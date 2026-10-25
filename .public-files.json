@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "files": [
+    ".gitattributes",
+    ".github/ISSUE_TEMPLATE/bug_report.md",
+    ".github/pull_request_template.md",
+    ".github/workflows/ci.yml",
+    ".gitignore",
+    ".public-files.json",
+    ".python-version",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "apps/dashboard.py",
+    "data/README.md",
+    "docs/getting-started.md",
+    "docs/images/hero-mobile.svg",
+    "docs/images/hero.svg",
+    "docs/images/heroes-current.jpg",
+    "docs/images/overview-mobile.jpg",
+    "docs/images/overview.jpg",
+    "docs/images/player-current.jpg",
+    "docs/images/replay-current.jpg",
+    "docs/images/schedule-current.jpg",
+    "docs/licensing.md",
+    "kpl_insight/resources/knowledge.json",
+    "pyproject.toml",
+    "requirements.txt",
+    "tools/check_public_files.py",
+    "tools/hooks/pre-commit",
+    "tools/hooks/pre-push"
+  ],
+  "python_roots": [
+    "kpl_insight",
+    "tests"
+  ]
+}

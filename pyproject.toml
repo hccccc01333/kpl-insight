@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kpl-insight"
+version = "0.1.0"
+description = "KPL collection, data processing and win-probability research for noncommercial use"
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+license = "PolyForm-Noncommercial-1.0.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{name = "hccccc01333 and contributors"}]
+dependencies = [
+  "pandas==3.0.2",
+  "numpy==2.4.4",
+  "requests==2.33.1",
+  "scikit-learn==1.8.0",
+  "scipy==1.17.1",
+  "joblib==1.5.3",
+]
+
+[project.optional-dependencies]
+dashboard = ["plotly==6.7.0", "streamlit==1.57.0"]
+
+[project.scripts]
+kpl-insight = "kpl_insight.cli:main"
+
+[project.urls]
+Homepage = "https://hccccc01333.github.io/KPLdata-site/"
+Repository = "https://github.com/hccccc01333/kpl-insight"
+Issues = "https://github.com/hccccc01333/kpl-insight/issues"
+
+[tool.setuptools.packages.find]
+include = ["kpl_insight*"]
+
+[tool.setuptools.package-data]
+kpl_insight = ["resources/*.json"]

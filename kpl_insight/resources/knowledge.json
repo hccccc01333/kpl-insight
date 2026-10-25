@@ -1,0 +1,79 @@
+{
+  "version": "2026-05-24",
+  "sources": [
+    "KPL 2026 春季赛公开赛制资料",
+    "王者荣耀官方分路介绍",
+    "王者荣耀局内资源刷新机制公开资料"
+  ],
+  "competition": {
+    "kpl": "王者荣耀职业联赛，职业赛事中常见常规赛、季后赛、总决赛等阶段。",
+    "playoff_format": "季后赛常见 BO7 双败淘汰，全局 BP，必要时进入巅峰对决。",
+    "annual_context": "春季赛、挑战者杯、夏季赛、年度总决赛等赛事会影响年度积分和参赛资格。",
+    "bo_meaning": {
+      "BO5": "五局三胜，多见于部分淘汰或杯赛阶段。",
+      "BO7": "七局四胜，KPL 季后赛/总决赛常见。",
+      "BO9": "九局五胜，适合扩展到更长赛制的总决赛/表演赛场景。"
+    }
+  },
+  "positions": {
+    "top": {
+      "name": "对抗路",
+      "role": "多由战士或坦克承担，负责边线对抗、绕后开团和侧翼牵制。",
+      "feature_focus": ["gold_diff_top", "hurt_diff_top", "tower_diff"]
+    },
+    "jungle": {
+      "name": "打野",
+      "role": "负责刷野、控龙、Gank 和节奏发动，前期等级成长快。",
+      "feature_focus": ["gold_diff_jungle", "hurt_diff_jungle", "objective_value_score"]
+    },
+    "mid": {
+      "name": "中路",
+      "role": "多为法师，清线后支援边路和资源团，是中期节奏枢纽。",
+      "feature_focus": ["gold_diff_mid", "hurt_diff_mid", "damage_conversion_diff"]
+    },
+    "adc": {
+      "name": "发育路",
+      "role": "多为射手，前期发育，2-3 件核心装备后承担持续输出。",
+      "feature_focus": ["gold_diff_adc", "carry_dominance", "carry_gold_share_diff"]
+    },
+    "support": {
+      "name": "游走",
+      "role": "多由辅助/坦克承担，负责保护、开视野、跟打野联动和开团。",
+      "feature_focus": ["hurt_diff_support", "assist_diff_per_min", "tempo_swing_score"]
+    }
+  },
+  "objectives": {
+    "tyrant": {
+      "name": "暴君",
+      "strategic_value": "前中期团战与属性收益，常作为第一波资源团触发点。",
+      "default_weight": 2.0
+    },
+    "dark_tyrant": {
+      "name": "黑暗暴君",
+      "strategic_value": "中后期输出增益，常影响团战爆发能力。",
+      "default_weight": 4.0
+    },
+    "lord": {
+      "name": "主宰",
+      "strategic_value": "提供推进能力，帮助队伍拔塔和压缩地图空间。",
+      "default_weight": 5.0
+    },
+    "storm": {
+      "name": "风暴龙王",
+      "strategic_value": "20 分钟后最高优先级资源，经常直接决定终局。",
+      "default_weight": 6.0
+    }
+  },
+  "timing_reference": {
+    "note": "不同版本刷新机制可能调整，系统以 API 字段为准；下列仅用于解释与导播提示。",
+    "first_major_objective_window": "约 4 分钟出现第一波关键中立资源团。",
+    "shadow_transition": "约 10 分钟进入暗影资源阶段，资源价值上升。",
+    "storm_dragon_king": "约 20 分钟进入风暴龙王决胜期。"
+  },
+  "dashboard_copywriting": {
+    "gold_lead": "经济领先意味着装备成型更快，但仍需结合资源和塔线判断。",
+    "objective_lead": "资源领先代表地图主动权更强，尤其在中后期更容易转化为推塔和团战胜势。",
+    "tempo_swing": "节奏波动越大，说明近期局势变化越剧烈，适合导播切出数据面板。",
+    "carry_dominance": "核心位领先说明中后期输出点更稳定，是胜率变化的重要解释。"
+  }
+}

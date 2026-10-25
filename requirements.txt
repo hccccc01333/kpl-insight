@@ -1,0 +1,7 @@
+# Core dependencies; the optional local UI is installed with .[dashboard].
+pandas==3.0.2
+numpy==2.4.4
+requests==2.33.1
+scikit-learn==1.8.0
+scipy==1.17.1
+joblib==1.5.3
