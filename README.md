@@ -66,7 +66,7 @@ python -m kpl_insight series --match-id 2026102201   --site-dir /path/to/kpl-sit
 - [Hero 0:4 LGD 案例](docs/cases/2026102201.md)
 - [10 场 Benchmark](benchmark/README.md)
 
-> **数据覆盖** · 线上索引在 **2026-10-25** 记录了 **33 项赛事 / 2,901 场系列赛 / 11,138 局比赛**；其中 **222 局**具备分钟级复盘。历史终局与真实过程的覆盖不同，不能把总局数当作胜率评估样本。数字来自[网站数据索引](https://hccccc01333.github.io/KPLdata-site/assets/site_totals.js)。
+> **数据覆盖** · 线上索引在 **2026-10-25** 记录了 **33 项赛事 / 2,901 场系列赛 / 11,138 局比赛**；其中 **221 局**具备分钟级复盘。历史终局与真实过程的覆盖不同，不能把总局数当作胜率评估样本。数字来自[网站数据索引](https://hccccc01333.github.io/KPLdata-site/assets/site_totals.js)。
 
 ## 界面预览
 
