@@ -101,6 +101,20 @@ python -m kpl_insight series --match-id 2026102201   --site-dir /path/to/kpl-sit
 
 GitHub Pages 在部分国内网络仍可能不稳定。站点通过静态文件更新数据，不代表每一场历史比赛都有实时过程。
 
+### 我想在本地打开同款网站
+
+网站源码和已归档的静态数据在独立的 [KPLdata-site 仓库](https://github.com/hccccc01333/KPLdata-site)。安装 Git 和 Python 3 后：
+
+```bash
+git clone https://github.com/hccccc01333/KPLdata-site.git
+cd KPLdata-site
+python -m http.server 8000 --bind 127.0.0.1
+```
+
+在浏览器打开 **http://127.0.0.1:8000/**，即可运行自己的一份网站，无需先训练模型。保持终端运行，结束时按 `Ctrl+C`。本地展示随仓库取得的数据版本；自动采集与更新需要另外配置，部分图片等外部资源仍可能需要联网。具体说明见[本地网站指南](docs/getting-started.md#本地运行同款静态网站)。
+
+如果这个项目对你有用，欢迎给本仓库点一颗 **Star**，让更多 KPL 同好发现它。也欢迎带着问题、需求和改进回来。
+
 ### 我想运行源码
 
 使用 **Python 3.14**，先克隆项目并创建虚拟环境：
