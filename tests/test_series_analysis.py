@@ -8,9 +8,9 @@ instead of the team name will fail here.
 from __future__ import annotations
 
 import json
+import tempfile
+import unittest
 from pathlib import Path
-
-import pytest
 
 from kpl_insight.analysis import analyze_series, load_series, render_markdown
 from kpl_insight.analysis.loaders import DEFAULT_SITE_DIR, SeriesDataError
@@ -74,67 +74,76 @@ def _fixture(tmp_path: Path, *, corrupt: bool = False, score=(1, 1)) -> Path:
     return tmp_path
 
 
-def test_side_switch_is_normalized_by_team(tmp_path):
-    series = load_series("99990001", _fixture(tmp_path))
-    assert (series.score1, series.score2) == (1, 1)
-    assert series.games[0].winner == "Alpha"
-    assert series.games[1].winner == "Bravo"
-    assert series.games[1].side_of("Bravo") == 1
-    report = analyze_series(series)
-    seq = report["series_comparison"]["side_sequence"]
-    assert seq[0]["team1_side"] == 1 and seq[1]["team1_side"] == 2
+class SeriesAnalysisTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_side_switch_is_normalized_by_team(self):
+        series = load_series("99990001", _fixture(self.root))
+        self.assertEqual((series.score1, series.score2), (1, 1))
+        self.assertEqual(series.games[0].winner, "Alpha")
+        self.assertEqual(series.games[1].winner, "Bravo")
+        self.assertEqual(series.games[1].side_of("Bravo"), 1)
+        report = analyze_series(series)
+        seq = report["series_comparison"]["side_sequence"]
+        self.assertEqual(seq[0]["team1_side"], 1)
+        self.assertEqual(seq[1]["team1_side"], 2)
+
+    def test_cumulative_regression_is_quarantined_not_faked(self):
+        series = load_series("99990001", _fixture(self.root, corrupt=True))
+        self.assertTrue(any("推塔累计回退" in w for w in series.warnings))
+        g2 = series.games[1]
+        self.assertGreaterEqual(g2.quarantined_frames, 1)
+        self.assertTrue(all(f.towers[0] >= 0 for f in g2.frames))
+        report = analyze_series(series)
+        self.assertEqual(report["data_quality"]["status"], "degraded")
+
+    def test_score_mismatch_is_an_error(self):
+        with self.assertRaisesRegex(SeriesDataError, "大场比分"):
+            load_series("99990001", _fixture(self.root, score=(2, 0)))
+
+    def test_missing_replay_degrades_without_crashing(self):
+        root = _fixture(self.root)
+        (root / "assets" / "replay" / "99990001.json").unlink()
+        series = load_series("99990001", root)
+        self.assertTrue(any("缺少分钟级复盘包" in w for w in series.warnings))
+        report = analyze_series(series)
+        self.assertEqual(report["data_quality"]["status"], "degraded")
+        self.assertTrue(all(not g["coverage"]["has_minute_data"] for g in report["games"]))
+        self.assertTrue(all(not g["windows"]["candidates"] for g in report["games"]))
+
+    def test_report_has_traceable_claims_and_markdown(self):
+        report = analyze_series(load_series("99990001", _fixture(self.root)))
+        self.assertEqual(report["schema_version"], "1.0")
+        self.assertTrue(report["conclusion"]["facts"])
+        for claim in report["conclusion"]["facts"] + report["conclusion"]["inferences"]:
+            self.assertTrue(claim.get("evidence"))
+        md = render_markdown(report)
+        self.assertIn("系列赛证据报告", md)
+        self.assertIn("未证实假设", md)
 
 
-def test_cumulative_regression_is_quarantined_not_faked(tmp_path):
-    series = load_series("99990001", _fixture(tmp_path, corrupt=True))
-    assert any("推塔累计回退" in w for w in series.warnings)
-    g2 = series.games[1]
-    assert g2.quarantined_frames >= 1
-    assert all(f.towers[0] >= 0 for f in g2.frames)
-    report = analyze_series(series)
-    assert report["data_quality"]["status"] == "degraded"
+@unittest.skipUnless((DEFAULT_SITE_DIR / "assets" / "replay" / "2026102201.json").exists(),
+                     "real site assets are not available")
+class RealSeriesTest(unittest.TestCase):
+    def test_real_hero_vs_lgd_orientation_and_degradation(self):
+        series = load_series("2026102201")
+        self.assertEqual((series.team1, series.team2), ("杭州LGD.NBW", "南通Hero久竞"))
+        self.assertEqual((series.score1, series.score2), (4, 0))
+        self.assertEqual([g.winner for g in series.games], ["杭州LGD.NBW"] * 4)
+        self.assertEqual(series.games[0].side_of("杭州LGD.NBW"), 2)
+        self.assertEqual(series.games[1].side_of("杭州LGD.NBW"), 1)
+        report = analyze_series(series)
+        self.assertEqual(report["data_quality"]["status"], "degraded")
+        self.assertIn("G1 是唯一一局早期领先方", report["headline"])
+        g1 = report["games"][0]
+        self.assertEqual(g1["early_leader"], "南通Hero久竞")
+        self.assertTrue(g1["comeback"])
 
 
-def test_score_mismatch_is_an_error(tmp_path):
-    with pytest.raises(SeriesDataError, match="大场比分"):
-        load_series("99990001", _fixture(tmp_path, score=(2, 0)))
-
-
-def test_missing_replay_degrades_without_crashing(tmp_path):
-    root = _fixture(tmp_path)
-    (root / "assets" / "replay" / "99990001.json").unlink()
-    series = load_series("99990001", root)
-    assert any("缺少分钟级复盘包" in w for w in series.warnings)
-    report = analyze_series(series)
-    assert report["data_quality"]["status"] == "degraded"
-    assert all(not g["coverage"]["has_minute_data"] for g in report["games"])
-    assert all(not g["windows"]["candidates"] for g in report["games"])
-
-
-def test_report_has_traceable_claims_and_markdown(tmp_path):
-    report = analyze_series(load_series("99990001", _fixture(tmp_path)))
-    assert report["schema_version"] == "1.0"
-    assert report["conclusion"]["facts"]
-    for claim in report["conclusion"]["facts"] + report["conclusion"]["inferences"]:
-        assert claim.get("evidence")
-    md = render_markdown(report)
-    assert "系列赛证据报告" in md
-    assert "未证实假设" in md
-
-
-@pytest.mark.skipif(not (DEFAULT_SITE_DIR / "assets" / "replay" / "2026102201.json").exists(),
-                    reason="real site assets are not available")
-def test_real_hero_vs_lgd_orientation_and_degradation():
-    series = load_series("2026102201")
-    assert (series.team1, series.team2) == ("杭州LGD.NBW", "南通Hero久竞")
-    assert (series.score1, series.score2) == (4, 0)
-    assert [g.winner for g in series.games] == ["杭州LGD.NBW"] * 4
-    # G1: Hero is detail t1, LGD is detail t2; G2/G3 reversed
-    assert series.games[0].side_of("杭州LGD.NBW") == 2
-    assert series.games[1].side_of("杭州LGD.NBW") == 1
-    report = analyze_series(series)
-    assert report["data_quality"]["status"] == "degraded"
-    assert "G1 是唯一一局早期领先方" in report["headline"]
-    g1 = report["games"][0]
-    assert g1["early_leader"] == "南通Hero久竞"
-    assert g1["comeback"] is True
+if __name__ == "__main__":
+    unittest.main()
