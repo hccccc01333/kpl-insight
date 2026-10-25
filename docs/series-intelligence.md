@@ -68,7 +68,7 @@ python benchmark/run_benchmark.py
 ## 案例
 
 `reports/series_analysis/2026102201.json` / `.md`  
-2026-10-22 杭州LGD.NBW 4:0 南通Hero久竞：首份报告暴露了四局末段累计计数异常，并明确隔离，未把异常帧当成 final。
+2026-10-22 杭州LGD.NBW 4:0 南通Hero久竞：首轮报告发现四局末段累计计数异常；修复 replay 构建器（跳过 status=2 终局摘要帧）后，正式报告状态为 `ok`。
 
 ## 限制
 

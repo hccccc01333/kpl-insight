@@ -138,7 +138,7 @@ class RealSeriesTest(unittest.TestCase):
         self.assertEqual(series.games[0].side_of("杭州LGD.NBW"), 2)
         self.assertEqual(series.games[1].side_of("杭州LGD.NBW"), 1)
         report = analyze_series(series)
-        self.assertEqual(report["data_quality"]["status"], "degraded")
+        self.assertEqual(report["data_quality"]["status"], "ok")
         self.assertIn("G1 是唯一一局早期领先方", report["headline"])
         g1 = report["games"][0]
         self.assertEqual(g1["early_leader"], "南通Hero久竞")
