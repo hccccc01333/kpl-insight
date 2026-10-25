@@ -56,6 +56,18 @@
 !/tests/**/*.py
 !/kpl_insight/resources/knowledge.json
 
+# Series Intelligence V1 (public, synthetic/user-supplied data only)
+!/benchmark/
+/benchmark/*
+!/benchmark/README.md
+!/benchmark/run_benchmark.py
+!/benchmark/series_benchmark.json
+!/docs/series-intelligence.md
+!/docs/cases/
+/docs/cases/*
+!/docs/cases/2026102201.md
+
+
 # Always private, including inside otherwise allowed source directories.
 .env
 .env.*

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kpl-insight"
-version = "0.1.0"
+version = "0.2.0"
 description = "KPL collection, data processing and win-probability research for noncommercial use"
 readme = "README.md"
 requires-python = ">=3.14,<3.15"
@@ -25,6 +25,7 @@ dashboard = ["plotly==6.7.0", "streamlit==1.57.0"]
 
 [project.scripts]
 kpl-insight = "kpl_insight.cli:main"
+analyze-series = "kpl_insight.analysis.cli:main"
 
 [project.urls]
 Homepage = "https://hccccc01333.github.io/KPLdata-site/"

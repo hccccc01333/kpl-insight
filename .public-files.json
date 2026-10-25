@@ -29,7 +29,12 @@
     "requirements.txt",
     "tools/check_public_files.py",
     "tools/hooks/pre-commit",
-    "tools/hooks/pre-push"
+    "tools/hooks/pre-push",
+    "benchmark/README.md",
+    "benchmark/run_benchmark.py",
+    "benchmark/series_benchmark.json",
+    "docs/series-intelligence.md",
+    "docs/cases/2026102201.md"
   ],
   "python_roots": [
     "kpl_insight",

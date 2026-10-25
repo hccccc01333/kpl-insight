@@ -16,6 +16,7 @@ COMMANDS = {
     "replay-check": ("kpl_insight.models.replay_check", "对照直播存档与当前模型重放"),
     "monitor": ("kpl_insight.collection.monitor", "按赛程采集并推理（需模型）"),
     "export-live": ("kpl_insight.site.export_live", "导出静态站点的 live.js 与回放分片"),
+    "series": ("kpl_insight.analysis.cli", "从本地数据资产生成一场系列赛的证据报告"),
 }
 
 

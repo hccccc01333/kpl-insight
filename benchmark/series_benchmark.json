@@ -1,0 +1,408 @@
+[
+  {
+    "match_id": "2026102201",
+    "date": "2026-10-22",
+    "team1": "杭州LGD.NBW",
+    "team2": "南通Hero久竞",
+    "score1": 4,
+    "score2": 0,
+    "bo": 7,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_15_1792663236",
+        "team1": "南通Hero久竞",
+        "team2": "杭州LGD.NBW",
+        "winner": "杭州LGD.NBW",
+        "duration": 19
+      },
+      {
+        "seq": 2,
+        "battle_id": "1054884368_16_1792665537",
+        "team1": "杭州LGD.NBW",
+        "team2": "南通Hero久竞",
+        "winner": "杭州LGD.NBW",
+        "duration": 16
+      },
+      {
+        "seq": 3,
+        "battle_id": "1054884368_17_1792667477",
+        "team1": "杭州LGD.NBW",
+        "team2": "南通Hero久竞",
+        "winner": "杭州LGD.NBW",
+        "duration": 12
+      },
+      {
+        "seq": 4,
+        "battle_id": "1054884368_18_1792669266",
+        "team1": "南通Hero久竞",
+        "team2": "杭州LGD.NBW",
+        "winner": "杭州LGD.NBW",
+        "duration": 14
+      }
+    ]
+  },
+  {
+    "match_id": "2026102101",
+    "date": "2026-10-21",
+    "team1": "成都AG超玩会",
+    "team2": "长沙TES.A",
+    "score1": 2,
+    "score2": 4,
+    "bo": 7,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_8_1792576862",
+        "team1": "长沙TES.A",
+        "team2": "成都AG超玩会",
+        "winner": "成都AG超玩会",
+        "duration": 18
+      },
+      {
+        "seq": 2,
+        "battle_id": "1054884368_9_1792578957",
+        "team1": "成都AG超玩会",
+        "team2": "长沙TES.A",
+        "winner": "长沙TES.A",
+        "duration": 20
+      },
+      {
+        "seq": 3,
+        "battle_id": "1054884368_10_1792581284",
+        "team1": "长沙TES.A",
+        "team2": "成都AG超玩会",
+        "winner": "长沙TES.A",
+        "duration": 22
+      },
+      {
+        "seq": 4,
+        "battle_id": "1054884368_11_1792583644",
+        "team1": "成都AG超玩会",
+        "team2": "长沙TES.A",
+        "winner": "成都AG超玩会",
+        "duration": 14
+      },
+      {
+        "seq": 5,
+        "battle_id": "1054884368_12_1792585256",
+        "team1": "长沙TES.A",
+        "team2": "成都AG超玩会",
+        "winner": "长沙TES.A",
+        "duration": 18
+      },
+      {
+        "seq": 6,
+        "battle_id": "1054884368_13_1792587249",
+        "team1": "成都AG超玩会",
+        "team2": "长沙TES.A",
+        "winner": "长沙TES.A",
+        "duration": 20
+      }
+    ]
+  },
+  {
+    "match_id": "2026102001",
+    "date": "2026-10-20",
+    "team1": "重庆狼队",
+    "team2": "深圳DYG",
+    "score1": 4,
+    "score2": 1,
+    "bo": 7,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_2_1792490577",
+        "team1": "重庆狼队",
+        "team2": "深圳DYG",
+        "winner": "深圳DYG",
+        "duration": 18
+      },
+      {
+        "seq": 2,
+        "battle_id": "1054884368_3_1792492829",
+        "team1": "重庆狼队",
+        "team2": "深圳DYG",
+        "winner": "重庆狼队",
+        "duration": 15
+      },
+      {
+        "seq": 3,
+        "battle_id": "1054884368_4_1792494745",
+        "team1": "深圳DYG",
+        "team2": "重庆狼队",
+        "winner": "重庆狼队",
+        "duration": 15
+      },
+      {
+        "seq": 4,
+        "battle_id": "1054884368_5_1792496760",
+        "team1": "重庆狼队",
+        "team2": "深圳DYG",
+        "winner": "重庆狼队",
+        "duration": 13
+      },
+      {
+        "seq": 5,
+        "battle_id": "1054884368_6_1792498320",
+        "team1": "重庆狼队",
+        "team2": "深圳DYG",
+        "winner": "重庆狼队",
+        "duration": 22
+      }
+    ]
+  },
+  {
+    "match_id": "2026101803",
+    "date": "2026-10-18",
+    "team1": "北京JDG",
+    "team2": "KSG",
+    "score1": 0,
+    "score2": 1,
+    "bo": 1,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_48_1792334389",
+        "team1": "北京JDG",
+        "team2": "KSG",
+        "winner": "KSG",
+        "duration": 15
+      }
+    ]
+  },
+  {
+    "match_id": "2026101802",
+    "date": "2026-10-18",
+    "team1": "北京JDG",
+    "team2": "长沙TES.A",
+    "score1": 3,
+    "score2": 1,
+    "bo": 5,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_44_1792325736",
+        "team1": "北京JDG",
+        "team2": "长沙TES.A",
+        "winner": "北京JDG",
+        "duration": 16
+      },
+      {
+        "seq": 2,
+        "battle_id": "1054884368_45_1792327744",
+        "team1": "长沙TES.A",
+        "team2": "北京JDG",
+        "winner": "北京JDG",
+        "duration": 14
+      },
+      {
+        "seq": 3,
+        "battle_id": "1054884368_46_1792329574",
+        "team1": "长沙TES.A",
+        "team2": "北京JDG",
+        "winner": "长沙TES.A",
+        "duration": 19
+      },
+      {
+        "seq": 4,
+        "battle_id": "1054884368_47_1792331714",
+        "team1": "长沙TES.A",
+        "team2": "北京JDG",
+        "winner": "北京JDG",
+        "duration": 13
+      }
+    ]
+  },
+  {
+    "match_id": "2026101801",
+    "date": "2026-10-18",
+    "team1": "KSG",
+    "team2": "上海EDG.M",
+    "score1": 1,
+    "score2": 3,
+    "bo": 5,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_40_1792313942",
+        "team1": "上海EDG.M",
+        "team2": "KSG",
+        "winner": "上海EDG.M",
+        "duration": 16
+      },
+      {
+        "seq": 2,
+        "battle_id": "1054884368_41_1792316152",
+        "team1": "上海EDG.M",
+        "team2": "KSG",
+        "winner": "上海EDG.M",
+        "duration": 15
+      },
+      {
+        "seq": 3,
+        "battle_id": "1054884368_42_1792318138",
+        "team1": "KSG",
+        "team2": "上海EDG.M",
+        "winner": "KSG",
+        "duration": 17
+      },
+      {
+        "seq": 4,
+        "battle_id": "1054884368_43_1792320206",
+        "team1": "上海EDG.M",
+        "team2": "KSG",
+        "winner": "上海EDG.M",
+        "duration": 12
+      }
+    ]
+  },
+  {
+    "match_id": "2026101702",
+    "date": "2026-10-17",
+    "team1": "北京WB",
+    "team2": "济南RW侠",
+    "score1": 3,
+    "score2": 0,
+    "bo": 5,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_36_1792238241",
+        "team1": "北京WB",
+        "team2": "济南RW侠",
+        "winner": "北京WB",
+        "duration": 14
+      },
+      {
+        "seq": 2,
+        "battle_id": "1054884368_37_1792240430",
+        "team1": "济南RW侠",
+        "team2": "北京WB",
+        "winner": "北京WB",
+        "duration": 15
+      },
+      {
+        "seq": 3,
+        "battle_id": "1054884368_38_1792242418",
+        "team1": "济南RW侠",
+        "team2": "北京WB",
+        "winner": "北京WB",
+        "duration": 12
+      }
+    ]
+  },
+  {
+    "match_id": "2026101701",
+    "date": "2026-10-17",
+    "team1": "KSG",
+    "team2": "杭州LGD.NBW",
+    "score1": 3,
+    "score2": 0,
+    "bo": 5,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_33_1792227477",
+        "team1": "杭州LGD.NBW",
+        "team2": "KSG",
+        "winner": "KSG",
+        "duration": 15
+      },
+      {
+        "seq": 2,
+        "battle_id": "1054884368_34_1792229739",
+        "team1": "KSG",
+        "team2": "杭州LGD.NBW",
+        "winner": "KSG",
+        "duration": 13
+      },
+      {
+        "seq": 3,
+        "battle_id": "1054884368_35_1792231707",
+        "team1": "杭州LGD.NBW",
+        "team2": "KSG",
+        "winner": "KSG",
+        "duration": 11
+      }
+    ]
+  },
+  {
+    "match_id": "2026101602",
+    "date": "2026-10-16",
+    "team1": "重庆狼队",
+    "team2": "深圳DYG",
+    "score1": 3,
+    "score2": 1,
+    "bo": 5,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_28_1792151836",
+        "team1": "重庆狼队",
+        "team2": "深圳DYG",
+        "winner": "重庆狼队",
+        "duration": 15
+      },
+      {
+        "seq": 2,
+        "battle_id": "1054884368_29_1792153825",
+        "team1": "深圳DYG",
+        "team2": "重庆狼队",
+        "winner": "重庆狼队",
+        "duration": 22
+      },
+      {
+        "seq": 3,
+        "battle_id": "1054884368_30_1792156499",
+        "team1": "重庆狼队",
+        "team2": "深圳DYG",
+        "winner": "深圳DYG",
+        "duration": 13
+      },
+      {
+        "seq": 4,
+        "battle_id": "1054884368_31_1792158287",
+        "team1": "重庆狼队",
+        "team2": "深圳DYG",
+        "winner": "重庆狼队",
+        "duration": 12
+      }
+    ]
+  },
+  {
+    "match_id": "2026101601",
+    "date": "2026-10-16",
+    "team1": "北京WB",
+    "team2": "南通Hero久竞",
+    "score1": 3,
+    "score2": 0,
+    "bo": 5,
+    "games": [
+      {
+        "seq": 1,
+        "battle_id": "1054884368_25_1792141117",
+        "team1": "北京WB",
+        "team2": "南通Hero久竞",
+        "winner": "北京WB",
+        "duration": 18
+      },
+      {
+        "seq": 2,
+        "battle_id": "1054884368_26_1792143280",
+        "team1": "北京WB",
+        "team2": "南通Hero久竞",
+        "winner": "北京WB",
+        "duration": 15
+      },
+      {
+        "seq": 3,
+        "battle_id": "1054884368_27_1792145373",
+        "team1": "北京WB",
+        "team2": "南通Hero久竞",
+        "winner": "北京WB",
+        "duration": 15
+      }
+    ]
+  }
+]

@@ -54,6 +54,18 @@
 
 本仓库公开赛程采集、快照解析、数据处理、特征构建、训练与回测工具。区分历史直播预测、当前模型重放与展示层平滑，让开发者能够检查口径、复现流程和提出改进。
 
+### 05 · 一场系列赛的证据报告
+
+`analyze-series` 读取一场已结束的 BO3/BO5/BO7，把四局经济、资源、BP、关键窗口和阵营变化整理成可追溯的 JSON / Markdown。它只陈述事实、统计判断与未证实假设，不把“诊断”写成教练意图或因果结论。
+
+```bash
+python -m kpl_insight series --match-id 2026102201   --site-dir /path/to/kpl-site --out report.json --md report.md
+```
+
+- [模块说明](docs/series-intelligence.md)
+- [Hero 0:4 LGD 案例](docs/cases/2026102201.md)
+- [10 场 Benchmark](benchmark/README.md)
+
 > **数据覆盖** · 线上索引在 **2026-10-25** 记录了 **33 项赛事 / 2,901 场系列赛 / 11,138 局比赛**；其中 **222 局**具备分钟级复盘。历史终局与真实过程的覆盖不同，不能把总局数当作胜率评估样本。数字来自[网站数据索引](https://hccccc01333.github.io/KPLdata-site/assets/site_totals.js)。
 
 ## 界面预览
@@ -139,6 +151,14 @@ python -m streamlit run apps/dashboard.py
 线上网页由独立的 [KPLdata-site](https://github.com/hccccc01333/KPLdata-site) 仓库维护。本仓库提供数据与模型工具，训练数据和预训练权重不随源码发布。
 
 </details>
+
+## 系列赛诊断 V1
+
+```bash
+python -m kpl_insight series --match-id 2026102201 --site-dir /path/to/kpl-site
+python benchmark/run_benchmark.py --site-dir /path/to/kpl-site
+python -m pytest -q tests/test_series_analysis.py
+```
 
 ## 开发导航
 
