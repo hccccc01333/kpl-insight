@@ -25,6 +25,8 @@
 
 面向想查数据的观众，也面向想研究数据与模型的开发者。**源码公开，限非商业使用。**
 
+喜欢 KPL、数据分析或前端交互？欢迎先[在线体验](https://hccccc01333.github.io/KPLdata-site/)，再给项目点一颗 **[Star](https://github.com/hccccc01333/kpl-insight)**。也欢迎[提 Issue](https://github.com/hccccc01333/kpl-insight/issues)、[贡献 PR](CONTRIBUTING.md)，一起把赛事数据做得更清楚、更好用。
+
 <p align="center">
   <a href="https://hccccc01333.github.io/KPLdata-site/">
     <picture>
@@ -34,7 +36,15 @@
   </a>
 </p>
 
-<p align="center"><sub>现有静态网站 · 点击图片直接体验 · 界面截图摄于 2026-10-25</sub></p>
+<p align="center"><sub>现有静态网站 · 点击图片直接体验 · 新版实际界面 · 截图摄于 2026-10-26</sub></p>
+
+## 这次更新：数据也有赛场的氛围
+
+- **全页 3D 场景**：光带与粒子贯穿页面，随鼠标和滚动变化；可暂停场景，并兼容减少动态效果偏好。
+- **可交互的数据卡片**：赛事、战队、选手、英雄、分析与荣誉内容支持入场动效、悬停反馈和滑动浏览。
+- **真实操作与数据**：从赛程查询、选手对比，到 BP 逐手回放和有分钟快照的比赛复盘，直接在浏览器体验。
+
+前端使用原生 HTML / CSS / JavaScript 与本地 Three.js；数据与模型工具使用 Python。网站源码在 [KPLdata-site](https://github.com/hccccc01333/KPLdata-site)，本仓库维护数据分析与模型工具。
 
 ## 可以做什么
 
@@ -66,7 +76,7 @@ python -m kpl_insight series --match-id 2026102201   --site-dir /path/to/kpl-sit
 - [Hero 0:4 LGD 案例](docs/cases/2026102201.md)
 - [10 场 Benchmark](benchmark/README.md)
 
-> **数据覆盖** · 线上索引在 **2026-10-25** 记录了 **33 项赛事 / 2,901 场系列赛 / 11,138 局比赛**；其中 **221 局**具备分钟级复盘。历史终局与真实过程的覆盖不同，不能把总局数当作胜率评估样本。数字来自[网站数据索引](https://hccccc01333.github.io/KPLdata-site/assets/site_totals.js)。
+> **数据覆盖** · 线上索引在 **2026-10-26** 记录了 **33 项赛事 / 2,901 场系列赛 / 11,138 局比赛**；其中 **221 局**具备分钟级复盘。历史终局与真实过程的覆盖不同，不能把总局数当作胜率评估样本。数字来自[网站数据索引](https://hccccc01333.github.io/KPLdata-site/assets/site_totals.js)。
 
 ## 界面预览
 
