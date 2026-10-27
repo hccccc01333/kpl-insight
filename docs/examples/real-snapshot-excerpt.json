@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "kind": "selected real aggregate fields, not a complete API response",
+    "match_id": "2026062603",
+    "battle_id": "1272988176_18_1782478925",
+    "game": 3,
+    "snapshot_file": "20260626_212751.json",
+    "prediction_collected_at": "2026-06-26 21:27:47",
+    "probability_kind": "historical stored prediction; not recomputed by this sample",
+    "model_version": "not recorded in this prediction row; do not infer current V12",
+    "note": "Original response and stored prediction have matching game time and aggregate differences; their collection wall-clock times differ. Only selected fields are published."
+  },
+  "api_excerpt": {
+    "game_duration": 767448,
+    "status": 1,
+    "win_camp": 0,
+    "camp1": {
+      "team_name": "广州TTG",
+      "gold": 41930,
+      "kill_num": 8,
+      "push_tower_num": 6
+    },
+    "camp2": {
+      "team_name": "北京JDG",
+      "gold": 37633,
+      "kill_num": 4,
+      "push_tower_num": 2
+    }
+  },
+  "historical_prediction": {
+    "snapshot_time_sec": "767",
+    "minute": "12.78",
+    "lag_sec": "60.0",
+    "camp1_win_prob": "0.94804",
+    "camp2_win_prob": "0.05196",
+    "gold_diff": "4297",
+    "kill_diff": "4",
+    "tower_diff": "4"
+  },
+  "official_result": {
+    "win_camp": 2,
+    "winner": "北京JDG"
+  },
+  "site_frame": {
+    "m": 12.8,
+    "p": 0.948,
+    "gd": 4297,
+    "k": [
+      8,
+      4
+    ],
+    "t": [
+      6,
+      2
+    ]
+  }
+}

@@ -30,6 +30,22 @@
 !/docs/images/
 /docs/images/*
 !/docs/getting-started.md
+!/docs/architecture.md
+!/docs/data-contracts.md
+!/docs/model-card.md
+!/docs/examples/
+/docs/examples/*
+!/docs/cases/match-walkthrough.md
+!/docs/cases/data-to-page.md
+!/docs/cases/model-validation-and-failure.md
+!/docs/project-history.md
+!/docs/contribution-example.md
+!/docs/examples/real-snapshot-excerpt.json
+!/tools/verify_walkthrough.py
+!/docs/images/timeline-demo.gif
+!/docs/images/hero-demo.gif
+!/docs/images/bp-demo.gif
+!/docs/images/simulator-demo.gif
 !/docs/images/hero-mobile.svg
 !/docs/images/hero.svg
 !/docs/images/heroes-current.jpg
@@ -38,6 +54,25 @@
 !/docs/images/player-current.jpg
 !/docs/images/replay-current.jpg
 !/docs/images/schedule-current.jpg
+!/docs/images/README.md
+!/docs/images/project-journey.svg
+!/docs/images/architecture-overview.svg
+!/docs/images/collection-flow.svg
+!/docs/images/model-pipeline.svg
+!/docs/images/series-evidence-flow.svg
+!/docs/images/site-publishing-flow.svg
+!/docs/images/bp-studio-20261027.jpg
+!/docs/images/coach-20261027.jpg
+!/docs/images/compare-20261027.jpg
+!/docs/images/hero-performance-20261027.jpg
+!/docs/images/mobile-20261027.jpg
+!/docs/images/replay-20261027.jpg
+!/docs/images/sandbox-20261027.jpg
+!/docs/images/series-20261027.jpg
+!/docs/images/series-report-20261027.jpg
+!/docs/images/simulator-20261027.jpg
+!/docs/images/team-20261027.jpg
+!/docs/images/team-bp-20261027.jpg
 !/docs/licensing.md
 !/tools/
 /tools/*
@@ -66,6 +101,10 @@
 !/docs/cases/
 /docs/cases/*
 !/docs/cases/2026102201.md
+!/docs/cases/match-walkthrough.md
+!/docs/cases/data-to-page.md
+!/docs/cases/model-validation-and-failure.md
+!/tools/verify_walkthrough.py
 
 
 # Always private, including inside otherwise allowed source directories.
