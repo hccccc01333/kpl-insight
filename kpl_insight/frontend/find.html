@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="KPL 智能找局：按年份、战队、胜方、时长、局序和 BP 记录检索全部已归档小局。">
+<title>智能找局 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="find.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">FIND · 智能找局</div>
+    <h1>智能找局</h1>
+    <p>按终局条件检索<b>全部已归档小局</b>：年份、战队、胜方、时长、局序、BP 记录。
+      分钟级时序条件（如“第 10 分钟经济领先”）不在本页，请用「精选对局」。</p>
+    <div class="ph-meta mono">
+      <span>仅已完赛大场</span><i>/</i>
+      <span>终局字段检索</span><i>/</i>
+      <span>结果可直达对局详情</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:24px">
+  <div class="filterbar">
+    <label class="fld"><span>年份</span><select id="fYear"><option value="">全部年份</option></select></label>
+    <label class="fld"><span>战队</span><select id="fTeam"><option value="">全部战队</option></select></label>
+    <label class="fld"><span>胜方</span><select id="fWinner"><option value="">任意胜方</option></select></label>
+    <label class="fld"><span>时长（分钟）</span>
+      <span style="display:flex;gap:6px">
+        <input class="search" id="fDurMin" type="number" min="0" max="60" placeholder="最短" style="width:86px">
+        <input class="search" id="fDurMax" type="number" min="0" max="60" placeholder="最长" style="width:86px">
+      </span>
+    </label>
+    <label class="fld"><span>第几局</span><select id="fSeq"><option value="">不限</option><option value="1">第 1 局</option><option value="2">第 2 局</option><option value="3">第 3 局</option><option value="4">第 4 局</option><option value="5">第 5 局</option><option value="6">第 6 局</option><option value="7">第 7 局</option></select></label>
+    <label class="fld"><span>BP 记录</span><select id="fBp"><option value="">不限</option><option value="full">完整 BP</option><option value="lineup">阵容齐全</option></select></label>
+    <button class="btn sm" id="fRun" type="button">查找</button>
+    <button class="btn ghost sm" id="fReset" type="button">重置</button>
+    <span class="block-note mono" id="fCount">正在加载对局索引…</span>
+  </div>
+  <div class="block-note mono" id="findNote" style="margin:10px 0">口径：只检索已完赛大场的终局字段；BP 记录来自已归档选禁序列，缺失不补造。</div>
+  <div class="q-wrap" style="overflow-x:auto">
+    <table class="q-table">
+      <thead><tr><th>日期</th><th>赛事 / 赛段</th><th>对阵</th><th class="num">局</th><th class="num">时长</th><th>胜方</th><th>BP</th><th></th></tr></thead>
+      <tbody id="findBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/games/index.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/find.js?v=1"></script>
+</body>
+</html>

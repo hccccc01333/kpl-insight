@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>这局谁更可能赢？· 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<link rel="stylesheet" href="assets/sandbox.css?v=4">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="这局谁更可能赢？· 峡谷有数">
+<meta property="og:description" content="选一局比赛，拖动时间条，看模型每一分钟怎么判断，再对照历史上类似局面最后谁赢了。">
+<meta property="og:image" content="https://kpldata-site.hccccc01333.workers.dev/assets/shots/sandbox.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="sandbox.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">SANDBOX · 胜率沙盘</div>
+    <h1>这局现在谁更可能赢？</h1>
+    <p>选一场比赛，拖到任意一分钟：右边会直接告诉你模型当时觉得谁更可能赢，以及历史上最像的 40 局最后是谁赢了。
+      页面不预测比分，也不承诺一定准，只把“当时的判断 + 类似局面的结果”摆出来。</p>
+    <div class="sb-howto" aria-label="使用步骤">
+      <span><b>1</b> 选一局</span>
+      <span><b>2</b> 拖时间条</span>
+      <span><b>3</b> 对照历史</span>
+    </div>
+    <div class="ph-meta mono">
+      <span>能查历史的比赛 <b id="sbMetaBattles">—</b></span><i>/</i>
+      <span>可以对照的时刻 <b id="sbMetaFrames">—</b></span><i>/</i>
+      <span>模型版本 <b id="sbModelVer">—</b></span><i>/</i>
+      <span>模型考试 <b id="sbModelN">—</b></span><i>/</i>
+      <span>数据更新 <b id="sbMetaUpdated">—</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap sb-main">
+  <div id="sbJumpNote" class="sb-jump-note" hidden></div>
+  <div class="sb-plain" id="sbPlain">
+    <div class="big">选一场比赛，拖一下时间条，就能看到这一刻的解释。</div>
+    <div class="sub">右边会直接告诉你：模型当时觉得谁更可能赢，以及历史上最像的 40 局最后是谁赢了。</div>
+  </div>
+
+  <details class="sb-adv-details">
+    <summary>给想深挖的人：模型考试与覆盖范围（点开看技术指标）</summary>
+    <div class="sb-kpis">
+      <div class="sb-kpi hl">
+        <div class="k">预测误差（越小越好）</div>
+        <div class="v" id="sbKpiBrier">—</div>
+        <div class="s" id="sbKpiBrierS">—</div>
+      </div>
+      <div class="sb-kpi">
+        <div class="k">胜负猜对率</div>
+        <div class="v" id="sbKpiAcc">—</div>
+        <div class="s" id="sbKpiAccS">—</div>
+      </div>
+      <div class="sb-kpi">
+        <div class="k">能查历史的比赛</div>
+        <div class="v" id="sbKpiCoverage">—</div>
+        <div class="s" id="sbKpiCoverageS">—</div>
+      </div>
+      <div class="sb-kpi warn">
+        <div class="k">最容易看错的局面</div>
+        <div class="v" id="sbKpiWeak">—</div>
+        <div class="s" id="sbKpiWeakS">—</div>
+      </div>
+    </div>
+  </details>
+
+  <details class="sb-glossary">
+    <summary>看不懂这些词？点开看人话解释</summary>
+    <div class="sb-glossary-body">
+      <div><b>胜率</b>：模型估计这队最终赢的概率，不是比分预测。</div>
+      <div><b>经济差</b>：左边总金币减右边总金币，正数就是左边领先。</div>
+      <div><b>类似局面</b>：从 <b id="sbGlossaryBattles">221 局</b>历史里找经济差、击杀、推塔、资源最接近的独立对局；样本少时会不稳。</div>
+      <div><b>Brier（误差）</b>：越小越好；0.25 相当于瞎猜，<b id="sbGlossaryBrier">0.177</b> 比瞎猜好，但不是神预测。</div>
+      <div><b>翻盘</b>：前 8 分钟落后、最后反而赢了。</div>
+      <div><b>参考区间</b>：历史结果的不确定范围，不是保证。</div>
+    </div>
+  </details>
+
+  <section class="block sb-first">
+    <div class="block-head">
+      <h2><i></i>胜率地图 <em>横轴经济差 · 纵轴分钟 · 绿色=左边赢面大，红色=右边赢面大</em></h2>
+      <span class="block-note mono">拖时间条或点曲线；每一格是历史上类似时刻的结果</span>
+    </div>
+
+    <div class="panel sb-toolbar">
+      <label class="sb-field"><span>选一场比赛</span><select id="sbMatch"></select></label>
+      <label class="sb-field"><span>选第几局</span><select id="sbBattle"></select></label>
+      <label class="sb-field sb-time"><span>拖到第几分钟（比赛时间）</span><input type="range" id="sbMinute" min="0" max="1" value="0"><b id="sbMinuteLabel">—</b></label>
+      <div class="seg sb-mode" id="sbMode">
+        <button type="button" data-mode="hist" class="on">看历史结果</button>
+        <button type="button" data-mode="model">看模型判断</button>
+      </div>
+      <button class="btn ghost sm" id="sbRandom" type="button">随便看一局</button>
+      <button class="btn ghost sm" id="sbComeback" type="button">看一场翻盘</button>
+      <button class="btn ghost sm" id="sbBlowout" type="button">看一场碾压</button>
+    </div>
+
+    <div class="sb-layout">
+      <div class="panel sb-chart-panel">
+        <div class="sb-surface-wrap">
+          <div id="sbSurface" class="sb-surface"></div>
+          <div class="sb-tip" id="sbTip"></div>
+        </div>
+        <div class="sb-legend" id="sbLegend"></div>
+        <div class="sb-curve-head">
+          <div class="panel-title">模型每一分钟的判断 <em id="sbCurveMeta">—</em></div>
+          <span class="block-note mono">拖动或点击曲线，时间条会跟着走</span>
+        </div>
+        <div id="sbCurve" class="sb-curve"></div>
+      </div>
+
+      <aside class="sb-side">
+        <div class="panel sb-state" id="sbState"></div>
+        <details class="sb-adv-box">
+          <summary>进阶：自己改经济差 / 击杀，看模型怎么变</summary>
+          <div class="panel sb-whatif" id="sbWhatIf"></div>
+        </details>
+        <div class="panel sb-analog" id="sbAnalog"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block" id="modelHealth">
+    <div class="block-head">
+      <h2><i></i>模型靠不靠谱 <em>哪些时候准，哪些时候容易错</em></h2>
+      <span class="block-note mono" id="sbHealthNote">—</span>
+    </div>
+
+    <div class="sb-health-kpis" id="sbHealthKpis"></div>
+
+    <div class="sb-health-grid">
+      <div class="panel">
+        <div class="panel-title">不同时间段的表现 <em id="sbPhaseN">—</em></div>
+        <div id="sbPhases" class="sb-phases"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">模型说 70%，实际赢了多少？ <em>直播记录，不是考试</em></div>
+        <div id="sbReliability" class="sb-reliability"></div>
+        <div class="sb-rel-note" id="sbRelNote">—</div>
+      </div>
+    </div>
+
+    <div class="sb-health-grid">
+      <div class="panel">
+        <div class="panel-title">模型考试，每局错多少 <em>每根条是一局</em></div>
+        <div id="sbBrierStrip" class="sb-brier-strip"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">错得最厉害的几局 <em>还有一次特殊保护机制测试</em></div>
+        <div id="sbWorst" class="sb-worst"></div>
+      </div>
+    </div>
+
+    <div class="sb-notes" id="sbNotes"></div>
+  </section>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/sandbox.js?v=2"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/sandbox_app.js?v=4"></script>
+</body>
+</html>

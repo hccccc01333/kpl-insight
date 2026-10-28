@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>荣誉中心 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="荣誉中心 · 峡谷有数">
+<meta property="og:description" content="KPL 荣誉中心：周榜 / 月榜五路最佳选手与本周最佳战队。分路内六项稳健标准分加权评分，按大场成组 bootstrap 给出不确定性。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="honors.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero" id="heroHead">
+  <div class="wrap">
+    <div class="ph-kicker mono">HONORS · 荣誉中心</div>
+    <h1>荣誉中心</h1>
+    <p>按周 / 月评出五个分路的最佳选手与本周最佳战队。所有名次由<b>固定评分卡</b>在该分路当期样本内可复算得出，
+      <b>不是「真实实力」排名</b>；不确定性按大场成组 bootstrap 给出。</p>
+    <div class="ph-meta mono">
+      <span>算法版本 <b id="mVer">—</b></span><i>/</i>
+      <span>评分卡 <b>固定权重 · 分路内标准分</b></span><i>/</i>
+      <span>统计时间 <b id="mBuilt">—</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:22px">
+  <div class="filterbar">
+    <div class="hn-kind" id="kindSwitch"></div>
+    <label class="fld grow"><span>评选周期</span><select id="fPeriod"></select></label>
+    <span class="block-note mono" id="periodNote">—</span>
+    <button class="btn ghost" id="csvBtn" type="button">导出候选榜 CSV</button>
+  </div>
+
+  <div class="brief" id="brief"></div>
+
+  <section class="block" id="lanesBlock" style="margin-top:26px">
+    <div class="block-head">
+      <h2><i></i>五路最佳</h2>
+      <span class="block-note mono" id="lanesNote">—</span>
+    </div>
+    <div class="hn-lanes" id="lanes"></div>
+  </section>
+
+  <section class="block" id="teamBlock">
+    <div class="block-head">
+      <h2><i></i>本期最佳战队</h2>
+      <span class="block-note mono">独立模型：对手强度校正胜率 / 稳定性（当期队内标准分加权）</span>
+    </div>
+    <div id="team"></div>
+  </section>
+
+  <section class="block" id="boardBlock">
+    <div class="block-head">
+      <h2><i></i>候选榜</h2>
+      <span class="block-note mono">仅列出达到门槛的选手 / 战队；未达门槛的分路只显示「候选」</span>
+    </div>
+    <div class="panel table-panel">
+      <table class="tbl">
+        <thead><tr>
+          <th>分路</th><th class="num">名次</th><th>选手</th><th>战队</th>
+          <th class="num">有效局 / 大场</th><th class="num">胜率</th><th class="num">KDA</th>
+          <th class="num">分均经济</th><th class="num">分均输出</th><th class="num">参团率</th>
+          <th class="num">MVP</th><th class="num">综合分</th>
+        </tr></thead>
+        <tbody id="boardRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block" id="formulaBlock">
+    <div class="block-head">
+      <h2><i></i>评分口径（可复算）</h2>
+      <a class="more" href="about.html">数据说明 →</a>
+    </div>
+    <div class="panel" id="formula"></div>
+  </section>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/coverage.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/share.js?v=85"></script>
+<script src="assets/honors.js?v=85"></script>
+<script>
+(function () {
+  "use strict";
+  var K = KPL, esc = K.esc, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  var H = window.KPL_HONORS;
+
+  if (!H || !H.meta) {
+    $("#lanes").innerHTML = '<div class="hn-muted" style="padding:30px 4px">荣誉数据暂不可用，请稍后刷新。</div>';
+    return;
+  }
+  var META = H.meta, LANES = META.laneOrder;
+  var LISTS = { week: H.weeks || [], month: H.months || [] };
+  var KIND_CN = { week: "周榜", month: "月榜" };
+
+  var qs = new URLSearchParams(location.search);
+  var kind = qs.get("kind") === "month" ? "month" : "week";
+
+  function byId(list, id) {
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return list[0] || null;
+  }
+  var period = byId(LISTS[kind], qs.get("period"));
+
+  // 缺失值不是 0：拿不到字段一律显示「—」，绝不把 undefined/null 折算成 0.0 / 0%
+  function fmtPct(v) { var n = K.mnum(v); return n === null ? "—" : Math.round(n * 100) + "%"; }
+  function num(n) { var v = K.mnum(n); return v === null ? "—" : K.fmtInt(Math.round(v)); }
+  function one(n) { var v = K.mnum(n); return v === null ? "—" : v.toFixed(1); }
+
+  function playerHref(n) { return "player.html?id=" + encodeURIComponent(n); }
+  function teamHref(n) { return "team.html?id=" + encodeURIComponent(n); }
+  function ava(src, name, cls) {
+    return src ? '<img class="' + cls + '" src="' + esc(src) + '" alt="' + esc(name) + '" loading="lazy">'
+               : '<span class="' + cls + ' hn-ava-t">' + esc(String(name).slice(0, 1)) + "</span>";
+  }
+
+  /* 头部元信息 */
+  $("#mVer").textContent = META.algorithmVersion;
+  $("#mBuilt").textContent = META.builtAt;
+
+  /* 周期切换按钮 */
+  function renderKind() {
+    $("#kindSwitch").innerHTML = ["week", "month"].map(function (k) {
+      return '<button type="button" class="hn-kbtn' + (k === kind ? " on" : "") +
+        '" data-kind="' + k + '">' + KIND_CN[k] +
+        '<em class="mono">' + LISTS[k].length + "</em></button>";
+    }).join("");
+    Array.prototype.forEach.call($("#kindSwitch").querySelectorAll(".hn-kbtn"), function (b) {
+      b.onclick = function () {
+        kind = b.getAttribute("data-kind");
+        period = byId(LISTS[kind], null) || period;
+        qs.set("kind", kind);
+        qs.set("period", period ? period.id : "");
+        history.replaceState(null, "", location.pathname + "?" + qs.toString());
+        render();
+      };
+    });
+  }
+
+  function renderPeriodSelect() {
+    var sel = $("#fPeriod");
+    sel.innerHTML = LISTS[kind].map(function (p) {
+      return '<option value="' + p.id + '"' + (period && p.id === period.id ? " selected" : "") + ">" +
+        esc(p.label) + " · " + esc(p.season || "—") + " · " + p.matches + " 大场" +
+        (p.ongoing ? "（进行中）" : "") + "</option>";
+    }).join("");
+    sel.onchange = function () {
+      period = byId(LISTS[kind], sel.value);
+      qs.set("kind", kind);
+      qs.set("period", period.id);
+      history.replaceState(null, "", location.pathname + "?" + qs.toString());
+      render();
+    };
+  }
+
+  /* 单个分路的卡片 */
+  function laneCard(ln, res) {
+    if (!res || !res.board || !res.board.length) {
+      return '<div class="hn-lane"><div class="hn-lh"><span class="hn-ln">' + ln + "</span></div>" +
+        '<div class="hn-muted">该分路本期无有效样本</div></div>';
+    }
+    var w = res.board[0], rest = res.board.slice(1);
+    var h = '<div class="hn-lane reveal">';
+    h += '<div class="hn-lh"><span class="hn-ln">' + ln + "</span>" +
+      '<em class="hn-ne mono">候选 ' + res.n + " 人</em></div>";
+    h += '<a class="hn-win" href="' + playerHref(w.name) + '">' +
+      ava(w.pic, w.name, "hn-ava") +
+      '<span class="hn-wt"><b>' + esc(w.name) + "</b><span>" + esc(w.team) + "</span></span>" +
+      '<span class="hn-ws"><b>' + w.score + "</b><em>综合分</em></span></a>";
+    h += '<div class="hn-kv">' +
+      "<span>有效 " + w.g + " 局 / " + w.m + " 场</span>" +
+      "<span>KDA " + one(w.kda) + "</span>" +
+      "<span>分均经济 " + num(w.gpm) + "</span>" +
+      "<span>分均输出 " + num(w.dpm) + "</span>" +
+      "<span>参团 " + K.mpct(w.part, 1) + "</span>" +
+      "<span>MVP " + w.mvp + "</span>" +
+      "<span>胜率 " + fmtPct(w.wr) + "</span></div>";
+    if (w.t1 !== undefined) {
+      h += '<div class="hn-unc"><span>胜者命中 ' + fmtPct(w.t1) + "</span><i>/</i>" +
+        "<span>95% 区间 " + w.ci[0] + "–" + w.ci[1] + "</span></div>";
+    } else {
+      h += '<div class="hn-unc warn"><span>未做稳定性估计</span></div>';
+    }
+    if (res.note) h += '<div class="hn-warn">' + esc(res.note) + "</div>";
+    if (rest.length) {
+      h += '<div class="hn-cand">' + rest.map(function (c, i) {
+        return '<a href="' + playerHref(c.name) + '"><i>' + (i + 2) + "</i>" +
+          '<span class="hn-cn">' + esc(c.name) + ' <em>' + esc(c.team) + "</em></span>" +
+          '<b>' + c.score + "</b></a>";
+      }).join("") + "</div>";
+    }
+    return h + "</div>";
+  }
+
+  /* 战队卡片 */
+  function teamBlock(team) {
+    if (!team || !team.board || !team.board.length) {
+      return '<div class="panel hn-muted">本期没有达到门槛（≥' + (team ? team.minMatches : 2) +
+        " 大场 / ≥" + (team ? team.minGames : 5) + " 局）的战队，仅候选。</div>";
+    }
+    var w = team.board[0], rest = team.board.slice(1);
+    var h = '<div class="hn-team reveal"><div class="hn-team-main">' +
+      '<a class="hn-win" href="' + teamHref(w.team) + '">' +
+      ava(w.tic, w.team, "hn-ava") +
+      '<span class="hn-wt"><b>' + esc(w.team) + "</b><span>局 " + w.gw + "-" + w.gl +
+      " · " + w.m + " 大场</span></span>" +
+      '<span class="hn-ws"><b>' + w.score + "</b><em>综合分</em></span></a>" +
+      '<div class="hn-kv"><span>对手强度校正 ' + one(w.oppAdj) + "</span>" +
+      "<span>稳定性 " + one(w.stab) + "</span>" +
+      "<span>胜率 " + fmtPct(w.wr) + "</span>";
+    if (w.t1 !== undefined) h += "<span>胜者命中 " + fmtPct(w.t1) + "</span><span>95% 区间 " +
+      w.ci[0] + "–" + w.ci[1] + "</span>";
+    h += "</div>";
+    if (team.note) h += '<div class="hn-warn">' + esc(team.note) + "</div>";
+    h += "</div>";
+    if (rest.length) {
+      h += '<div class="hn-team-rest">' + rest.map(function (c, i) {
+        return '<a class="hn-trow" href="' + teamHref(c.team) + '"><i>' + (i + 2) + "</i>" +
+          '<span class="hn-cn">' + esc(c.team) + "</span>" +
+          '<em class="mono">局 ' + c.gw + "-" + c.gl + " · " + c.m + " 场</em><b>" + c.score + "</b></a>";
+      }).join("") + "</div>";
+    }
+    return h + "</div>";
+  }
+
+  /* 候选榜表格 */
+  function boardRows() {
+    var rows = [];
+    LANES.forEach(function (ln) {
+      var res = period.lanes[ln];
+      if (!res || !res.board) return;
+      res.board.forEach(function (c, i) {
+        rows.push('<tr><td>' + (i === 0 ? '<b>' + ln + "</b>" : '<span class="hn-muted">' + ln + "</span>") +
+          "</td><td class=\"num\">" + (i + 1) + "</td>" +
+          '<td><a href="' + playerHref(c.name) + '">' + esc(c.name) + "</a></td>" +
+          "<td>" + esc(c.team) + "</td>" +
+          '<td class="num">' + c.g + " / " + c.m + "</td>" +
+          '<td class="num">' + fmtPct(c.wr) + "</td>" +
+          '<td class="num">' + one(c.kda) + "</td>" +
+          '<td class="num">' + num(c.gpm) + "</td>" +
+          '<td class="num">' + (c.dpm != null ? num(c.dpm) : "—") + "</td>" +
+          '<td class="num">' + (c.part != null ? one(c.part) + "%" : "—") + "</td>" +
+          '<td class="num">' + (c.mvp != null ? c.mvp : "—") + "</td>" +
+          '<td class="num">' + (c.t1 !== undefined ? c.score + ' <em class="hn-hit">' + fmtPct(c.t1) + "</em>" : c.score) + "</td></tr>");
+      });
+    });
+    $("#boardRows").innerHTML = rows.length ? rows.join("")
+      : '<tr><td colspan="12" class="hn-muted">本期没有达到门槛的选手</td></tr>';
+    return rows;
+  }
+
+  function exportCSV() {
+    var data = [["分路", "名次", "选手", "战队", "有效局", "大场", "胜率", "KDA", "分均经济", "综合分", "胜者命中"]];
+    LANES.forEach(function (ln) {
+      var res = period.lanes[ln];
+      if (!res || !res.board) return;
+      res.board.forEach(function (c, i) {
+        data.push([ln, i + 1, c.name, c.team, c.g, c.m, fmtPct(c.wr), one(c.kda),
+          c.gpm != null ? c.gpm : "—", c.score,
+          c.t1 !== undefined ? fmtPct(c.t1) : "—"]);
+      });
+    });
+    K.exportCSV("honors-" + period.id + ".csv", data);
+  }
+
+  function renderFormula() {
+    var W = META.formula.weights, dims = META.dims, dimCN = META.dimCN;
+    var head = "<tr><th>分路</th>" + dims.map(function (d) { return "<th class=\"num\">" + dimCN[d] + "</th>"; }).join("") + "</tr>";
+    var body = LANES.map(function (ln) {
+      return "<tr><td><b>" + ln + "</b></td>" + dims.map(function (d) {
+        return '<td class="num">' + Math.round(W[ln][d] * 100) + "%</td>";
+      }).join("") + "</tr>";
+    }).join("");
+    var T = META.thresholds;
+    $("#formula").innerHTML =
+      '<div class="hn-fx"><div class="hn-fx-col">' +
+      "<h3>选手评分</h3>" +
+      '<table class="tbl"><thead>' + head + "</thead><tbody>" + body + "</tbody></table>" +
+      '<p class="hn-fnote">每列权重之和为 100%。' + esc(META.formula.robustZ) + "。" + esc(META.formula.score) + "</p>" +
+      "</div><div class=\"hn-fx-col\">" +
+      "<h3>门槛与不确定性</h3><ul class=\"hn-flist\">" +
+      "<li><b>周榜</b>：≥" + T.week.minGames + " 局 / ≥" + T.week.minMatches + " 大场；<b>月榜</b>：≥" +
+      T.month.minGames + " 局 / ≥" + T.month.minMatches + " 大场。</li>" +
+      "<li><b>数据完整率</b> ≥" + T.completeness + "（该局分路、经济、时长、参团率齐备才计入）。</li>" +
+      "<li><b>战队</b>：每期 ≥" + T.team.week.minMatches + " 大场 / ≥" + T.team.week.minGames + " 局（月榜 ≥" +
+      T.team.month.minMatches + " 大场 / ≥" + T.team.month.minGames + " 局）。" + esc(META.formula.team) + "。</li>" +
+      "<li><b>不确定性</b>：" + esc(META.formula.bootstrap) + "。</li>" +
+      "<li>样本不足时只展示候选榜，不强行颁奖。</li>" +
+      "</ul><p class=\"hn-fnote\">数据来源：" + esc(META.source) + "。已覆盖 " +
+      K.fmtInt(META.coverage.matchFiles) + " 场 / " + K.fmtInt(META.coverage.battles) + " 局 —— " +
+      esc(META.note) + "</p>" +
+      "</div></div>";
+  }
+
+  function render() {
+    renderKind();
+    renderPeriodSelect();
+    if (!period) {
+      $("#lanes").innerHTML = '<div class="hn-muted" style="padding:30px 4px">暂无可用周期。</div>';
+      return;
+    }
+    $("#periodNote").textContent = period.start.replace(/-/g, "/") + " – " + period.end.replace(/-/g, "/") +
+      " · " + period.matches + " 大场 / " + period.games + " 局";
+    document.querySelector(".page-hero p").innerHTML =
+      "本期为 <b>" + esc(period.label) + "</b>（" + esc(period.season || "—") +
+      "）：由<b>固定评分卡</b>在该分路当期样本内可复算评出，<b>不是「真实实力」排名</b>；不确定性按大场成组 bootstrap 给出。";
+
+    var laneCards = LANES.map(function (ln) { return laneCard(ln, period.lanes[ln]); });
+    $("#lanes").innerHTML = laneCards.join("");
+    var enough = LANES.filter(function (ln) {
+      var r = period.lanes[ln]; return r && r.board && r.board.length;
+    }).length;
+    $("#lanesNote").textContent = enough + " / 5 个分路有达标样本";
+
+    $("#team").innerHTML = teamBlock(period.team);
+    boardRows();
+    renderFormula();
+
+    var tw = period.team && period.team.board && period.team.board[0];
+    K.brief("#brief", "本期（" + esc(period.label) + " · " + esc(period.season || "—") + "，共 " +
+      period.matches + " 大场 / " + period.games + " 局）：" +
+      LANES.filter(function (ln) { return period.lanes[ln] && period.lanes[ln].board.length; })
+        .slice(0, 3).map(function (ln) {
+          var b = period.lanes[ln].board[0];
+          return "<b>" + ln + "</b> " + esc(b.name) + "（" + b.score + " 分）";
+        }).join("、") +
+      (tw ? "；本期最佳战队 <b>" + esc(tw.team) + "</b>（" + tw.score + " 分，" +
+        Math.round(tw.gw) + "-" + Math.round(tw.gl) + "）" : "") + "。");
+
+    K.refresh();
+  }
+
+  $("#csvBtn").onclick = exportCSV;
+
+  /* 分享海报：口径与页面完全一致，强制携带周期 / 样本 / 算法版本 */
+  if (window.SHARE) {
+    window.SHARE.mount($("#heroHead"), function () {
+      var tw = period.team && period.team.board && period.team.board[0];
+      var first = LANES.filter(function (ln) { return period.lanes[ln] && period.lanes[ln].board.length; })[0];
+      var pb = first ? period.lanes[first].board[0] : null;
+      return {
+        kind: "荣誉中心",
+        title: KIND_CN[kind] + " · " + period.label,
+        icon: (pb && pb.icon) || "",
+        sub: period.start + " – " + period.end + " · " + (period.season || "—"),
+        stats: [
+          ["样本", period.matches + " 大场 / " + period.games + " 局"],
+          ["最佳战队", tw ? tw.team + "（" + tw.score + " 分）" : "样本不足"],
+          ["五路最佳", LANES.filter(function (ln) { return period.lanes[ln] && period.lanes[ln].board.length; })
+            .map(function (ln) { return ln.slice(0, 2) + " " + period.lanes[ln].board[0].name; }).join(" / ").slice(0, 34)],
+          ["算法版本", META.algorithmVersion]
+        ],
+        note: "口径：分路内六项稳健标准分按固定评分卡加权（不含团队胜率）；按大场成组 bootstrap。" +
+          "非「真实实力」排名。统计时间 " + META.builtAt + "。",
+        url: location.origin + location.pathname + "?kind=" + kind + "&period=" + period.id
+      };
+    }, "kpldata-honors.png");
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

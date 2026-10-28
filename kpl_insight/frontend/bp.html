@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BP 分析 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<style>
+.bp2-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:14px;align-items:start}
+@media(max-width:1050px){.bp2-grid{grid-template-columns:1fr}}
+.bp2-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.bp2-panel .pt{font-size:14px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bp2-panel .pt img{width:22px;height:22px;object-fit:contain}
+.bp2-cap{font-size:11.5px;color:var(--muted);font-family:var(--mono);margin:10px 0 4px}
+.bp2-chips{display:flex;flex-wrap:wrap;gap:6px}
+.bp2-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;
+          padding:4px 8px;font-size:12.5px;background:var(--inset)}
+.bp2-chip img{width:20px;height:20px;border-radius:50%;object-fit:cover;border:1px solid var(--line2)}
+.bp2-chip b{color:var(--gold);font-family:var(--mono);font-size:11.5px}
+.bp2-chip.fall{border-color:rgba(192,138,141,.4)}
+.bp2-chip.fall b{color:var(--red)}
+.bp-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+.bp-slot{border:1px dashed var(--line2);border-left-width:3px;border-radius:9px;padding:7px 8px;min-height:58px;font-size:11.5px;color:var(--muted)}
+.bp-slot.ban-slot{border-left-color:rgba(192,138,141,.8)}
+.bp-slot.pick-slot{border-left-color:rgba(255,255,255,.8)}
+.act-badge{display:inline-flex;align-items:center;justify-content:center;min-width:32px;
+  font-size:10px;font-weight:800;border-radius:4px;padding:1px 5px;margin-right:5px;letter-spacing:.5px}
+.act-badge.ban{background:rgba(192,138,141,.16);color:#FF7A7E;border:1px solid rgba(192,138,141,.5)}
+.act-badge.pick{background:rgba(255,255,255,.16);color:var(--gold);border:1px solid rgba(255,255,255,.5)}
+.dot{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:7px;vertical-align:middle}
+.dot.red{background:var(--red)} .dot.gold{background:var(--gold)}
+.bp-legend{display:flex;gap:18px;align-items:center;font-size:12.5px;color:var(--ink2);font-family:var(--mono)}
+.bp-slot.filled{border-style:solid;background:var(--inset)}
+.bp-slot.blue{border-color:rgba(157,178,204,.45)}
+.bp-slot.red{border-color:rgba(192,138,141,.45)}
+.bp-slot.now{outline:2px solid rgba(255,255,255,.6)}
+.bp-slot .k{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.bp-slot .h{display:flex;align-items:center;gap:6px;margin-top:3px;color:var(--ink);font-weight:700;font-size:12.5px}
+.bp-slot .h img{width:22px;height:22px;border-radius:50%;object-fit:cover;border:1px solid var(--line2)}
+.bp-now{margin-top:12px;border:1px solid var(--line);border-radius:11px;padding:12px 14px;background:var(--inset)}
+.bp-now .ask{font-size:13.5px;font-weight:700}
+.bp-now .ask b{color:var(--gold)}
+.pred-row{display:grid;grid-template-columns:150px 1fr 58px;gap:9px;align-items:center;padding:4px 2px;cursor:pointer;border-radius:7px}
+.pred-row:hover{background:var(--card2)}
+.pred-row .n{display:flex;align-items:center;gap:7px;font-size:12.5px;min-width:0}
+.pred-row .n img{width:20px;height:20px;border-radius:50%;object-fit:cover}
+.pred-row .n span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pred-row .bar{height:9px;background:var(--inset);border-radius:5px;overflow:hidden}
+.pred-row .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-d));border-radius:5px}
+.pred-row .p{font-family:var(--mono);font-size:12px;color:var(--ink2);text-align:right}
+.bp-actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.sample-tag{font-size:11.5px;color:var(--muted);font-family:var(--mono)}
+.sample-tag.warn{color:var(--orange)}
+.bp-dims{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:end}
+@media(max-width:1100px){.bp-dims{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.bp-dims .fld{min-width:0}
+.hv-row{display:grid;grid-template-columns:1fr 64px;gap:8px;align-items:center;padding:3px 4px;border-radius:6px}
+.hv-row:hover{background:var(--inset)}
+.hv-row .n{display:flex;align-items:center;gap:7px;font-size:12.5px;min-width:0}
+.hv-row .n img{width:20px;height:20px;object-fit:contain}
+.hv-row .n span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hv-row .c{font-family:var(--mono);font-size:12px;color:var(--gold);text-align:right}
+@media(max-width:700px){
+  .bp-dims{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bp-board{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hv-row,.pred-row{grid-template-columns:minmax(0,1fr) auto}
+}
+/* V5 双模式：官方赛事板 / 分析模式 */
+.mode-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+.bp2-grid.board-mode{grid-template-columns:minmax(0,1fr)}
+.bp2-grid.board-mode .bp-board{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.bp2-grid.board-mode .bp-slot{min-height:76px}
+@media(max-width:820px){.bp2-grid.board-mode .bp-board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.why-item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:8px;background:var(--inset);font-size:12.5px;line-height:1.7}
+.why-item .hh{display:flex;align-items:center;gap:7px;font-weight:800;font-size:13.5px}
+.why-item .hh img{width:22px;height:22px;border-radius:50%;object-fit:cover}
+.why-item .ev{margin-top:5px;color:var(--ink2)}
+.why-item .ev b{font-family:var(--mono);color:var(--gold)}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="BP 分析 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="bp.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">DRAFT · BP 分析</div>
+    <h1>BP 分析与预测</h1>
+    <p>基于全部 {N} 局真实 BP 的<b>八维交叉分析</b>：战队 × 对手 × 赛季年份 × 具体赛事 × 赛段 × 局序 × 阵营 × 赛果，
+      任意组合查看 BP 倾向，并按官方选人顺序逐步预测下一手概率。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="mode-bar">
+    <div class="seg" id="bpMode">
+      <button data-mode="board" class="on">官方赛事板</button>
+      <button data-mode="analyze">分析模式</button>
+    </div>
+    <span class="block-note mono" id="modeNote">官方赛事板：按官方选人顺序逐手落子，实时预测下一手</span>
+    <a class="btn primary sm" href="bp-studio.html" style="margin-left:auto;white-space:nowrap">真实比赛 BP 演播室 ↗</a>
+  </div>
+  <!-- V4 工作台：选两队 + 假设关键位/禁用 → 即时胜率与替代方案 -->
+  <section class="block mod analyze" id="benchBlock" style="margin-top:0">
+    <div class="block-head">
+      <h2><i></i>对阵假设工作台</h2>
+      <span class="block-note mono">两队 + 关键英雄假设 → 即时胜率变化 · 下方是条件浏览与落子模拟</span>
+    </div>
+    <div class="panel" style="padding:16px 18px">
+      <div class="wb-grid">
+        <label class="fld"><span>数据范围</span><select id="wbScope"></select></label>
+        <label class="fld"><span>A 方战队</span><select id="wbA"></select></label>
+        <label class="fld"><span>B 方战队</span><select id="wbB"></select></label>
+        <label class="fld"><span>英雄定义</span><span class="wb-note mono" id="wbHint">从队伍历史使用率取边际</span></label>
+      </div>
+      <div class="wb-grid wb-grid-2">
+        <label class="fld"><span>A 关键英雄①</span><select id="wbA1"><option value="">— 不假设 —</option></select></label>
+        <label class="fld"><span>A 关键英雄②</span><select id="wbA2"><option value="">— 不假设 —</option></select></label>
+        <label class="fld"><span>B 关键英雄①</span><select id="wbB1"><option value="">— 不假设 —</option></select></label>
+        <label class="fld"><span>B 关键英雄②</span><select id="wbB2"><option value="">— 不假设 —</option></select></label>
+      </div>
+      <div class="wb-grid wb-grid-2">
+        <label class="fld"><span>A 禁用（对 B 的招牌）</span><select id="wbBanA"><option value="">— 不禁用 —</option></select></label>
+        <label class="fld"><span>B 禁用（对 A 的招牌）</span><select id="wbBanB"><option value="">— 不禁用 —</option></select></label>
+      </div>
+      <div class="wb-result" id="wbResult"></div>
+      <div class="wb-cols">
+        <div><div class="wb-cap">A 方替代方案 <em class="mono">按边际排序 · 样本≥5 局</em></div><div id="wbAltA"></div></div>
+        <div><div class="wb-cap">B 方替代方案 <em class="mono">按边际排序 · 样本≥5 局</em></div><div id="wbAltB"></div></div>
+      </div>
+      <div class="block-note mono" style="margin-top:10px" id="wbFoot"></div>
+    </div>
+  </section>
+
+  <div class="block-head mod analyze"><h2><i></i>BP 条件分析</h2>
+    <span class="block-note mono">八维交叉：战队 × 对手 × 年份 × 赛事 × 赛段 × 局序 × 阵营 × 赛果</span></div>
+  <div class="filterbar mod analyze" style="flex-direction:column;align-items:stretch;gap:12px">
+    <div class="bp-dims">
+      <label class="fld"><span>视角战队</span><select id="selTeam"></select></label>
+      <label class="fld"><span>对手</span><select id="selOpp"><option value="">全部对手</option></select></label>
+      <label class="fld"><span>赛季年份</span><select id="selYear"><option value="">全部年份</option></select></label>
+      <label class="fld"><span>具体赛事</span><select id="selLeague"><option value="">全部赛事</option></select></label>
+      <label class="fld"><span>赛段</span><select id="selStage"><option value="">全部赛段</option></select></label>
+    </div>
+    <div class="bp-dims" style="grid-template-columns:repeat(3,minmax(0,1fr)) 1.6fr">
+      <label class="fld"><span>局序</span><select id="selGame">
+        <option value="">全部局</option>
+        <option value="1">第 1 局</option><option value="2">第 2 局</option><option value="3">第 3 局</option>
+        <option value="4">第 4 局</option><option value="5">第 5 局</option><option value="6+">第 6 局+（BO7 深水区）</option>
+      </select></label>
+      <label class="fld"><span>阵营</span><select id="selSide">
+        <option value="">不限制</option><option value="1">我在蓝方</option><option value="2">我在红方</option>
+      </select></label>
+      <label class="fld"><span>赛果</span><select id="selResult">
+        <option value="">不限制</option><option value="win">我赢下的局</option><option value="lose">我输掉的局</option>
+      </select></label>
+      <div class="fld"><span>条件样本</span><span class="sample-tag" id="sampleTag" style="padding:10px 0">—</span></div>
+    </div>
+    <div class="bp-legend">颜色约定：<span><span class="dot red"></span>禁用 BAN</span><span><span class="dot gold"></span>选用 PICK</span></div>
+  </div>
+  <div class="brief mod analyze" id="brief"></div>
+
+  <div class="bp2-grid" id="bp2Grid">
+    <div class="mod analyze">
+      <div id="profiles"></div>
+      <div class="bp2-panel">
+        <div class="pt">英雄反向查询 <em class="mono" style="font-style:normal;color:var(--muted);font-weight:400" id="hvNote">谁在 ban 它 / 谁在选它（基于全部 N 局）</em></div>
+        <label class="fld"><span>选择英雄</span><select id="selHero"></select></label>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:8px">
+          <div><div class="bp2-cap"><span class="dot red"></span>最爱禁用它的战队（ban 掉）</div><div id="hvBan"></div></div>
+          <div><div class="bp2-cap"><span class="dot gold"></span>最爱选用它的战队（pick 出场）</div><div id="hvPick"></div></div>
+        </div>
+        <div class="bp2-cap">最常出现在</div><div id="hvPos" class="bp2-chips"></div>
+      </div>
+    </div>
+    <div class="bp2-panel" id="draftPanel">
+      <div class="pt">BP 模拟器 <em class="mono" style="font-style:normal;color:var(--muted);font-weight:400">点击预测行落子 · 支持手动选</em></div>
+      <div class="bp-board" id="board"></div>
+      <div class="bp-now" id="nowCard"></div>
+      <div class="bp-actions">
+        <select class="search" id="manualHero" style="max-width:220px"><option value="">— 手动选一个英雄 —</option></select>
+        <button class="btn ghost sm" id="manualBtn" type="button">落子</button>
+        <button class="btn ghost sm" id="resetBtn" type="button">重新开始</button>
+        <button class="btn primary sm" id="autoBtn" type="button">自动打满剩余手位</button>
+        <button class="btn ghost sm" id="playBtn" type="button">▶ 播放（每秒一步）</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel mod analyze" id="whyPanel" style="margin-top:16px">
+    <div class="pt" style="font-size:14px;font-weight:800;margin-bottom:8px">为什么推荐这个英雄</div>
+    <div id="whyBox"></div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/bp.js?v=85"></script>
+<script src="assets/team_data.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  var BP = window.KPL_BP;
+  document.querySelector(".page-hero p").innerHTML =
+    document.querySelector(".page-hero p").innerHTML.replace("{N}", K.fmtInt(BP.totalBattles));
+  $("#hvNote").textContent = "谁在 ban 它 / 谁在选它（基于全部 " + K.fmtInt(BP.totalBattles) + " 局）";
+
+  var heroIcon = {};
+  ((K.scopeOf("all") || {}).heroes || []).forEach(function (h) { heroIcon[h.name] = h.icon; });
+  var teamIcon = {};
+  ((K.scopeOf("all") || {}).teams || []).forEach(function (t) { teamIcon[t.team] = t.icon; });
+
+  /* ---------- 维度选项 ---------- */
+  var teamSet = {}, yearSet = {}, stageSet = {};
+  BP.games.forEach(function (g) {
+    teamSet[g[3]] = 1; teamSet[g[4]] = 1;
+    if (g[0]) yearSet[g[0]] = 1;
+    if (g[2]) stageSet[g[2]] = 1;
+  });
+  var teamNames = Object.keys(teamSet).sort(function (a, b) { return a.localeCompare(b, "zh"); });
+  var years = Object.keys(yearSet).sort().reverse();
+  var stages = Object.keys(stageSet).sort();
+
+  var selTeam = $("#selTeam"), selOpp = $("#selOpp"), selYear = $("#selYear"),
+      selLeague = $("#selLeague"), selStage = $("#selStage"),
+      selGame = $("#selGame"), selSide = $("#selSide"), selResult = $("#selResult");
+  selTeam.innerHTML = teamNames.map(function (t) { return "<option>" + K.esc(t) + "</option>"; }).join("");
+  selTeam.value = teamNames.indexOf("重庆狼队") >= 0 ? "重庆狼队" : teamNames[0];
+  selOpp.insertAdjacentHTML("beforeend", teamNames.map(function (t) { return "<option>" + K.esc(t) + "</option>"; }).join(""));
+  selYear.insertAdjacentHTML("beforeend", years.map(function (y) { return "<option>" + y + "</option>"; }).join(""));
+  selStage.innerHTML = '<option value="">全部赛段</option>' +
+    stages.map(function (s) { return "<option>" + K.esc(s) + "</option>"; }).join("");
+
+  function fillLeagues() {
+    var y = selYear.value;
+    var cur = selLeague.value;
+    var ids = {};
+    BP.games.forEach(function (g) { if (!y || g[0] === y) ids[g[1]] = 1; });
+    var keys = Object.keys(ids).sort().reverse();
+    selLeague.innerHTML = '<option value="">全部赛事</option>' + keys.map(function (id) {
+      return '<option value="' + id + '">' + K.esc(BP.leagues[id] || id) + "</option>";
+    }).join("");
+    if (keys.indexOf(cur) >= 0) selLeague.value = cur;
+  }
+  fillLeagues();
+
+  var allHeroes = BP.heroes.slice(0, 140);
+  $("#manualHero").insertAdjacentHTML("beforeend",
+    allHeroes.map(function (h) { return "<option>" + K.esc(h) + "</option>"; }).join(""));
+  $("#selHero").innerHTML = allHeroes.map(function (h) { return "<option>" + K.esc(h) + "</option>"; }).join("");
+  $("#selHero").value = allHeroes.indexOf("鲁班大师") >= 0 ? "鲁班大师" : allHeroes[0];
+
+  var picked = {}, step = 0, rowsCache = [], aggCached = null;
+
+  function cond() {
+    return {
+      team: selTeam.value, opp: selOpp.value, year: selYear.value,
+      league: selLeague.value, stage: selStage.value,
+      gameNo: selGame.value, side: selSide.value, result: selResult.value,
+    };
+  }
+
+  function filterGames(c) {
+    var out = [];
+    for (var i = 0; i < BP.games.length; i++) {
+      var g = BP.games[i];
+      if (c.year && g[0] !== c.year) continue;
+      if (c.league && g[1] !== c.league) continue;
+      if (c.stage && g[2] !== c.stage) continue;
+      if (g[3] !== c.team && g[4] !== c.team) continue;
+      var myCamp = g[3] === c.team ? 1 : 2;
+      if (c.opp) {
+        var oppName = myCamp === 1 ? g[4] : g[3];
+        if (oppName !== c.opp) continue;
+      }
+      if (c.gameNo) {
+        if (c.gameNo === "6+") { if (g[5] < 6) continue; }
+        else if (String(g[5]) !== c.gameNo) continue;
+      }
+      if (c.side && String(myCamp) !== c.side) continue;
+      if (c.result === "win" && g[6] !== myCamp) continue;
+      if (c.result === "lose" && g[6] === myCamp) continue;
+      out.push(g);
+    }
+    return out;
+  }
+
+  function aggregate(rows, team) {
+    var myBan = {}, myPick = {}, oppBan = {};
+    var handSub = [];
+    for (var k = 0; k < 20; k++) handSub.push({});
+    rows.forEach(function (g) {
+      var myCamp = g[3] === team ? 1 : 2;
+      var hands = g[7].split(";");
+      for (var k = 0; k < hands.length; k++) {
+        var p = hands[k].split(",");
+        var act = +p[0], camp = +p[1], hero = BP.heroes[+p[2]];
+        if (!hero) continue;
+        handSub[k][hero] = (handSub[k][hero] || 0) + 1;
+        if (camp === myCamp) {
+          if (act === 0) myBan[hero] = (myBan[hero] || 0) + 1;
+          else myPick[hero] = (myPick[hero] || 0) + 1;
+        } else if (act === 0) {
+          oppBan[hero] = (oppBan[hero] || 0) + 1;
+        }
+      }
+    });
+    return { myBan: myBan, myPick: myPick, oppBan: oppBan, handSub: handSub, n: rows.length };
+  }
+
+  function topN(map, n) {
+    return Object.keys(map).map(function (h) { return [h, map[h]]; })
+      .sort(function (a, b) { return b[1] - a[1]; }).slice(0, n);
+  }
+
+  function predict(k, agg, c, actorTeam) {
+    var globalRows = BP.prior[k] || [];
+    var globalRate = {};
+    globalRows.forEach(function (r) { globalRate[r[0]] = r[2]; });
+    var sub = agg.handSub[k] || {};
+    var subTotal = agg.n || 0;
+    var alpha = 15;
+    var teamHand = {}, teamTotal = 0;
+    if (actorTeam) {
+      rowsCache.forEach(function (g) {
+        var actorCamp = g[3] === actorTeam ? 1 : (g[4] === actorTeam ? 2 : 0);
+        if (!actorCamp) return;
+        var cell = g[7].split(";")[k];
+        if (!cell) return;
+        var q = cell.split(",");
+        if (+q[1] === actorCamp) {
+          var h = BP.heroes[+q[2]];
+          teamHand[h] = (teamHand[h] || 0) + 1;
+          teamTotal++;
+        }
+      });
+    }
+    var out = [], seen = {};
+    /* 每个候选都带上评分拆解，供「为什么推荐」面板复算展示 */
+    function build(hero) {
+      var gRate = globalRate[hero] || 0.0005;
+      var sRate = ((sub[hero] || 0) + alpha * gRate * subTotal) / (subTotal + alpha || 1);
+      var tCnt = (teamHand[hero] || 0);
+      var tRate = tCnt / Math.max(1, teamTotal);
+      var sc = (sRate + 0.002) * (1 + tRate * 50);
+      return { h: hero, sub: (sub[hero] || 0), subTotal: subTotal, gRate: gRate,
+               subRate: sRate, tCnt: tCnt, tRate: tRate, alpha: alpha,
+               score: sc, p: sc };
+    }
+    Object.keys(sub).forEach(function (h) {
+      if (picked[h] || seen[h]) return;
+      seen[h] = 1; out.push(build(h));
+    });
+    Object.keys(teamHand).forEach(function (h) {
+      if (picked[h] || seen[h]) return;
+      seen[h] = 1; out.push(build(h));
+    });
+    globalRows.forEach(function (r) {
+      if (picked[r[0]] || seen[r[0]]) return;
+      seen[r[0]] = 1; out.push(build(r[0]));
+    });
+    var total = out.reduce(function (s, x) { return s + x.p; }, 0) || 1;
+    out.forEach(function (x) { x.p /= total; });
+    out.sort(function (a, b) { return b.p - a.p; });
+    return out.slice(0, 8);
+  }
+
+  function chip(h, num, cls) {
+    return '<span class="bp2-chip ' + (cls || "") + '">' +
+      (heroIcon[h] ? '<img src="' + K.esc(heroIcon[h]) + '" alt="" loading="lazy">' : "") +
+      K.esc(h) + '<b>' + num + "</b></span>";
+  }
+
+  function renderProfiles(agg, c) {
+    var desc = [];
+    if (c.opp) desc.push("对阵 " + c.opp);
+    if (c.year) desc.push(c.year + " 赛季");
+    if (c.league) desc.push(BP.leagues[c.league] || c.league);
+    if (c.stage) desc.push(c.stage);
+    if (c.gameNo) desc.push(c.gameNo === "6+" ? "第 6 局+" : "第 " + c.gameNo + " 局");
+    if (c.side) desc.push(c.side === "1" ? "蓝方" : "红方");
+    if (c.result) desc.push(c.result === "win" ? "赢下的局" : "输掉的局");
+    var html = '<div class="bp2-panel" style="margin-bottom:14px">' +
+      '<div class="pt">' + (teamIcon[c.team] ? '<img src="' + K.esc(teamIcon[c.team]) + '" alt="">' : "") + K.esc(c.team) +
+      ' <span class="mono" style="color:var(--muted);font-weight:400;font-size:11.5px">' +
+      (desc.length ? "条件：" + desc.join(" · ") : "条件：全部") + " · 共 " + agg.n + " 局样本</span></div>";
+    if (!agg.n) {
+      html += '<div class="empty-tip">该条件下没有样本，请放宽筛选</div></div>';
+      $("#profiles").innerHTML = html;
+      return;
+    }
+    html += '<div class="bp2-cap"><span class="dot red"></span>最爱禁用（该战队主动 ban 掉）</div><div class="bp2-chips">' +
+      topN(agg.myBan, 8).map(function (r) { return chip(r[0], r[1]); }).join("") + "</div>" +
+      '<div class="bp2-cap"><span class="dot red"></span>最常被对手禁用（对手 ban 掉它的英雄）</div><div class="bp2-chips">' +
+      topN(agg.oppBan, 8).map(function (r) { return chip(r[0], r[1], "fall"); }).join("") + "</div>" +
+      '<div class="bp2-cap"><span class="dot gold"></span>最爱选用（pick 出场）</div><div class="bp2-chips">' +
+      topN(agg.myPick, 8).map(function (r) { return chip(r[0], r[1]); }).join("") + "</div></div>";
+    $("#profiles").innerHTML = html;
+  }
+
+  /* ---------- 英雄反向查询（全量，不受筛选影响） ---------- */
+  var heroAggCache = null;
+  function buildHeroIndex() {
+    var banBy = {}, pickBy = {}, posCnt = [];
+    for (var k = 0; k < 20; k++) posCnt.push({});
+    BP.games.forEach(function (g) {
+      var hands = g[7].split(";");
+      for (var k = 0; k < hands.length; k++) {
+        var p = hands[k].split(",");
+        var act = +p[0], camp = +p[1], hero = BP.heroes[+p[2]];
+        if (!hero) continue;
+        var team = camp === 1 ? g[3] : g[4];
+        if (act === 0) {
+          if (!banBy[hero]) banBy[hero] = {};
+          banBy[hero][team] = (banBy[hero][team] || 0) + 1;
+        } else {
+          if (!pickBy[hero]) pickBy[hero] = {};
+          pickBy[hero][team] = (pickBy[hero][team] || 0) + 1;
+        }
+        posCnt[k][hero] = (posCnt[k][hero] || 0) + 1;
+      }
+    });
+    heroAggCache = { banBy: banBy, pickBy: pickBy, posCnt: posCnt };
+  }
+
+  function renderHeroView() {
+    if (!heroAggCache) buildHeroIndex();
+    var hero = $("#selHero").value;
+    function rows(map) {
+      if (!map) return '<div class="empty-tip" style="padding:10px">暂无记录</div>';
+      return Object.keys(map).map(function (t) { return [t, map[t]]; })
+        .sort(function (a, b) { return b[1] - a[1]; }).slice(0, 6).map(function (r) {
+          return '<div class="hv-row"><span class="n">' +
+            (teamIcon[r[0]] ? '<img src="' + K.esc(teamIcon[r[0]]) + '" alt="">' : "") +
+            "<span>" + K.esc(r[0]) + '</span></span><span class="c">' + r[1] + " 次</span></div>";
+        }).join("");
+    }
+    $("#hvBan").innerHTML = rows(heroAggCache.banBy[hero]);
+    $("#hvPick").innerHTML = rows(heroAggCache.pickBy[hero]);
+    var pos = heroAggCache.posCnt.map(function (m, k) { return [k, m[hero] || 0]; })
+      .filter(function (r) { return r[1] > 0; }).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 4)
+      .map(function (r) {
+        var tpl = BP.template[r[0]];
+        return '<span class="bp2-chip"><span class="act-badge ' + (tpl[0] === 0 ? "ban" : "pick") + '" style="min-width:0">' +
+          (tpl[0] === 0 ? "禁" : "选") + '</span>第 ' + (r[0] + 1) + " 手（" + (tpl[1] === 1 ? "蓝" : "红") + "）<b>" + r[1] + "</b></span>";
+      }).join("");
+    $("#hvPos").innerHTML = pos || '<span class="mono" style="color:var(--muted)">—</span>';
+  }
+
+  function renderBoard() {
+    $("#board").innerHTML = BP.template.map(function (tpl, k) {
+      var act = tpl[0] === 0 ? "禁" : "选";
+      var camp = tpl[1];
+      var hero = null;
+      for (var h in picked) if (picked[h][0] === k) { hero = h; break; }
+      var cls = "bp-slot " + (camp === 1 ? "blue" : "red") + (tpl[0] === 0 ? " ban-slot" : " pick-slot") +
+        (hero ? " filled" : "") + (k === step ? " now" : "");
+      return '<div class="' + cls + '"><div class="k"><span class="act-badge ' + (tpl[0] === 0 ? "ban" : "pick") + '">' +
+        act + "</span>" + (k + 1) + " · " + (camp === 1 ? "蓝" : "红") + "</div>" +
+        (hero ? '<div class="h">' + (heroIcon[hero] ? '<img src="' + K.esc(heroIcon[hero]) + '" alt="">' : "") + K.esc(hero) + "</div>"
+              : '<div class="h" style="color:var(--muted);font-weight:400">' + (k === step ? "← 当前" : "—") + "</div>") +
+        "</div>";
+    }).join("");
+  }
+
+  /* ---------- 「为什么推荐这个英雄」：把推荐拆成可复算的依据 ---------- */
+  function renderWhy(step, agg, c) {
+    var box = $("#whyBox");
+    if (!box) return;
+    if (step >= BP.template.length) {
+      box.innerHTML = '<div class="empty-tip">BP 已完成，全部手位落子完毕。</div>';
+      return;
+    }
+    var tpl = BP.template[step];
+    var actTxt = tpl[0] === 0 ? "禁用" : "选用";
+    var campTxt = tpl[1] === 1 ? "蓝方" : "红方";
+    var actorTeam = tpl[1] === 1 ? c.team : (c.opp || null);
+    var who = actorTeam || "对位战队（未指定对手，仅按全局先验）";
+    var preds = predict(step, agg, c, actorTeam);
+    if (!preds.length) {
+      box.innerHTML = '<div class="block-note mono">第 ' + (step + 1) + ' 手 · ' + campTxt + ' ' + K.esc(who) +
+        ' ' + actTxt + '</div><div class="empty-tip">该手没有可推荐候选（候选已全部落子）</div>';
+      return;
+    }
+    var head = '<div class="block-note mono">第 ' + (step + 1) + ' 手 · ' + campTxt + ' ' + K.esc(who) + ' ' + actTxt +
+      ' · 条件样本 ' + agg.n + ' 局' + (agg.n < 10 ? "（偏少，已向全局先验收缩）" : "") + "</div>";
+    var items = preds.slice(0, 3).map(function (x, i) {
+      var ev = [];
+      ev.push("本条件命中 <b>" + x.sub + "</b> 次 / 条件样本 <b>" + x.subTotal + "</b> 局");
+      ev.push("全局先验 <b>" + (x.gRate * 100).toFixed(2) + "%</b> 按 α=" + x.alpha + " 收缩，加权频率 <b>" + (x.subRate * 100).toFixed(1) + "%</b>");
+      if (x.tCnt) ev.push("该战队历史此手位用过 <b>" + x.tCnt + "</b> 次（队内频率 <b>" + (x.tRate * 100).toFixed(1) + "%</b>）");
+      ev.push("综合评分 <b>" + x.score.toFixed(4) + "</b> → 归一化概率 <b>" + (x.p * 100).toFixed(1) + "%</b>");
+      return '<div class="why-item"><div class="hh">' + (i === 0 ? '<span class="act-badge pick">首选</span>' : "") +
+        (heroIcon[x.h] ? '<img src="' + K.esc(heroIcon[x.h]) + '" alt="" loading="lazy">' : "") + K.esc(x.h) + "</div>" +
+        '<div class="ev">' + ev.join("；") + "。</div></div>";
+    }).join("");
+    var rule = actTxt === "禁用"
+      ? "禁用推荐 = 对手在该手位最可能拿走的英雄（条件内频率 × 全局热度，样本少时向全局收缩），目的是先手压制其体系。"
+      : "选用推荐 = 本方该手位历史偏好 × 全局强度，样本少时自动向全局先验收缩，避免小样本过拟合。";
+    box.innerHTML = head + items + '<div class="block-note mono" style="margin-top:10px">判据：' + rule + "</div>";
+  }
+
+  function renderNow(agg, c) {
+    renderWhy(step, agg, c);
+    var card = $("#nowCard");
+    if (step >= BP.template.length) {
+      var rowsx = [1, 2].map(function (camp) {
+        var heroes = [];
+        for (var h in picked) if (picked[h][1] === camp) heroes.push(h);
+        return "<div><b>" + (camp === 1 ? "蓝方" : "红方") + "</b>：" + heroes.join("、") + "</div>";
+      }).join("");
+      card.innerHTML = '<div class="ask">BP 已完成 ✓</div>' +
+        '<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:13px">' + rowsx + "</div>";
+      return;
+    }
+    var tpl = BP.template[step];
+    var actTxt = tpl[0] === 0 ? "禁用" : "选用";
+    var campTxt = tpl[1] === 1 ? "蓝方" : "红方";
+    var actorTeam = tpl[1] === 1 ? c.team : (c.opp || null);
+    var team = actorTeam || "对位战队（未指定对手）";
+    var preds = predict(step, agg, c, actorTeam);
+    var hint = agg.n < 10 ? ' <span style="color:var(--orange)">（样本偏少，已平滑到全局）</span>' : "";
+    var actBadge = tpl[0] === 0 ? '<span class="act-badge ban">禁用</span>' : '<span class="act-badge pick">选用</span>';
+    card.innerHTML = '<div class="ask">第 ' + (step + 1) + ' 手 · ' + campTxt + " <b>" + K.esc(team) + "</b> " + actBadge + hint +
+      ' <span class="mono" style="color:var(--muted);font-weight:400">（点预测行落子）</span></div>' +
+      '<div style="margin-top:8px">' + preds.map(function (x) {
+        return '<div class="pred-row" data-hero="' + K.esc(x.h) + '">' +
+          '<span class="n">' + (heroIcon[x.h] ? '<img src="' + K.esc(heroIcon[x.h]) + '" alt="" loading="lazy">' : "") +
+          "<span>" + K.esc(x.h) + "</span></span>" +
+          '<span class="bar"><i style="width:' + Math.max(2, x.p * 100).toFixed(1) + '%"></i></span>' +
+          '<span class="p">' + (x.p * 100).toFixed(1) + "%</span></div>";
+      }).join("") + "</div>";
+    card.querySelectorAll(".pred-row").forEach(function (el) {
+      el.addEventListener("click", function () { place(el.getAttribute("data-hero")); });
+    });
+  }
+
+  function place(hero) {
+    if (step >= BP.template.length || picked[hero]) return;
+    picked[hero] = [step, BP.template[step][1]];
+    step++;
+    renderBoard();
+    renderNow(aggCached, cond());
+  }
+
+  function refresh() {
+    var c = cond();
+    rowsCache = filterGames(c);
+    aggCached = aggregate(rowsCache, c.team);
+    var tag = $("#sampleTag");
+    tag.textContent = "命中 " + aggCached.n + " 局样本" + (aggCached.n < 10 && aggCached.n > 0 ? " · 样本偏少" : "");
+    tag.className = "sample-tag" + (aggCached.n < 10 ? " warn" : "");
+    renderProfiles(aggCached, c);
+    renderBoard();
+    renderNow(aggCached, c);
+    /* 数据简报 */
+    if (aggCached.n) {
+      var mb = topN(aggCached.myBan, 1)[0];
+      var mp = topN(aggCached.myPick, 1)[0];
+      var ob = topN(aggCached.oppBan, 1)[0];
+      K.brief("#brief", "当前条件命中 <b>" + aggCached.n + "</b> 局 BP。" + K.esc(c.team) + " 最爱禁用「" + (mb ? "<b>" + K.esc(mb[0]) + "</b>（" + mb[1] + " 次）" : "—") +
+        "」，最爱选「" + (mp ? "<b>" + K.esc(mp[0]) + "</b>（" + mp[1] + " 次）" : "—") + "」；对手最常针对禁用的是「" +
+        (ob ? "<b>" + K.esc(ob[0]) + "</b>（" + ob[1] + " 次）" : "—") + "」。换对手或局序，结论实时重算。");
+    } else {
+      K.brief("#brief", "当前条件下没有 BP 样本，放宽筛选试试。");
+    }
+  }
+
+  function autoFill() {
+    while (step < BP.template.length) {
+      var c2 = cond();
+      var actor = BP.template[step][1] === 1 ? c2.team : (c2.opp || null);
+      var preds = predict(step, aggCached, c2, actor);
+      if (!preds.length) break;
+      place(preds[0].h);
+    }
+  }
+
+  function resetSim() {
+    picked = {};
+    step = 0;
+    renderBoard();
+    renderNow(aggCached, cond());
+  }
+
+  var playTimer = null;
+  $("#playBtn").addEventListener("click", function () {
+    var btn = this;
+    if (playTimer) {
+      clearInterval(playTimer);
+      playTimer = null;
+      btn.textContent = "▶ 播放（每秒一步）";
+      return;
+    }
+    btn.textContent = "⏸ 暂停";
+    playTimer = setInterval(function () {
+      if (step >= BP.template.length) {
+        clearInterval(playTimer);
+        playTimer = null;
+        btn.textContent = "▶ 播放（每秒一步）";
+        return;
+      }
+      var c2 = cond();
+      var actor = BP.template[step][1] === 1 ? c2.team : (c2.opp || null);
+      var preds = predict(step, aggCached, c2, actor);
+      if (preds.length) place(preds[0].h);
+    }, 1000);
+  });
+  $("#resetBtn").addEventListener("click", function () {
+    if (playTimer) { clearInterval(playTimer); playTimer = null; $("#playBtn").textContent = "▶ 播放（每秒一步）"; }
+    resetSim();
+  });
+  $("#autoBtn").addEventListener("click", autoFill);
+  $("#manualBtn").addEventListener("click", function () {
+    var h = $("#manualHero").value;
+    if (h) { place(h); $("#manualHero").value = ""; }
+  });
+  $("#selHero").addEventListener("change", renderHeroView);
+  selYear.addEventListener("change", function () { fillLeagues(); resetSim(); refresh(); });
+  ["selTeam", "selOpp", "selLeague", "selStage", "selGame", "selSide", "selResult"].forEach(function (id) {
+    $("#" + id).addEventListener("change", function () { resetSim(); refresh(); });
+  });
+
+  renderHeroView();
+  refresh();
+
+  /* ================= V5 双模式：官方赛事板 / 分析模式 ================= */
+  var bpMode = "board";
+  function applyMode() {
+    var analyze = bpMode === "analyze";
+    Array.prototype.forEach.call(document.querySelectorAll(".mod.analyze"), function (el) {
+      el.style.display = analyze ? "" : "none";
+    });
+    $("#bp2Grid").classList.toggle("board-mode", !analyze);
+    $("#modeNote").textContent = analyze
+      ? "分析模式：条件筛选 + 战队 BP 画像 + 落子模拟 + 推荐依据"
+      : "官方赛事板：按官方选人顺序逐手落子，实时预测下一手";
+    renderBoard();
+    renderNow(aggCached, cond());
+  }
+  $("#bpMode").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    Array.prototype.forEach.call(this.children, function (x) { x.classList.toggle("on", x === b); });
+    bpMode = b.getAttribute("data-mode");
+    applyMode();
+  });
+  applyMode();
+
+  /* ================= V4：对阵假设工作台 ================= */
+  (function bench() {
+    var TD = window.KPL_TEAM_DATA || {};
+    var S = window.KPL_SEASONS || { scopes: {} };
+    var SCOPES = [
+      ["all", "全部赛事"],
+      ["2026", "2026 年"], ["2025", "2025 年"], ["2024", "2024 年"], ["2023", "2023 年"]
+    ];
+    var SHRINK = 25;          // 先验收缩：英雄样本越少越贴近球队总体胜率
+    var PICK_W = 0.9, BAN_W = 1.1;
+
+    var logit = function (p) { p = Math.min(Math.max(p, 1e-4), 1 - 1e-4); return Math.log(p / (1 - p)); };
+    var sig = function (x) { return 1 / (1 + Math.exp(-x)); };
+    var pct1 = function (v) { return (v * 100).toFixed(1) + "%"; };
+
+    function teamsOf(scope) {
+      var d = S.scopes[scope] || S.scopes.all || {};
+      return (d.teams || []).filter(function (t) { return t.games >= 10; })
+        .sort(function (a, b) { return b.games - a.games; });
+    }
+    function teamRow(scope, name) {
+      var d = S.scopes[scope] || S.scopes.all || {};
+      return (d.teams || []).filter(function (t) { return t.team === name; })[0] || null;
+    }
+    function heroLeague(scope) {
+      var d = S.scopes[scope] || S.scopes.all || {};
+      var map = {};
+      (d.heroes || []).forEach(function (h) { map[h.name] = h; });
+      return map;
+    }
+    var LEAGUE_CACHE = {};
+    function leagueHeroes(scope) {
+      if (!LEAGUE_CACHE[scope]) LEAGUE_CACHE[scope] = heroLeague(scope);
+      return LEAGUE_CACHE[scope];
+    }
+
+    /* 某队某英雄的收缩后胜率与"相对球队基准"的 log-odds 边际 */
+    function heroEdge(team, hero, teamRowObj, scope) {
+      var pool = (TD[team] || {}).h || [];
+      var hit = pool.filter(function (r) { return r[0] === hero; })[0];
+      var lg = leagueHeroes(scope)[hero];
+      var prior = lg && lg.wr ? lg.wr : (teamRowObj ? teamRowObj.wr : 0.5);
+      var n = hit ? hit[1] : 0, w = hit ? hit[2] : 0;
+      var p = (w + SHRINK * prior) / (n + SHRINK);
+      var base = teamRowObj ? Math.min(Math.max(teamRowObj.wr, 0.2), 0.8) : 0.5;
+      var edge = logit(p) - logit(base);
+      var usage = teamRowObj && teamRowObj.games ? Math.min(1, n / Math.max(1, teamRowObj.games) * 3) : 0;
+      return { hero: hero, n: n, w: w, p: p, edge: edge, usage: usage };
+    }
+
+    function fillSelect(el, items, keep) {
+      var cur = keep ? el.value : "";
+      el.innerHTML = items.map(function (it) {
+        return '<option value="' + K.esc(it[0] || it) + '">' + K.esc(it[1] || it) + "</option>";
+      }).join("");
+      if (cur) el.value = cur;
+    }
+
+    var $id = function (x) { return document.getElementById(x); };
+
+    function refreshHeroSelects() {
+      var A = $id("wbA").value, B = $id("wbB").value;
+      var poolA = (((TD[A] || {}).h) || []).map(function (r) { return r[0]; });
+      var poolB = (((TD[B] || {}).h) || []).map(function (r) { return r[0]; });
+      var optA = [["", "— 不假设 —"]].concat(poolA.slice(0, 40).map(function (h) { return [h, h]; }));
+      var optB = [["", "— 不假设 —"]].concat(poolB.slice(0, 40).map(function (h) { return [h, h]; }));
+      ["wbA1", "wbA2"].forEach(function (id2) { fillSelect($id(id2), optA, true); });
+      ["wbB1", "wbB2"].forEach(function (id2) { fillSelect($id(id2), optB, true); });
+      fillSelect($id("wbBanA"), optB, true);   // A 禁 B 的英雄
+      fillSelect($id("wbBanB"), optA, true);   // B 禁 A 的英雄
+    }
+
+    function compute() {
+      var scope = $id("wbScope").value;
+      var A = $id("wbA").value, B = $id("wbB").value;
+      if (A === B) { $id("wbResult").innerHTML = '<div class="empty-tip">A/B 不能是同一支战队</div>'; return; }
+      var ra = teamRow(scope, A) || teamRow("all", A);
+      var rb = teamRow(scope, B) || teamRow("all", B);
+      if (!ra || !rb) { $id("wbResult").innerHTML = '<div class="empty-tip">该范围内缺少战队样本</div>'; return; }
+
+      var baseLogit = logit(ra.wr) - logit(rb.wr);
+      var p0 = sig(baseLogit);
+      var rows = [];
+      var dLogit = 0;
+      function addPick(team, hero, rowSelf, sign, kind) {
+        if (!hero) return;
+        var e = heroEdge(team, hero, rowSelf, scope);
+        var contrib = sign * e.edge * (kind === "ban" ? BAN_W * Math.max(0.35, e.usage) : PICK_W);
+        dLogit += contrib;
+        rows.push({
+          team: team, hero: hero, n: e.n, wr: e.p, edge: e.edge, contrib: contrib, kind: kind
+        });
+      }
+      addPick(A, $id("wbA1").value, ra, +1, "pick");
+      addPick(A, $id("wbA2").value, ra, +1, "pick");
+      addPick(B, $id("wbB1").value, rb, -1, "pick");
+      addPick(B, $id("wbB2").value, rb, -1, "pick");
+      addPick(B, $id("wbBanA").value, rb, -1, "ban");
+      addPick(A, $id("wbBanB").value, ra, +1, "ban");
+
+      var p1 = sig(baseLogit + dLogit);
+      var dpp = (p1 - p0) * 100;
+
+      var bar = function (p) {
+        return '<div class="wb-bar"><i style="width:' + (p * 100).toFixed(1) + '%"></i>' +
+          '<span class="wb-mid"></span></div>';
+      };
+      var detail = rows.length ? '<table class="tbl wb-tbl"><thead><tr><th>方</th><th>英雄</th><th>类型</th>' +
+        '<th class="num">队伍历史</th><th class="num">收缩胜率</th><th class="num">对胜率影响</th></tr></thead><tbody>' +
+        rows.map(function (r) {
+          var sign = r.contrib >= 0 ? "+" : "";
+          var pp = (sig(baseLogit + r.contrib) - p0) * 100;  // 单条边际的近似影响
+          return "<tr><td>" + K.esc(r.team) + "</td><td>" + K.esc(r.hero) + "</td>" +
+            "<td>" + (r.kind === "ban" ? "禁用对手" : "选用") + "</td>" +
+            '<td class="num mono">' + r.n + " 局</td>" +
+            '<td class="num mono">' + pct1(r.wr) + "</td>" +
+            '<td class="num mono" style="color:' + (pp >= 0 ? "#1F8A53" : "#D5374B") + '">' +
+            sign + pp.toFixed(1) + " pp</td></tr>";
+        }).join("") + "</tbody></table>"
+        : '<div class="empty-tip">还没有假设。选几个关键英雄，看看胜率会怎么走。</div>';
+
+      $id("wbResult").innerHTML =
+        '<div class="wb-head">' +
+        '<div class="wb-side"><div class="wb-t">' + K.esc(A) + '</div><div class="wb-sub mono">' +
+        ra.games + " 局 · 胜率 " + pct1(ra.wr) + "</div>" + bar(p1) + "</div>" +
+        '<div class="wb-mid-col"><div class="wb-p0 mono">赛前基准 ' + pct1(p0) + "</div>" +
+        '<div class="wb-p1">' + pct1(p1) + "</div>" +
+        '<div class="wb-d mono" style="color:' + (dpp >= 0 ? "#1F8A53" : "#D5374B") + '">' +
+        (dpp >= 0 ? "+" : "") + dpp.toFixed(1) + " pp</div></div>" +
+        '<div class="wb-side r"><div class="wb-t">' + K.esc(B) + '</div><div class="wb-sub mono">' +
+        rb.games + " 局 · 胜率 " + pct1(rb.wr) + "</div>" +
+        '<div class="wb-bar r"><i style="width:' + ((1 - p1) * 100).toFixed(1) + '%"></i></div></div>' +
+        "</div>" + detail;
+
+      // 替代方案
+      ["A", "B"].forEach(function (side) {
+        var team = side === "A" ? A : B;
+        var row = side === "A" ? ra : rb;
+        var pool = ((TD[team] || {}).h || []).map(function (r) { return heroEdge(team, r[0], row, scope); })
+          .filter(function (e) { return e.n >= 5; })
+          .sort(function (x, y) { return y.edge - x.edge; }).slice(0, 6);
+        var html = pool.length ? '<div class="usage">' + pool.map(function (e) {
+          var pp = (sig(baseLogit + e.edge * PICK_W * (side === "A" ? 1 : -1)) - p0) * 100;
+          return '<a href="hero.html?id=' + encodeURIComponent(e.hero) + '">' +
+            '<span class="nm">' + K.esc(e.hero) + "</span>" +
+            '<span class="n">' + e.n + " 局</span>" +
+            '<span class="wr">' + pct1(e.p) + "</span>" +
+            '<span class="mono" style="font-size:11.5px;color:' + (pp >= 0 ? "#1F8A53" : "#D5374B") + '">' +
+            (pp >= 0 ? "+" : "") + pp.toFixed(1) + "pp</span></a>";
+        }).join("") + "</div>"
+          : '<div class="empty-tip">该队在所选范围内样本不足</div>';
+        $id("wbAlt" + side).innerHTML = html;
+      });
+
+      $id("wbFoot").textContent = "口径：先验收缩 k=" + SHRINK + "，选用权重 ×" + PICK_W + "、禁用权重 ×" + BAN_W +
+        "，log-odds 相加后转概率。边际来自该队历史使用该英雄的胜率，未考虑版本、阵容联动与对手反制，不等于因果结论。";
+    }
+
+    function boot() {
+      fillSelect($id("wbScope"), SCOPES);
+      var ts = teamsOf("all").map(function (t) { return [t.team, t.team]; });
+      if (!ts.length) { $id("wbResult").innerHTML = '<div class="empty-tip">缺少战队数据</div>'; return; }
+      fillSelect($id("wbA"), ts);
+      fillSelect($id("wbB"), ts);
+      if (ts.length > 1) $id("wbB").value = ts[1][0];
+      refreshHeroSelects();
+      compute();
+      ["wbScope", "wbA", "wbB"].forEach(function (id2) {
+        $id(id2).addEventListener("change", function () { refreshHeroSelects(); compute(); });
+      });
+      ["wbA1", "wbA2", "wbB1", "wbB2", "wbBanA", "wbBanB"].forEach(function (id2) {
+        $id(id2).addEventListener("change", compute);
+      });
+    }
+    boot();
+  })();
+})();
+</script>
+</body>
+</html>

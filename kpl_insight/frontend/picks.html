@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>精选对局 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A111C'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="精选对局 · 峡谷有数">
+<meta property="og:description" content="按规则自动筛出的翻盘局、拉锯局、波动局与资源战，点进去直接落到关键分钟。">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="schedule.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">PICKS · 精选对局</div>
+    <h1>精选对局</h1>
+    <p>不是编辑推荐，是<b>规则筛出来的</b>：翻盘局、拉锯局、波动局、资源战。每条都写明触发条件，
+      点进去会直接落到关键分钟（复盘时间轴已定位好）。</p>
+    <div class="ph-meta mono">
+      <span>可判定对局 <b id="pkTotal">—</b></span><i>/</i>
+      <span>入选 <b id="pkPicked">—</b></span><i>/</i>
+      <span>规则版本 <b id="pkAt">—</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:22px">
+  <div class="filterbar">
+    <div class="seg" id="pkTabs">
+      <button data-k="" class="on">全部</button>
+      <button data-k="comeback">翻盘局</button>
+      <button data-k="long">拉锯局</button>
+      <button data-k="swing">波动局</button>
+      <button data-k="events">资源战</button>
+    </div>
+    <span class="block-note mono" id="pkNote">—</span>
+    <a class="more" href="schedule.html" style="margin-left:auto">按赛程找 →</a>
+  </div>
+
+  <div class="pick-grid" id="pickGrid"></div>
+
+  <div class="panel" style="margin-top:18px">
+    <div class="panel-title">筛选规则 <em class="mono">全部来自逐分钟数据，可复核</em></div>
+    <div id="pkRules" class="block-note"></div>
+    <div class="block-note mono" style="margin-top:8px">
+      说明：规则只用于"值得一看"的排序，不代表比赛质量评判；「波动局」反映的是模型胜率变化幅度，
+      既可能是真翻盘，也可能是早期低置信采样，点击后在复盘页可看到逐帧依据。
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/coverage.js?v=85"></script>
+<script src="assets/picks.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  var P = window.KPL_PICKS || { rows: [], rules: [] };
+  var rows = P.rows || [];
+  var cur = "";
+
+  $("#pkTotal").textContent = (P.totalBattles || rows.length) + " 局";
+  $("#pkPicked").textContent = (P.picked || rows.length) + " 条";
+  $("#pkAt").textContent = String(P.updatedAt || "").slice(0, 10) || "—";
+  $("#pkRules").innerHTML = (P.rules || []).map(function (r) {
+    // 同时给出"全量达标"与"入选"两个数：前者是规则命中，后者是取前 48 后的展示数，
+    // 只写一个会被误读成"这条规则只命中了这么多局"
+    var picked = rows.filter(function (x) {
+      return x.tags.some(function (t) { return t.k === r.k; });
+    }).length;
+    var cnt = (r.total != null)
+      ? '（达标 ' + r.total + ' 局 · 入选 ' + picked + ' 条）'
+      : '';
+    return "<div>· <b>" + K.esc(r.label) + "</b>：" + K.esc(r.rule) + cnt + "</div>";
+  }).join("");
+
+  function jumpMinute(r) {
+    // 翻盘局落到"最低点"，其余落到波动最大那段的起点（都没有才不带 &m=）
+    if (r.minMinute != null) return Math.round(r.minMinute);
+    if (r.swingMinute != null) return Math.round(r.swingMinute);
+    return null;
+  }
+
+  function card(r) {
+    var tags = r.tags.map(function (t) {
+      return '<span class="pk-tag ' + t.k + '" title="' + K.esc(t.rule || "") + '">' + K.esc(t.label) +
+        '<em>' + K.esc(t.note) + "</em></span>";
+    }).join("");
+    var m = jumpMinute(r);
+    var href = "match.html?id=" + encodeURIComponent(r.matchId) + "&g=" + (r.seq || 1) + (m != null ? "&m=" + m : "");
+    return '<a class="pick-card" href="' + href + '">' +
+      '<div class="pk-top"><span class="pk-date mono">' + K.esc(String(r.date).slice(5)) + "</span>" +
+      '<span class="pk-vs">' + K.esc(r.t1) + " vs " + K.esc(r.t2) + "</span>" +
+      '<span class="pk-g mono">G' + (r.seq || 1) + " · " + r.dur.toFixed(0) + "′</span></div>" +
+      '<div class="pk-tags">' + tags + "</div>" +
+      '<div class="pk-foot mono">胜方 ' + K.esc(r.winner) +
+      (r.minProb != null ? " · 最低胜率 " + Math.round(r.minProb * 100) + "%" : "") +
+      " · 波动 " + Math.round(r.swing * 100) + "pp · 事件 " + r.events + "</div>" +
+      '<span class="pk-go">看这段 →</span></a>';
+  }
+
+  function render() {
+    var list = cur ? rows.filter(function (r) {
+      return r.tags.some(function (t) { return t.k === cur; });
+    }) : rows;
+    $("#pickGrid").innerHTML = list.length ? list.map(card).join("")
+      : '<div class="empty-tip">该标签下暂无入选对局</div>';
+    $("#pkNote").textContent = (cur ? "筛选：" + cur + " · " : "") + list.length + " 条（按综合分排序）";
+  }
+
+  $("#pkTabs").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    Array.prototype.forEach.call(this.children, function (x) { x.classList.toggle("on", x === b); });
+    cur = b.getAttribute("data-k");
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

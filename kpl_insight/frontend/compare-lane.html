@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>位置对比 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="位置对比 · 峡谷有数">
+<meta property="og:description" content="把对抗路 / 打野 / 中路 / 发育路 / 游走放在一起，看各分路在当前范围内的画像：KDA、胜率、MVP 率、参团率与输出占比。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="compare-lane.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">COMPARE · 位置对比</div>
+    <h1>位置对比</h1>
+    <p>把<b>对抗路 / 打野 / 中路 / 发育路 / 游走</b>五条分路放在一起：默认展示前 3 条，可自选 2–4 条。
+      每条分路的值 = 当前数据范围内该位置全部选手按出场局数加权聚合（等价于「该分路所有局」的合计口径）。
+      <b>边界</b>：五种分路职责不同，KDA / 输出占比的天然区间就不一样，因此只读作「分路画像」，<b>不能</b>直接当成强弱排名；虚线为跨分路加权均值，仅作形状参考。
+      想看具体某名选手？用 <a href="compare-player.html" style="color:var(--gold);font-weight:700">「选手对比」</a>；
+      想看战队 / 英雄？用 <a href="compare-team.html" style="color:var(--gold);font-weight:700">「战队对比」</a>
+      / <a href="compare.html" style="color:var(--gold);font-weight:700">「英雄对比」</a>。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="scopebar" id="scopeBar"></div>
+
+  <div class="filterbar">
+    <div class="pickers" id="pickers"></div>
+  </div>
+
+  <div class="cmp-grid">
+    <div class="cmp-radar">
+      <div id="radar"></div>
+      <div class="cmp-legend" id="legend"></div>
+    </div>
+    <div class="cmp-table">
+      <table id="cmpTable"></table>
+      <div class="cmp-tip" id="cmpTip"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="panel-title">口径说明</div>
+    <div class="block-note">
+      1. 分路归属按选手在该范围内的<b>实际出场位置</b>字段，位置未知的选手不计入任何分路；<br>
+      2. 每条分路的指标按选手出场局数<b>加权平均</b>，等价于「该分路全部局」的合计口径，不是「选手平均」；<br>
+      3. 不同分路职责不同（游走参团高、发育路输出高、打野 KDA 高），雷达与表格的<b>原始值不可跨分路直接比强弱</b>；<br>
+      4. 预计聚合样本为该范围内出场达标的选手；候选数不足的分路会直接缺席，不会用缺失值填充。
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/share.js?v=85"></script>
+<script src="assets/compare.js?v=20261026f"></script>
+<script>
+KPL_COMPARE.init("lane");
+SHARE.mount(document.querySelector(".filterbar"), KPL_COMPARE.spec, "kpl-compare-lane.png");
+</script>
+</body>
+</html>

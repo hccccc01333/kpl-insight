@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>选手 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="选手 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="players.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">PLAYERS · 选手</div>
+    <h1>选手数据榜</h1>
+    <p>2019–2026 全部选手的比赛数据，可按年份 / 赛事、位置和排序方式自由筛选。
+      所有排名只统计已打完的比赛。</p>
+    <div class="ph-meta mono">
+      <span>入榜选手 <b id="pCount">—</b></span><i>/</i>
+      <span>范围 <b id="pScope">—</b></span><i>/</i>
+      <span>数据时钟 <b id="genAt">—</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="scopebar" id="scopeBar"></div>
+  <div class="brief" id="brief"></div>
+  <div class="filterbar">
+    <label class="fld"><span>搜索</span>
+      <input class="search" id="pSearch" type="search" placeholder="选手名 / 战队，如：一诺" autocomplete="off">
+    </label>
+    <label class="fld"><span>位置</span>
+      <select id="fPos"><option value="">全部位置</option></select>
+    </label>
+    <label class="fld"><span>排序</span>
+      <select id="fSort">
+        <option value="kda" selected>按 KDA</option>
+        <option value="mvp">按 MVP 次数</option>
+        <option value="wr">按胜率</option>
+        <option value="games">按出场局数</option>
+        <option value="dmg">按输出占比</option>
+      </select>
+    </label>
+    <label class="fld"><span>最少局数</span>
+      <select id="fMin">
+        <option value="0">不限</option>
+        <option value="10">≥ 10 局</option>
+        <option value="30">≥ 30 局</option>
+        <option value="100">≥ 100 局</option>
+      </select>
+    </label>
+    <span class="block-note mono" id="countNote"></span>
+    <button class="btn ghost sm" id="expBtn" type="button">导出 CSV</button>
+  </div>
+  <div class="player-grid" id="playerGrid"></div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  $("#genAt").textContent = D.generatedAt;
+
+  var curScope = "all";
+  var q0 = new URLSearchParams(location.search).get("q") || "";
+  if (q0) $("#pSearch").value = q0;
+
+  function playerCard(p, i) {
+    var ava = p.icon ? '<img class="p-ava" src="' + K.esc(p.icon) + '" alt="" loading="lazy">'
+      : '<span class="p-ava ph">' + K.esc(String(p.name).slice(0, 1)) + "</span>";
+    var big = { kda: { v: K.mnumText(p.kda, 1), l: "KDA" },
+                mvp: { v: String(p.mvp), l: "MVP" },
+                wr: { v: K.pct(p.wr, 0), l: "胜率" },
+                games: { v: String(p.games), l: "局数" },
+                dmg: { v: K.mpct(p.dmg, 0), l: "输出" } }[$("#fSort").value];
+    return '<a class="player reveal" href="player.html?id=' + encodeURIComponent(p.name) + '" style="transition-delay:' +
+      Math.min((i || 0) * 22, 240) + 'ms">' + ava +
+      '<div class="p-main"><div class="p-top">' +
+      '<span class="p-name"><span class="nm">' + K.esc(p.name) + "</span>" +
+      (p.pos ? "<em>" + K.esc(p.pos) + "</em>" : "") + "</span>" +
+      '<span class="p-kda">' + big.v + "<small>" + big.l + "</small></span></div>" +
+      '<div class="p-team">' + (p.teamIcon ? '<img src="' + K.esc(p.teamIcon) + '" alt="">' : "") +
+      "<b>" + K.esc(p.team) + "</b><span>· " + p.games + " 局 · 胜率 " + K.pct(p.wr, 0) +
+      " · MVP " + p.mvp + " · 参团 " + K.mpct(p.part, 0) + "</span></div>" +
+      "</div></a>";
+  }
+
+  // 降序比较：缺失值永远排在最后，绝不把「没有数据」当成最小的真实值参与排序
+  function byNum(get, a, b) {
+    var x = K.mnum(get(a)), y = K.mnum(get(b));
+    if (x === null && y === null) return b.games - a.games;
+    if (x === null) return 1;
+    if (y === null) return -1;
+    return y - x || b.games - a.games;
+  }
+
+  function render() {
+    var d = K.scopeOf(curScope);
+    var pos = $("#fPos").value, min = parseInt($("#fMin").value, 10) || 0;
+    var sortKey = $("#fSort").value;
+    var q = $("#pSearch").value.trim().toLowerCase();
+    var rows = (d.players || []).filter(function (p) {
+      if (pos && p.pos !== pos) return false;
+      if (p.games < min) return false;
+      if (q && String(p.name).toLowerCase().indexOf(q) < 0 && String(p.team).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    rows = rows.slice().sort(function (a, b) {
+      if (sortKey === "games") return b.games - a.games;
+      if (sortKey === "mvp") return b.mvp - a.mvp || b.games - a.games;
+      if (sortKey === "wr") return b.wr - a.wr || b.games - a.games;
+      if (sortKey === "dmg") return byNum(function (p) { return p.dmg; }, a, b);
+      return b.kda - a.kda || b.games - a.games;
+    }).slice(0, 60);
+    $("#pCount").textContent = rows.length;
+    $("#pScope").textContent = K.scopeName(curScope);
+    $("#countNote").textContent = "展示前 " + rows.length + " 名" + (q ? "（搜索：" + $("#pSearch").value.trim() + "）" : "");
+    $("#playerGrid").innerHTML = rows.length
+      ? rows.map(playerCard).join("")
+      : '<div class="empty-tip">没有符合条件的选手（可清空搜索或放宽条件）</div>';
+    /* 数据简报 */
+    if (rows.length) {
+      var bK = rows.slice().sort(byNum.bind(null, function (p) { return p.kda; }))[0];
+      var bM = rows.slice().sort(function (a, b) { return b.mvp - a.mvp; })[0];
+      var dmgRows = rows.filter(function (p) { return K.mnum(p.dmg) !== null; });
+      var bD = dmgRows.length ? dmgRows.slice().sort(byNum.bind(null, function (p) { return p.dmg; }))[0] : null;
+      K.brief("#brief", "当前筛选有 <b>" + rows.length + "</b> 名选手。KDA 领跑：<b>" + K.esc(bK.name) + "</b>（<b>" + K.mnumText(bK.kda, 2) +
+        "</b>，" + bK.games + " 局）；MVP 最多：<b>" + K.esc(bM.name) + "</b>（<b>" + bM.mvp + "</b> 次）；" +
+        (bD ? "输出占比最高：<b>" + K.esc(bD.name) + "</b>（<b>" + K.mpct(bD.dmg, 1) + "</b>）。"
+            : "当前范围内输出占比没有有效样本，不参与领跑对比。"));
+    } else {
+      K.brief("#brief", "当前条件下没有选手数据，清空搜索或放宽局数试试。");
+    }
+    K.refresh();
+  }
+
+  function fillPositions() {
+    var d = K.scopeOf(curScope);
+    var cur = $("#fPos").value;
+    var positions = {};
+    (d.players || []).forEach(function (p) { if (p.pos) positions[p.pos] = 1; });
+    var order = ["对抗路", "打野", "中路", "发育路", "游走"];
+    var keys = Object.keys(positions).sort(function (a, b) {
+      var ia = order.indexOf(a), ib = order.indexOf(b);
+      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    });
+    $("#fPos").innerHTML = '<option value="">全部位置</option>' +
+      keys.map(function (p) { return "<option" + (p === cur ? " selected" : "") + ">" + K.esc(p) + "</option>"; }).join("");
+  }
+
+  curScope = K.scopeBar("#scopeBar", function (id) { curScope = id; fillPositions(); render(); });
+  $("#expBtn").addEventListener("click", function () {
+    var d = K.scopeOf(curScope);
+    var pos = $("#fPos").value, min = parseInt($("#fMin").value, 10) || 0;
+    var q = $("#pSearch").value.trim().toLowerCase();
+    var rows2 = (d.players || []).filter(function (p) {
+      if (pos && p.pos !== pos) return false;
+      if (p.games < min) return false;
+      if (q && String(p.name).toLowerCase().indexOf(q) < 0 && String(p.team).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    }).slice().sort(function (a, b) { return b.kda - a.kda || b.games - a.games; });
+    var rows = [["选手", "战队", "位置", "局数", "胜率", "KDA", "MVP", "参团率", "输出占比", "范围"]];
+    rows2.forEach(function (p2) {
+      rows.push([p2.name, p2.team, p2.pos, p2.games, (p2.wr * 100).toFixed(1) + "%", p2.kda, p2.mvp,
+        p2.part == null ? "—" : p2.part, p2.dmg == null ? "—" : p2.dmg, K.scopeName(curScope)]);
+    });
+    K.exportCSV("选手榜_" + K.scopeName(curScope) + ".csv", rows);
+  });
+  $("#pSearch").addEventListener("input", render);
+  ["fPos", "fSort", "fMin"].forEach(function (id) { $("#" + id).addEventListener("change", render); });
+  fillPositions();
+  render();
+})();
+</script>
+</body>
+</html>

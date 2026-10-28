@@ -4,21 +4,21 @@
 
 访问 [静态网站](https://hccccc01333.github.io/KPLdata-site/)。它是单独部署的现有网站，使用静态数据文件，不依赖你本地运行本项目。部分国内网络对 GitHub Pages 的访问仍可能不稳定。
 
-### 本地运行同款静态网站
+### 默认：运行项目自带前端
 
-先安装 Git 和 Python 3。网页源码及已归档的静态数据在独立站点仓库；无需先安装模型工具或训练权重：
+前端页面、交互和已归档展示数据已随本项目提供，默认使用这套界面。下载或克隆本项目后，在项目根目录运行：
 
 ```bash
-git clone https://github.com/hccccc01333/KPLdata-site.git
-cd KPLdata-site
-python -m http.server 8000 --bind 127.0.0.1
+python start.py
 ```
 
-保持该终端运行，在浏览器访问 **http://127.0.0.1:8000/**。关闭服务时按 `Ctrl+C`；若 8000 端口已被占用，将命令中的端口及访问地址一起改为其他可用端口，例如 8001。
+Windows 也可双击根目录的“启动网站.bat”。只需 Python 3.10 或以上，无需安装模型依赖、Node 或另行克隆网站仓库。启动后自动打开 **http://127.0.0.1:8000/**，按 `Ctrl+C` 停止；端口被占用时使用 `python start.py --port 8001`，不自动打开浏览器时加 `--no-browser`。
 
-通过本地 HTTP 服务打开网页，不要直接双击 HTML：部分数据由页面通过请求加载。数据文件随站点仓库取得，本地页面不会自动同步线上更新；可拉取后续仓库更新，或另行配置下文的数据采集与导出流程。部分头像、图标等外部资源仍可能需要联网，因此这不等于完全离线或保证任何网络环境下可用。
+前端源码及展示数据在 [`kpl_insight/frontend/`](../kpl_insight/frontend/README.md)，可以直接修改 HTML、CSS 和 JavaScript。内置数据是打包时的归档快照；启动网页不等于启动实时采集与预测，部分外部图片和录像仍需联网。
 
-想修改界面，可直接编辑站点仓库的 HTML、CSS 和 JavaScript。仅限本仓库约定的非商业使用范围。喜欢这个项目，也欢迎给 [kpl-insight 主仓库](https://github.com/hccccc01333/kpl-insight) 点 Star，帮助更多同好找到它。
+本地页面只提供“一键启动 / 停止”和状态监控。系统自动选择赛事和运行方式：有模型时实时预测，没有模型时仅采集并标注。无需填写 ID、选择模式或输入命令；线上网站不显示此面板。
+
+安装公开版工具后，`python -m kpl_insight` 和 `kpl-insight` 默认打开这套前端。指定参数时运行 `python -m kpl_insight web --port 8001`；`--help` 继续显示所有采集、训练与分析命令。
 
 ## 2. 安装与离线演示
 
@@ -104,7 +104,7 @@ python -m streamlit run apps/dashboard.py
 python -m kpl_insight export-live
 ```
 
-默认在 `output/site/assets/` 生成 `live.js` 与 `live_hist/`，不推送 Git、不部署。要写入自己的静态站点源码目录，可在进程启动前设置 `KPL_SITE_DIR`。完整网页源码在独立的 [KPLdata-site 仓库](https://github.com/hccccc01333/KPLdata-site)。
+默认在项目内置的 `kpl_insight/frontend/assets/` 更新 `live.js` 与 `live_hist/`，刷新本地前端即可查看；不推送 Git、不部署。要写入另一份静态站点目录，可在进程启动前设置 `KPL_SITE_DIR`（启动前端时使用相同的目录）。
 
 ## 数据口径
 

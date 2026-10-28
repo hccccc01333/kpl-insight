@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英雄表现 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="英雄表现 · 峡谷有数">
+<meta property="og:description" content="逐系列赛看选手 × 英雄：出场、胜负、伤害、经济、参团与同位置同英雄 P50/P75/P90 对标，并能下钻到比赛证据。">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="hero-performance.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">PLAYER × HERO · 逐系列赛</div>
+    <h1>英雄表现</h1>
+    <p>把一名选手的每个英雄按<b>系列赛</b>展开：单系列赛里一个英雄只用一次，0% 或 100% 只展示事实，不据此判断英雄强弱。趋势看跨系列赛的滚动窗口，并同时给出<b>同位置同英雄 P50 / P75 / P90</b> 参考；基准不足会显式标注，不跨年代偷偷补样本。</p>
+    <p class="mono" style="font-size:12px;opacity:.78;margin-top:10px">当前覆盖站内 2019–2026 历史；2016–2018 外部历史已完成质检，尚未接入本页。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="panel hp-controls">
+    <label class="fld"><span>选手</span><select id="hpPlayer"></select></label>
+    <label class="fld"><span>数据范围</span><select id="hpScope"><option value="all">全部赛事</option></select></label>
+    <label class="fld"><span>英雄</span><select id="hpHero"><option value="all">全部英雄</option></select></label>
+    <div class="hp-meta mono" id="hpMeta"></div>
+  </div>
+
+  <div id="hpSummary" class="hp-summary"></div>
+
+  <div class="hp-grid">
+    <div class="panel hp-table-panel">
+      <div class="panel-title">英雄表现 <em class="mono" id="hpTableNote">按系列赛聚合</em></div>
+      <div class="hp-table-wrap"><table id="hpHeroTable"></table></div>
+      <div class="block-note">点击英雄查看基准与比赛证据。P 值为同位置同英雄的百分位；小样本会标出，不生成“变强/下滑”结论。</div>
+    </div>
+    <div class="panel hp-detail-panel">
+      <div class="panel-title">英雄详情 <em class="mono" id="hpDetailTitle"></em></div>
+      <div id="hpDetail"><div class="empty-tip">选择左侧英雄查看详情</div></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="panel-title">口径说明</div>
+    <div class="block-note">
+      1. 系列赛 = 一次双方 BO 对抗；选手 × 英雄 × 系列赛为一条证据行，单局只作为系列赛内的事实；<br>
+      2. P50 / P75 / P90 是同期同位置同英雄的描述性参考线，不是官方评级；样本池排除当前选手；<br>
+      3. 同赛事池不足 3 人 / 20 局时，显式回退到同位置同英雄全历史，并标注“基准已扩大”；仍不足则停止评级；<br>
+      4. 每分钟伤害 / 经济只除以该字段有效的出场分钟；源数据里伤害 / 经济为 0 视为缺失，不按 0 摊薄；参团率按有效出场局数加权，队内 0 击杀时无定义；<br>
+      5. 单系列赛 1 局 0% / 100% 只展示事实；变化结论至少需要 6 个系列赛，且仍只作描述，不作因果；<br>
+      6. 当前覆盖 2019–2026 站内历史；2016–2018 外部历史尚未接入本页，避免把不完整字段混入同一基准池。
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/hero_perf/index.js?v=20261027c"></script>
+<script src="assets/hero_perf_app.js?v=20261027c"></script>
+</body>
+</html>

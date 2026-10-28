@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交手记录 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<style>
+.h2h-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:14px;align-items:start}
+@media(max-width:1000px){.h2h-grid{grid-template-columns:1fr}}
+.h2h-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.h2h-tuning{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.h2h-vs{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin:16px 0 6px}
+.h2h-vs .t{display:flex;align-items:center;gap:11px;font-size:18px;font-weight:800}
+.h2h-vs .t.r{flex-direction:row-reverse;text-align:right}
+.h2h-vs img{width:46px;height:46px;object-fit:contain}
+.h2h-vs .mid{font-family:var(--mono);font-size:26px;font-weight:800;color:var(--gold)}
+.h2h-bar{display:flex;height:26px;border-radius:8px;overflow:hidden;border:1px solid var(--line2);margin:14px 0 6px}
+.h2h-bar .a{background:linear-gradient(90deg,var(--gold),var(--gold-d));display:flex;align-items:center;justify-content:flex-end;padding-right:9px;font-size:12px;font-weight:800;color:#151006;min-width:34px}
+.h2h-bar .b{background:var(--blue-d);display:flex;align-items:center;padding-left:9px;font-size:12px;font-weight:800;color:#fff;min-width:34px}
+.h2h-kv{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--ink2)}
+.h2h-kv b{font-family:var(--mono);color:var(--ink)}
+.h2h-row2{display:grid;grid-template-columns:96px 1fr auto auto;gap:12px;align-items:center;padding:10px 8px;
+          border-bottom:1px solid var(--line)}
+.h2h-row2:last-child{border-bottom:none}
+.h2h-row2:hover{background:var(--inset)}
+.h2h-row2 .d{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.h2h-row2 .meta{font-size:12.5px;color:var(--muted)}
+.h2h-row2 .score{font-family:var(--mono);font-size:15px;font-weight:800}
+.h2h-row2 .score .w{color:var(--gold)}
+.h2h-row2 .go{font-size:13px;font-weight:700;color:var(--gold)}
+.h2h-row2 .go:hover{text-decoration:underline}
+.h2h-years{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.h2h-years button{font-family:inherit;font-size:12.5px;padding:5px 11px;border-radius:7px;border:1px solid var(--line2);
+                  background:var(--card2);color:var(--ink2);cursor:pointer}
+.h2h-years button.on{background:var(--gold);color:#151006;font-weight:700;border-color:var(--gold)}
+.h2h-trend{margin-top:8px}
+.h2h-trend svg{width:100%;height:auto;display:block}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="交手记录 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="h2h.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">HEAD TO HEAD · 交手记录</div>
+    <h1>战队交手记录</h1>
+    <p>任意两支战队的历史交锋全记录：大场胜负、局分对比、逐年走势与每一次对局详情（2019–2026）。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="filterbar">
+    <label class="fld"><span>战队 A</span><select id="selA"></select></label>
+    <label class="fld"><span>战队 B</span><select id="selB"></select></label>
+    <label class="fld"><span>年份范围</span><select id="fYear">
+      <option value="">全部年份</option>
+    </select></label>
+    <span class="block-note mono" id="countNote"></span>
+    <button class="btn ghost sm" id="expBtn" type="button">导出 CSV</button>
+  </div>
+
+  <div class="h2h-grid">
+    <div class="h2h-panel" id="summary"></div>
+    <div class="h2h-panel">
+      <div class="panel-title" style="margin-bottom:6px">历次交锋 <em class="mono">点击进入比赛详情</em></div>
+      <div id="records"></div>
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+
+  var ALL = window.KPL_SCHEDULE_ALL || [];
+  var S = window.KPL_SEASONS;
+  var teams = (S.scopes.all.teams || []).slice()
+    .sort(function (a, b) { return a.team.localeCompare(b.team, "zh"); });
+
+  var q = new URLSearchParams(location.search);
+  var wantA = q.get("a") || "重庆狼队";
+  var wantB = q.get("b") || "北京WB";
+
+  function teamIcon(name) {
+    var t = teams.filter(function (x) { return x.team === name; })[0];
+    return t ? t.icon : "";
+  }
+
+  var opts = teams.map(function (t) { return "<option>" + K.esc(t.team) + "</option>"; }).join("");
+  $("#selA").innerHTML = opts;
+  $("#selB").innerHTML = opts;
+  $("#selA").value = wantA;
+  $("#selB").value = wantB;
+  var years = {};
+  ALL.forEach(function (r) { years[r.year] = 1; });
+  $("#fYear").innerHTML = '<option value="">全部年份</option>' +
+    Object.keys(years).sort().reverse().map(function (y) { return "<option>" + y + " 年</option>"; }).join("");
+
+  function meetings(a, b, year) {
+    return ALL.filter(function (r) {
+      if (year && String(r.year) !== year) return false;
+      return (r.team1 === a && r.team2 === b) || (r.team1 === b && r.team2 === a);
+    }).slice().reverse();
+  }
+
+  function render() {
+    var a = $("#selA").value, b = $("#selB").value, year = $("#fYear").value;
+    if (a === b) {
+      $("#summary").innerHTML = '<div class="empty-tip">请选择两支不同的战队</div>';
+      $("#records").innerHTML = "";
+      $("#countNote").textContent = "";
+      return;
+    }
+    var ms = meetings(a, b, year);
+    if (!ms.length) {
+      $("#summary").innerHTML = '<div class="h2h-vs"><div class="t">' +
+        (teamIcon(a) ? '<img src="' + K.esc(teamIcon(a)) + '" alt="">' : "") + K.esc(a) + "</div>" +
+        '<div class="mid">VS</div><div class="t r">' + K.esc(b) +
+        (teamIcon(b) ? '<img src="' + K.esc(teamIcon(b)) + '" alt="">' : "") + "</div></div>" +
+        '<div class="empty-tip">该范围内两队没有交手记录</div>';
+      $("#records").innerHTML = "";
+      $("#countNote").textContent = "0 次交锋";
+      return;
+    }
+    /* 统计 */
+    var aWin = 0, bWin = 0, aGames = 0, bGames = 0;
+    var yearRows = {};
+    ms.forEach(function (r) {
+      var aIs1 = r.team1 === a;
+      var sa = aIs1 ? r.score1 : r.score2;
+      var sb = aIs1 ? r.score2 : r.score1;
+      aGames += sa; bGames += sb;
+      if (sa > sb) aWin++; else if (sb > sa) bWin++;
+      var y = r.year;
+      if (!yearRows[y]) yearRows[y] = [0, 0, 0];
+      yearRows[y][0]++;
+      if (sa > sb) yearRows[y][1]++;
+      else if (sb > sa) yearRows[y][2]++;
+    });
+    var total = aWin + bWin || 1;
+    var pctA = aWin / total * 100;
+
+    /* 逐年走势折线（A 的大场胜率） */
+    var yKeys = Object.keys(yearRows).sort();
+    var trendHTML = "";
+    if (yKeys.length >= 2) {
+      var T = 640, TH = 170, PL = 40, PR = 16, PT = 22, PB = 30;
+      var CP = K.chartPalette();
+      var n = yKeys.length;
+      var X = function (i) { return PL + (n === 1 ? 0 : i * (T - PL - PR) / (n - 1)); };
+      var Y = function (p) { return PT + (1 - p) * (TH - PT - PB); };
+      var s = '<svg viewBox="0 0 ' + T + " " + TH + '" aria-label="逐年交手走势">';
+      [0.25, 0.5, 0.75].forEach(function (g) {
+        s += '<line x1="' + PL + '" y1="' + Y(g).toFixed(1) + '" x2="' + (T - PR) + '" y2="' + Y(g).toFixed(1) +
+          '" stroke=' + CP.grid + ' stroke-dasharray="4 6"/>';
+      });
+      s += '<text x="' + (PL - 7) + '" y="' + (Y(0.5) + 4) + '" text-anchor="end" font-size="10" fill=' + CP.label + ' font-family="Inter,monospace">50%</text>';
+      var pts = yKeys.map(function (y, i) {
+        var row = yearRows[y];
+        var wr = row[0] ? row[1] / row[0] : 0;
+        return X(i).toFixed(1) + "," + Y(wr).toFixed(1);
+      }).join(" ");
+      s += '<polyline points="' + pts + '" fill="none" stroke=' + CP.line + ' stroke-width="2.2"/>';
+      yKeys.forEach(function (y, i) {
+        var row = yearRows[y];
+        var wr = row[0] ? row[1] / row[0] : 0;
+        s += '<circle cx="' + X(i).toFixed(1) + '" cy="' + Y(wr).toFixed(1) + '" r="3.5" fill=' + CP.line + ' />' +
+          '<text x="' + X(i).toFixed(1) + '" y="' + (TH - 10) + '" text-anchor="middle" font-size="10.5" fill=' + CP.label + ' font-family="Inter,monospace">' + y + "</text>" +
+          '<text x="' + X(i).toFixed(1) + '" y="' + (Y(wr) - 9).toFixed(1) + '" text-anchor="middle" font-size="10" fill=' + CP.onLine + ' font-family="Inter,monospace">' + Math.round(wr * 100) + "%</text>";
+      });
+      s += "</svg>";
+      trendHTML = '<div class="block-note mono" style="margin-top:12px">' + K.esc(a) + " 的大场胜率逐年走势</div>" +
+        '<div class="h2h-trend">' + s + "</div>";
+    }
+
+    $("#summary").innerHTML =
+      '<div class="h2h-vs">' +
+      '<div class="t">' + (teamIcon(a) ? '<img src="' + K.esc(teamIcon(a)) + '" alt="">' : "") + K.esc(a) + "</div>" +
+      '<div class="mid">' + aWin + " : " + bWin + "</div>" +
+      '<div class="t r">' + K.esc(b) + (teamIcon(b) ? '<img src="' + K.esc(teamIcon(b)) + '" alt="">' : "") + "</div></div>" +
+      '<div class="h2h-bar"><span class="a" style="width:' + pctA.toFixed(1) + '%">' + aWin + " 胜</span>" +
+      '<span class="b" style="width:' + (100 - pctA).toFixed(1) + '%">' + bWin + " 胜</span></div>" +
+      '<div class="h2h-kv"><span>大场交锋 <b>' + ms.length + "</b> 次</span>" +
+      "<span>局分 <b>" + aGames + " : " + bGames + "</b></span>" +
+      "<span>最近一次 <b>" + K.esc(ms[0].date) + "</b></span></div>" + trendHTML;
+
+    $("#countNote").textContent = "共 " + ms.length + " 次交锋" + (year ? "（" + year + " 年）" : "");
+    $("#records").innerHTML = ms.map(function (r) {
+      var aIs1 = r.team1 === a;
+      var sa = aIs1 ? r.score1 : r.score2;
+      var sb = aIs1 ? r.score2 : r.score1;
+      var hasDetail = r.hasDetail;
+      var href = "match.html?id=" + encodeURIComponent(r.matchId);
+      return '<div class="h2h-row2">' +
+        '<span class="d">' + K.esc(r.date) + "</span>" +
+        '<span class="meta">' + K.esc(r.leagueName) + (r.stage ? " · " + K.esc(r.stage) : "") + "</span>" +
+        '<span class="score"><span class="' + (sa > sb ? "w" : "") + '">' + sa + "</span> : <span class=\"" +
+        (sb > sa ? "w" : "") + '">' + sb + "</span></span>" +
+        '<a class="go" href="' + href + '">' + (hasDetail ? "复盘 →" : "详情 →") + "</a></div>";
+    }).join("");
+  }
+
+  $("#expBtn").addEventListener("click", function () {
+    var a = $("#selA").value, b = $("#selB").value, year = $("#fYear").value;
+    var ms = meetings(a, b, year);
+    var rows = [["日期", "联赛", "赛段", "对阵", "比分", "胜方", "比赛ID"]];
+    ms.forEach(function (r) {
+      var aIs1 = r.team1 === a;
+      var sa = aIs1 ? r.score1 : r.score2;
+      var sb = aIs1 ? r.score2 : r.score1;
+      rows.push([r.date, r.leagueName, r.stage, a + " vs " + b, sa + ":" + sb, sa > sb ? a : b, r.matchId]);
+    });
+    K.exportCSV("交手_" + a + "_vs_" + b + ".csv", rows);
+  });
+  ["selA", "selB", "fYear"].forEach(function (id) {
+    $("#" + id).addEventListener("change", function () {
+      var url = "h2h.html?a=" + encodeURIComponent($("#selA").value) + "&b=" + encodeURIComponent($("#selB").value);
+      history.replaceState(null, "", url);
+      render();
+    });
+  });
+  render();
+})();
+</script>
+</body>
+</html>

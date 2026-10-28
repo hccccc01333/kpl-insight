@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>对局详情 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="对局详情 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="schedule.html">
+<header id="siteHeader" class="topbar"></header>
+<div id="wrapHero"></div>
+<main class="wrap" id="main" style="margin-top:24px"></main>
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/site_totals.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/replay/index.js?v=85"></script>
+<script src="assets/coverage.js?v=85"></script>
+<script src="assets/replay.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/games/index.js?v=85"></script>
+<script src="assets/equip_icons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  var CP = K.chartPalette();
+  var BID = new URLSearchParams(location.search).get("id") || "";
+
+  function fail(msg, back) {
+    $("#wrapHero").innerHTML = '<header class="page-hero"><div class="wrap">' +
+      '<div class="ph-kicker mono">GAME · 对局详情</div><h1>' + K.esc(msg) + "</h1>" +
+      '<p>对局详情覆盖 2019–2026 全部已完赛对局；请从比赛页或选手页进入。</p>' +
+      '<div class="slide-cta" style="margin-top:18px"><a class="btn primary" href="' + (back || "schedule.html") +
+      '">' + (back ? "返回比赛" : "返回赛程") + "</a></div></div></header>";
+  }
+
+  if (!BID) { fail("缺少对局参数"); return; }
+  /* battle_id 前缀与官方 match_id 不同：全文索引查找 */
+  var MID = "", LG = "";
+  Object.keys(window.KPL_GAME_INDEX || {}).some(function (mid) {
+    var e = KPL_GAME_INDEX[mid];
+    for (var i = 0; i < e.b.length; i++) {
+      if (e.b[i][0] === BID) { MID = mid; LG = e.lg; return true; }
+    }
+    return false;
+  });
+  if (!MID) { fail("未找到该对局"); return; }
+  var sched = (window.KPL_SCHEDULE_ALL || []).filter(function (r) { return r.matchId === MID; })[0] || {};
+
+  var heroIcon = {};
+  ((K.scopeOf("all") || {}).heroes || []).forEach(function (h) { heroIcon[h.name] = h.icon; });
+
+  fetch("assets/games/" + LG + ".json").then(function (r) {
+    if (!r.ok) throw new Error("http " + r.status);
+    return r.json();
+  }).then(function (data) {
+    var g = data[BID];
+    if (!g) { fail("未找到该对局", "match.html?id=" + MID); return; }
+    render(g);
+  }).catch(function () {
+    fail("对局数据加载失败（请通过本地服务器打开站点）");
+  });
+
+  function render(g) {
+    var isLiveG = g.live === 1 || g.win === 0 || g.win == null;
+    var winName = g.win === 1 ? g.t1 : (g.win === 2 ? g.t2 : "");
+    $("#wrapHero").innerHTML = '<header class="page-hero"><div class="wrap">' +
+      '<div class="ph-kicker mono">GAME · ' + K.esc(sched.leagueName || "") +
+      (sched.stage ? " · " + K.esc(sched.stage) : "") + " · " + K.esc(sched.date || "") + " · 第 " + g.seq + " 局</div>" +
+      '<div class="g-score">' +
+      '<div class="g-team ' + (g.win === 1 ? "win" : "") + '">' + (g.i1 ? '<img src="' + K.esc(g.i1) + '" alt="">' : "") +
+      "<span>" + K.esc(g.t1) + "</span><b class='mono'>" + g.k1 + "</b><i>击杀</i></div>" +
+      '<div class="g-mid"><span class="mono">' + g.dur + " 分钟</span><b class='mono'>" +
+      K.signed(g.g1 - g.g2) + "</b><span class='mono' style='color:var(--muted)'>金币差（蓝方视角）</span>" +
+      (isLiveG ? "<em>" + K.liveBadge() + " 已进行 " + g.dur + " 分钟</em>"
+               : "<em>胜方：" + K.esc(winName) + "</em>") + "</div>" +
+      '<div class="g-team r ' + (g.win === 2 ? "win" : "") + '">' + (g.i2 ? '<img src="' + K.esc(g.i2) + '" alt="">' : "") +
+      "<span>" + K.esc(g.t2) + "</span><b class='mono'>" + g.k2 + "</b><i>击杀</i></div></div>" +
+      '<div style="margin-top:14px">' + K.coverageBadges(K.battleCoverageMask(MID, BID)) +
+      '<div class="cov-note">本局可看的内容：亮色=有数据，虚线=官方未提供</div></div>' +
+      '<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">' +
+      '<a class="btn ghost sm" href="match.html?id=' + K.esc(MID) + '">← 整场详情</a>' +
+      '<a class="btn ghost sm" href="bp-studio.html?match=' + encodeURIComponent(MID) + '&amp;g=' + encodeURIComponent(g.seq) + '">赛事 BP 演播室 →</a>' +
+      (g.video ? '<a class="btn primary sm" href="' + K.esc(g.video) + '" target="_blank" rel="noopener">看本局回放 ↗</a>'
+               : '<a class="btn ghost sm" href="https://search.bilibili.com/all?keyword=' +
+                 encodeURIComponent("KPL " + g.t1 + " " + g.t2 + " 第" + g.seq + "局") +
+                 '" target="_blank" rel="noopener">去 B 站找本局 ↗</a>') +
+      "</div></div></header>";
+
+    /* BP */
+    var picks1 = g.bp.filter(function (b) { return b[0] === 1 && b[1] === 1; });
+    var picks2 = g.bp.filter(function (b) { return b[0] === 2 && b[1] === 1; });
+    var bans1 = g.bp.filter(function (b) { return b[0] === 1 && b[1] === 0; });
+    var bans2 = g.bp.filter(function (b) { return b[0] === 2 && b[1] === 0; });
+    function pickChips(list) {
+      return list.map(function (p, i) {
+        var ic = heroIcon[p[2]];
+        return '<span class="bp-pick"><em>' + (i + 1) + '</em>' +
+          (ic ? '<img src="' + K.esc(ic) + '" alt="">' : "") + K.esc(p[2]) + "</span>";
+      }).join("");
+    }
+    function banChips(list) {
+      return list.map(function (p) {
+        var ic = heroIcon[p[2]];
+        return (ic ? '<img src="' + K.esc(ic) + '" alt="" title="禁用 ' + K.esc(p[2]) + '">' : "");
+      }).join("");
+    }
+
+    /* 选手行 */
+    function sideRows(camp, team, win) {
+      return g.players.filter(function (p) { return p.c === camp; }).map(function (p) {
+        var ic = heroIcon[p.h];
+        var equips = (p.eq || []).map(function (n) {
+          var ei = (window.KPL_EQUIP_ICONS || {})[n] || "";
+          return '<span class="g-eq" title="' + K.esc(n) + '">' + (ei ? '<img src="' + K.esc(ei) + '" alt="" loading="lazy">' : "") + "</span>";
+        }).join("");
+        var ava = p.pi ? '<img class="g-ava" src="' + K.esc(p.pi) + '" alt="" loading="lazy">'
+          : '<span class="g-ava ph">' + K.esc(String(p.n).slice(0, 1)) + "</span>";
+        return '<div class="g-prow' + (p.mvp ? " mvp" : "") + '">' +
+          '<a class="g-hero" href="hero.html?id=' + encodeURIComponent(p.h) + '">' +
+          (ic ? '<img src="' + K.esc(ic) + '" alt="">' : "") + "<span>" + K.esc(p.h) + "</span></a>" +
+          '<a class="g-player" href="player.html?id=' + encodeURIComponent(p.n) + '">' + ava +
+          "<span>" + K.esc(p.n) + (p.mvp ? '<em class="mvp-tag">MVP</em>' : "") + "</span></a>" +
+          '<div class="g-kda mono">' + p.k + "/" + p.d + "/" + p.a + "</div>" +
+          '<div class="g-stat"><span class="mono">' + K.fmtInt(p.g) + "</span><small>经济</small></div>" +
+          '<div class="g-stat"><span class="mono">' + K.mpct(p.dmg, 1) + '</span><small>输出</small></div>' +
+          '<div class="g-stat"><span class="mono">' + K.mpct(p.bh, 1) + '</span><small>承受</small></div>' +
+          '<div class="g-kit">' + equips +
+          (p.sai ? '<span class="g-eq sa" title="' + K.esc(p.sa) + '"><img src="' + K.esc(p.sai) + '" alt=""></span>' : "") +
+          "</div></div>";
+      }).join("");
+    }
+
+    var hasReplay = window.KPL_REPLAY && KPL_REPLAY.hasReplay(MID);
+    $("#main").innerHTML =
+      '<div class="block-head"><h2><i></i>复盘工作台</h2><span class="block-note mono">' +
+      (hasReplay ? "先看一句话结论与三个转折 · 需要时再展开逐分钟时间轴"
+                 : "本局没有分钟级快照 · 只有基础比分 / BP / 选手明细") + "</span></div>" +
+      '<div class="panel" style="padding:14px"><div id="replayWorkbench">' +
+      (hasReplay ? "" : '<div class="empty-tip">本局暂无分钟级复盘数据。' +
+        (window.KPL_TOTALS ? "全站 " + KPL_TOTALS.replayBattles + " / " + K.fmtInt(KPL_TOTALS.battles) +
+          " 局有直播胜率；其余只展示赛果、BP 与选手明细。" : "仅有赛果、BP 与选手明细。") + "</div>") + "</div></div>" +
+      '<div class="bp-grid" style="margin-top:18px">' +
+      '<div class="bp-side blue"><div class="hd">' + K.esc(g.t1) + "（蓝方）</div>" +
+      '<div class="bp-picks">' + pickChips(picks1) + "</div>" +
+      '<div class="bp-bans">ban：' + banChips(bans1) + "</div></div>" +
+      '<div class="bp-side red"><div class="hd">' + K.esc(g.t2) + "（红方）</div>" +
+      '<div class="bp-picks">' + pickChips(picks2) + "</div>" +
+      '<div class="bp-bans">ban：' + banChips(bans2) + "</div></div></div>" +
+
+      '<div class="g-teams">' +
+      '<div class="panel g-side"><div class="panel-title">' + K.esc(g.t1) + " 阵容" +
+      (g.win === 1 ? ' <em class="mono" style="color:var(--gold)">胜</em>' : "") + "</div>" + sideRows(1, g.t1, g.win === 1) + "</div>" +
+      '<div class="panel g-side"><div class="panel-title">' + K.esc(g.t2) + " 阵容" +
+      (g.win === 2 ? ' <em class="mono" style="color:var(--gold)">胜</em>' : "") + "</div>" + sideRows(2, g.t2, g.win === 2) + "</div>" +
+      "</div>" +
+      '<div class="panel-foot mono" style="margin-top:12px">数据来源：官方逐局数据 · ' +
+      K.esc(MID) + " 第 " + g.seq + " 局" + (g.video ? "" : "（本局无回放视频）") + "</div>";
+    if (hasReplay) {
+      KPL_REPLAY.mount(document.getElementById("replayWorkbench"), { matchId: MID, battleId: BID });
+    }
+
+    /* 数据曲线（比赛期间采集的指标序列，如已归档） */
+    (function () {
+      var sc = document.createElement("script");
+      sc.src = "assets/live.js?ts=" + Date.now();
+      sc.onload = function () {
+        sc.remove();
+        var L = window.KPL_LIVE || {};
+        var all = (L.history || []).concat(L.matches || []);
+        var h = all.filter(function (x) { return x.battleId === BID; })[0];
+        if (!h || !(h.pts || []).length || h.pts.length < 3) return;
+        renderCurves(h);
+      };
+      sc.onerror = function () { sc.remove(); };
+      document.head.appendChild(sc);
+    })();
+    K.refresh();
+  }
+
+  function renderCurves(h) {
+    var pts = h.pts;
+    var LANES = ["对抗路", "打野", "中路", "发育路", "游走"];
+    // 分路序名单：取自本局的复盘数据包（与 frames[].g 同一份 roster），
+    // 避免按采集顺序把不同位置的选手画在同一张图上。
+    var laneNames = null, curTab = "win";
+    var TABS = [
+      ["win", "胜率"], ["eco", "经济"], ["gd", "经济差 · 预测对照"],
+      ["kill", "击杀"], ["tower", "推塔"], ["player", "选手经济"], ["dmg", "选手输出"]
+    ];
+    var box = document.createElement("div");
+    box.className = "panel";
+    box.style.marginTop = "14px";
+    box.innerHTML = '<div class="panel-title">数据曲线 <em class="mono">比赛期间逐分钟采集 · 模型实时推算</em></div>' +
+      '<div class="seg curve-tabs" id="curveTabs" style="margin:6px 0 8px">' +
+      TABS.map(function (t, i) { return '<button type="button" data-t="' + t[0] + '" class="' + (i === 0 ? "on" : "") + '">' + t[1] + "</button>"; }).join("") +
+      "</div>" +
+      '<div class="live-chart" id="curveChart"></div>' +
+      '<div class="panel-foot mono" id="curveNote"></div>';
+    var main = document.getElementById("main");
+    if (main) main.prepend(box);
+
+    // 预取本局的分路序名单（复盘数据包里的 roster 与 frames 同序），用于同位置对位。
+    // 取不到时 drawLanes 会退回单图并标注"无法做同位置对位"。
+    if (window.KPL_REPLAY && KPL_REPLAY.loadPackage) {
+      KPL_REPLAY.loadPackage(MID, function (pkg) {
+        var bt = null;
+        if (pkg && pkg.battles) {
+          for (var i = 0; i < pkg.battles.length; i++) {
+            if (pkg.battles[i].battleId === BID) { bt = pkg.battles[i]; break; }
+          }
+        }
+        if (bt && bt.names && bt.names.length === 10) laneNames = bt.names;
+        if (laneNames && (curTab === "player" || curTab === "dmg")) draw(curTab);
+      });
+    }
+
+    function draw(id) {
+      var el2 = document.getElementById("curveChart");
+      var note = document.getElementById("curveNote");
+      curTab = id;
+      if (id === "win") {
+        K.lineChart(el2, { height: 280, yMin0: true, yFmt: function (v) { return Math.round(v * 100) + "%"; },
+          series: [{ name: K.esc(h.t1) + " 胜率（模型）", color: CP.mark, fill: true,
+                     pts: pts.map(function (r) { return [r[0], r[1]]; }) }] });
+        note.textContent = "模型对 " + h.t1 + " 的实时胜率推算 · 每分钟一个采样点";
+      } else if (id === "eco") {
+        K.lineChart(el2, { height: 280, yFmt: function (v) { return Math.round(v / 1000) + "k"; },
+          series: [
+            { name: h.t1, color: CP.mark, pts: pts.map(function (r) { return [r[0], r[2]]; }) },
+            { name: h.t2, color: CP.line, pts: pts.map(function (r) { return [r[0], r[3]]; }) }
+          ] });
+        note.textContent = "两队总经济随比赛发展";
+      } else if (id === "gd") {
+        var ser = [{ name: "实际经济差", color: CP.mark, fill: true,
+                     pts: pts.map(function (r) { return [r[0], r[2] - r[3]]; }) }];
+        if ((h.gpred || []).length >= 3) {
+          ser.push({ name: "5 分钟前的预测值", color: CP.label, dash: true, pts: h.gpred });
+        }
+        K.lineChart(el2, { height: 280, yZero: true,
+          yFmt: function (v) { return (v > 0 ? "+" : "") + Math.round(v / 1000) + "k"; }, series: ser });
+        note.textContent = "紫色虚线 = 用 5 分钟前的走势外推出的此刻经济差——与实际曲线越贴合，说明节奏越稳定";
+      } else if (id === "kill") {
+        K.lineChart(el2, { height: 280, yFmt: Math.round, series: [
+          { name: h.t1 + " 击杀", color: CP.mark, pts: pts.map(function (r) { return [r[0], r[4]]; }) },
+          { name: h.t2 + " 击杀", color: CP.line, pts: pts.map(function (r) { return [r[0], r[5]]; }) }
+        ] });
+        note.textContent = "两队累计击杀";
+      } else if (id === "tower") {
+        K.lineChart(el2, { height: 280, yFmt: Math.round, series: [
+          { name: h.t1 + " 推塔", color: CP.mark, pts: pts.map(function (r) { return [r[0], r[6]]; }) },
+          { name: h.t2 + " 推塔", color: CP.line, pts: pts.map(function (r) { return [r[0], r[7]]; }) }
+        ] });
+        note.textContent = "两队累计推塔数";
+      } else if (id === "player" || id === "dmg") {
+        drawLanes(el2, note, id === "player");
+      }
+    }
+
+    /* 选手经济 / 选手输出：按分路拆成 5 张同位置对位小图（small multiples）。
+       有复盘名单时严格按 对抗路→游走 对齐；没有时退回单图并明确标注无法对位。 */
+    function drawLanes(el2, note, isGold) {
+      var valAt = function (i3, r) { return isGold ? (r[12 + i3 * 2] || 0) : (r[12 + i3 * 2 + 1] || 0); };
+      var yf = function (v) { return Math.round(v / 1000) + "k"; };
+      var idxOf = function (nm) {
+        for (var k = 0; k < (h.names || []).length; k++) if (h.names[k] === nm) return k;
+        return -1;
+      };
+      var pairs = null;
+      if (laneNames && laneNames.length === 10) {
+        pairs = [];
+        for (var i = 0; i < 5; i++) {
+          var a = idxOf(laneNames[i]), b = idxOf(laneNames[i + 5]);
+          if (a < 0 || b < 0) { pairs = null; break; }
+          pairs.push({ lane: LANES[i], a: a, b: b });
+        }
+      }
+      var what = isGold ? "个人经济" : "累计输出伤害";
+      if (!pairs) {
+        var C1 = ["#FFFFFF", "#E8A33D", "#D98A2B", "#C47421", "#A85F1A"];
+        var C2 = ["#9DB2CC", "#8AA2BE", "#2E71B0", "#225A94", "#174378"];
+        var ser = [];
+        for (var i2 = 0; i2 < 10; i2++) {
+          (function (i3) {
+            ser.push({
+              name: (h.names && h.names[i3]) || ("P" + (i3 + 1)),
+              color: ((h.pcamp && h.pcamp[i3] === 2) ? C2 : C1)[i3 % 5],
+              pts: pts.map(function (r) { return [r[0], valAt(i3, r)]; }), width: 1.7
+            });
+          })(i2);
+        }
+        K.lineChart(el2, { height: 300, yFmt: yf, series: ser });
+        note.textContent = "10 名选手的" + what + "曲线（金系 = " + h.t1 + "，蓝系 = " + h.t2 +
+          "）· 本局无分钟级复盘名单，无法做同位置对位";
+        return;
+      }
+      el2.innerHTML = '<div class="rp-sm-grid">' + pairs.map(function (pk, i) {
+        return '<div class="rp-sm"><div class="rp-sm-t mono">' + pk.lane + "</div>" +
+          '<div class="rp-sm-c" id="smc' + i + '"></div></div>';
+      }).join("") + "</div>";
+      pairs.forEach(function (pk, i) {
+        K.lineChart(document.getElementById("smc" + i), { height: 200, yFmt: yf, series: [
+          { name: (h.names || [])[pk.a] || "P", color: "#F6C021", width: 2,
+            pts: pts.map(function (r) { return [r[0], valAt(pk.a, r)]; }) },
+          { name: (h.names || [])[pk.b] || "P", color: "#8FC7F0", width: 2,
+            pts: pts.map(function (r) { return [r[0], valAt(pk.b, r)]; }) }
+        ] });
+      });
+      note.textContent = "按分路拆成 5 张同位置对位小图（金 = " + h.t1 + "，蓝 = " + h.t2 +
+        "，顺序 对抗路→游走）· 分路序取自本局复盘名单";
+    }
+    var tabs = document.getElementById("curveTabs");
+    tabs.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      Array.prototype.forEach.call(tabs.children, function (x) { x.classList.toggle("on", x === b); });
+      draw(b.getAttribute("data-t"));
+    });
+    draw("win");
+  }
+})();
+</script>
+</body>
+</html>

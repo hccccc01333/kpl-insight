@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>赛前模拟 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2317181E'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' font-weight='bold' fill='%23F02F55' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<style>
+.sim-verdict{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:center;padding:2px 0 12px}
+.sv-team{min-width:0}
+.sv-team.r{text-align:right}
+.sv-team .nm{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;min-width:0}
+.sv-team.r .nm{flex-direction:row-reverse}
+.sv-team .nm span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sv-team img{width:30px;height:30px;object-fit:contain;flex:none}
+.sv-p{font-size:36px;font-weight:900;font-family:var(--mono);margin-top:3px;line-height:1.1}
+.sv-team.a .sv-p{color:var(--brand)}
+.sv-team .s{font-size:11px;color:var(--muted);margin-top:2px}
+.sv-mid{font-family:var(--mono);font-size:11px;color:var(--faint);text-align:center}
+.sim-split{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--inset);margin:2px 0 14px}
+.sim-split i{display:block;height:100%}
+.sim-split .a{background:var(--brand)}
+.sim-split .b{background:var(--ink2)}
+.model-row{display:grid;grid-template-columns:146px 70px 54px minmax(0,1fr);gap:10px;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.model-row:last-child{border-bottom:none}
+.model-row .mk{font-weight:700;color:var(--ink)}
+.model-row .mp{font-family:var(--mono);font-weight:800;text-align:right}
+.model-row .mw{font-family:var(--mono);color:var(--muted);text-align:right}
+.model-row .mn{color:var(--muted);font-size:11.5px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.model-total{display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;margin-top:4px;
+  border-top:1px solid var(--line2);font-size:12.5px;color:var(--muted)}
+.model-total b{font-family:var(--mono);font-size:20px;color:var(--brand)}
+.sim-context{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.form-chips{display:inline-flex;gap:3px;vertical-align:middle}
+.form-chips i{width:17px;height:17px;border-radius:3px;display:grid;place-items:center;font-size:9px;
+  font-style:normal;font-weight:800}
+.form-chips i.w{background:var(--brand);color:#fff}
+.form-chips i.l{background:var(--inset);color:var(--muted);border:1px solid var(--line)}
+.h2h-line{display:grid;grid-template-columns:62px minmax(0,1fr) 58px;gap:10px;padding:7px 0;
+  border-bottom:1px solid rgba(25,27,35,.06);font-size:12px;color:var(--ink2)}
+.h2h-line:last-child{border-bottom:none}
+.h2h-line .d{font-family:var(--mono);color:var(--faint);font-size:11px}
+.h2h-line .sc{font-family:var(--mono);font-weight:800;text-align:right;color:var(--ink)}
+.ctx-line{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:12.5px;
+  border-bottom:1px solid rgba(25,27,35,.06)}
+.ctx-line:last-child{border-bottom:none}
+.ctx-line span{color:var(--muted)}
+.ctx-line b{color:var(--ink);font-variant-numeric:tabular-nums}
+.bt-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line)}
+.bt-cell{padding:14px 16px 12px 0;border-bottom:1px solid var(--line);border-right:1px solid var(--line);min-width:0}
+.bt-cell:nth-child(4n){border-right:none}
+.bt-cell .k{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt-cell .v{font-size:24px;font-weight:900;margin-top:3px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.bt-cell .s{font-size:11px;color:var(--faint);margin-top:4px}
+.bt-cell.hl .v{color:var(--brand)}
+@media(max-width:860px){.bt-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bt-cell:nth-child(4n){border-right:1px solid var(--line)}.bt-cell:nth-child(2n){border-right:none}}
+@media(max-width:860px){
+  .sim-verdict{grid-template-columns:1fr auto 1fr;gap:8px}
+  .sv-p{font-size:27px}
+  .sv-team .nm{font-size:13px}
+  .sv-team img{width:24px;height:24px}
+  .sim-context{grid-template-columns:1fr}
+  .model-row{grid-template-columns:110px 56px 44px minmax(0,1fr);font-size:12px}
+}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="赛前模拟 · 峡谷有数">
+<meta property="og:description" content="以实力评级判断胜负方向，按赛季滚动校准概率；近期状态、交手、首发与英雄环境作为赛前情报。给出 BO3/BO5/BO7 大场胜率与比分分布。">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="simulator.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">PRE-MATCH · 赛前模拟</div>
+    <h1>赛前胜负与比分模拟</h1>
+    <p>以<b>实力评级</b>判断胜负方向，用按赛季滚动的<b>走步回测校准</b>修正幅度；近期状态、交手、首发与英雄环境作为赛前情报，帮助你理解这个判断。
+      再按 BO 系列赛逐局展开，给出大场胜率、最可能比分与完整比分分布。纯赛前信息，不含未开赛对局数据。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="scopebar" id="scopeBar"></div>
+
+  <div class="sim-grid">
+    <div class="panel sim-controls">
+      <label class="fld"><span>战队 A</span><select id="simA"></select></label>
+      <button class="btn ghost sm" id="simSwap" type="button" style="margin-top:-4px">交换 A / B</button>
+      <label class="fld"><span>战队 B</span><select id="simB"></select></label>
+      <label class="fld"><span>赛制</span><select id="simBo">
+        <option value="3">BO3</option><option value="5" selected>BO5</option><option value="7">BO7</option>
+      </select></label>
+      <div>
+        <div class="param-row">
+          <label class="ck"><input type="checkbox" id="simManual"> 手动设定单局胜率</label>
+          <input type="range" id="simP" min="5" max="95" step="1" value="50" disabled>
+          <span class="pv" id="simPv">50%</span>
+        </div>
+        <div class="panel-foot mono" style="margin-top:6px" id="simSrc">单局胜率由五项因素合成</div>
+      </div>
+    </div>
+
+    <div class="panel sim-out">
+      <div class="sim-verdict">
+        <div class="sv-team a">
+          <div class="nm" id="svAName"></div>
+          <div class="sv-p" id="svAP">—</div>
+          <div class="s" id="svAS"></div>
+        </div>
+        <div class="sv-mid">SERIES</div>
+        <div class="sv-team r">
+          <div class="nm" id="svBName"></div>
+          <div class="sv-p" id="svBP">—</div>
+          <div class="s" id="svBS"></div>
+        </div>
+      </div>
+      <div class="sim-split"><i class="a" id="splitA"></i><i class="b" id="splitB"></i></div>
+      <div class="sim-kpis" id="simKpis"></div>
+      <div class="sim-dist" id="simDist"></div>
+      <div class="sum-badge" id="sumCheck"></div>
+      <div class="panel-foot mono">假设每局相互独立 · 结果仅供参考，非官方预测</div>
+    </div>
+  </div>
+
+  <div class="block-head sub-head" style="margin-top:26px">
+    <h2><i></i>这个胜率怎么来的</h2>
+    <span class="block-note mono">实力评级 → 赛制展开 → 独立校准 · 每一步都可以复算</span>
+  </div>
+  <div class="panel"><div id="modelRows"></div>
+    <div class="model-total"><span>合成并校准后的 <b id="mtA"></b> 单局胜率</span><b id="mtP">—</b></div>
+    <div class="block-note mono" id="modelNote" style="margin-top:8px"></div>
+  </div>
+
+  <div class="block-head sub-head" style="margin-top:26px">
+    <h2><i></i>走步回测</h2>
+    <span class="block-note mono">按时间顺序逐场预测，只用该场之前的数据</span>
+  </div>
+  <div class="panel">
+    <div class="bt-grid" id="btGrid"></div>
+    <div class="block-note mono" id="btNote" style="margin-top:12px"></div>
+  </div>
+
+  <div class="sim-context">
+    <div class="panel">
+      <div class="panel-title">近期状态与赛制经验 <em class="mono">近 10 个系列赛</em></div>
+      <div id="formBox"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">历史交手 <em class="mono">最近 5 次</em></div>
+      <div id="h2hBox"></div>
+    </div>
+  </div>
+
+  <div class="block-head sub-head" style="margin-top:26px"><h2><i></i>概率树</h2>
+    <label class="tree-toggle"><input type="checkbox" id="treeOn"> 展开逐局概率树</label></div>
+  <div class="panel" id="treePanel" style="display:none">
+    <div class="tree-wrap" id="treeBox"></div>
+    <div class="cmp-tip" id="treeTip" style="font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.7"></div>
+  </div>
+
+  <div class="block-head sub-head" style="margin-top:26px"><h2><i></i>可解释结论</h2>
+    <span class="block-note mono">每条结论都可由上方概率直接复算</span></div>
+  <div class="panel"><div class="qa-list" id="qaList"></div></div>
+
+  <div class="block-head sub-head" style="margin-top:26px"><h2><i></i>方法与口径</h2></div>
+  <div class="model-grid">
+    <div class="panel">
+      <ul class="rules">
+        <li><b>胜负判断。</b>以全历史逐场累计的实力评级（Elo，K=40、年度向 1500 回归 25%、不含分差加成）为准：Elo 差映射为单局胜率，再按 BO 赛制逐局展开。状态、交手、首发与英雄环境暂不进入生产概率，只作为赛前情报展示。</li>
+        <li><b>概率校准。</b>原始 Elo 概率在极端区间偏自信；用无截距收缩保留胜负判断、只调整概率幅度。α 按赛季滚动：每个赛季只用此前一个完整赛季（不足则扩展到更早赛季）拟合；2025 年之后的 715 场按走步口径评估。</li>
+        <li><b>战绩平滑。</b>胜负场做拉普拉斯平滑（+2 胜 / +4 场），避免 3 局 3 胜直接推出 100%。</li>
+        <li><b>系列赛推算。</b>按「先赢到半数加一局」逐局展开精确计算，比分概率之和恒为 1（页面实时校验）。</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <ul class="rules">
+        <li><b>概率树。</b>节点是「A 已胜 i 局、B 已胜 j 局」，边为该局谁获胜，节点概率为到达该状态的所有路径之和。</li>
+        <li><b>不使用的东西。</b>不含局内进程、BP、选手临场状态与版本变动；假设每局独立，不模拟手感延续。</li>
+        <li><b>使用建议。</b>样本越大、两队交手越多，参考价值越高；结果不是官方预测，也不构成任何投注建议。</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/deep.js?v=85"></script>
+<script src="assets/lineups.js?v=85"></script>
+<script src="assets/prematch_calib.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+
+  var ALL = window.KPL_SCHEDULE_ALL || [];
+  var DEEP = (window.KPL_DEEP && window.KPL_DEEP.teams) || {};
+  var LINEUPS = window.KPL_LINEUPS || {};
+  var CAL = window.KPL_PRE_CALIB || null;
+  var ALPHA = CAL ? CAL.alpha : 0.5;
+  var selA = $("#simA"), selB = $("#simB"), selBo = $("#simBo");
+  var ckManual = $("#simManual"), rngP = $("#simP"), lblPv = $("#simPv");
+  var byName = {}, SCOPE = "all";
+
+  function logit(p) { p = Math.min(Math.max(p, 1e-4), 1 - 1e-4); return Math.log(p / (1 - p)); }
+  function sig(x) { return 1 / (1 + Math.exp(-x)); }
+  function smooth(w, g) { return (w + 2) / (g + 4); }
+  function comb(n, k) { var r = 1; for (var i = 0; i < k; i++) r = r * (n - i) / (i + 1); return Math.round(r * 1e6) / 1e6; }
+
+  function seriesFrom(a, b, m, p) {
+    if (a >= m) return 1;
+    if (b >= m) return 0;
+    var need = m - a, bneed = m - b, s = 0;
+    for (var k = 0; k < bneed; k++) s += comb(need - 1 + k, k) * Math.pow(p, need) * Math.pow(1 - p, k);
+    return s;
+  }
+  function series(p, bo) { return seriesFrom(0, 0, (bo + 1) / 2, p); }
+  function invertSeries(target, bo) {
+    var lo = 0.01, hi = 0.99;
+    for (var i = 0; i < 60; i++) {
+      var mid = (lo + hi) / 2;
+      if (series(mid, bo) < target) lo = mid; else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+  function scoreLines(p, m) {
+    var q = 1 - p, rows = [];
+    for (var k = 0; k < m; k++) {
+      rows.push({ score: m + "-" + k, win: true, games: m + k, prob: comb(m - 1 + k, k) * Math.pow(p, m) * Math.pow(q, k) });
+      rows.push({ score: k + "-" + m, win: false, games: m + k, prob: comb(m - 1 + k, k) * Math.pow(q, m) * Math.pow(p, k) });
+    }
+    return rows;
+  }
+
+  function fillTeams(id) {
+    var d = K.scopeOf(id);
+    var st = (d.teams || []).filter(function (t) { return t.games >= 10; })
+      .slice().sort(function (a, b) { return b.games - a.games; });
+    if (st.length < 2) st = (d.teams || []).slice(0, 40);
+    byName = {};
+    st.forEach(function (t) { byName[t.team] = t; });
+    var keepA = selA.value, keepB = selB.value;
+    selA.innerHTML = st.map(function (t) { return "<option>" + K.esc(t.team) + "</option>"; }).join("");
+    selB.innerHTML = selA.innerHTML;
+    if (byName[keepA]) selA.value = keepA;
+    if (byName[keepB] && keepB !== selA.value) selB.value = keepB;
+    else if (selB.options.length > 1) selB.selectedIndex = selA.selectedIndex === 0 ? 1 : 0;
+    run();
+  }
+
+  function h2h(a, b) {
+    var rows = ALL.filter(function (r) {
+      return r.done && ((r.team1 === a && r.team2 === b) || (r.team1 === b && r.team2 === a));
+    }).sort(function (x, y) { return (y.date + (y.time || "")).localeCompare(x.date + (x.time || "")); });
+    var wins = 0;
+    rows.forEach(function (r) {
+      var aIs1 = r.team1 === a;
+      if ((r.score1 > r.score2) === aIs1) wins++;
+    });
+    return { n: rows.length, wins: wins, rows: rows.slice(0, 5) };
+  }
+
+  function formStats(t) {
+    var s = String((DEEP[t] || {}).form || "");
+    var w = (s.match(/W/g) || []).length;
+    return { s: s, w: w, n: s.length };
+  }
+
+  function boStats(t, bo) {
+    var d = DEEP[t];
+    if (!d) return null;
+    var rec = bo === 5 ? d.bo5 : (bo === 7 ? d.bo7 : null);
+    if (!rec || !rec.n || rec.n < 5) return null;
+    return { n: rec.n, w: rec.w || 0 };
+  }
+
+  function teamSpec(name) {
+    var st = byName[name] || {};
+    return { name: name, icon: st.icon || "", games: st.games || 0, wins: st.wins || 0 };
+  }
+
+  function formChips(s) {
+    return '<span class="form-chips">' + String(s || "").split("").map(function (c) {
+      return '<i class="' + (c === "W" ? "w" : "l") + '">' + c + "</i>";
+    }).join("") + "</span>";
+  }
+
+  function run() {
+    var a = selA.value, b = selB.value, bo = parseInt(selBo.value, 10), m = (bo + 1) / 2;
+    if (!a || !b) return;
+    if (a === b) {
+      $("#simKpis").innerHTML = '<div class="sim-kpi"><div class="k">提示</div><div class="v" style="font-size:15px;color:var(--red)">战队 A 与 B 不能相同</div></div>';
+      $("#simDist").innerHTML = ""; $("#sumCheck").innerHTML = ""; $("#qaList").innerHTML = "";
+      $("#treeBox").innerHTML = ""; $("#simSrc").textContent = "";
+      $("#svAP").textContent = "—"; $("#svBP").textContent = "—";
+      $("#modelRows").innerHTML = ""; $("#mtP").textContent = "—";
+      return;
+    }
+
+    var manual = ckManual.checked;
+    rngP.disabled = !manual;
+    var da0 = DEEP[a] || {}, db0 = DEEP[b] || {};
+    var p0 = (da0.elo && db0.elo) ? 1 / (1 + Math.pow(10, (db0.elo - da0.elo) / 400)) : 0.5;
+    var ps0 = series(p0, bo);
+    var psCal = CAL ? sig(ALPHA * logit(ps0)) : ps0;
+    var pAuto = invertSeries(psCal, bo);
+    var p = manual ? (parseInt(rngP.value, 10) / 100) : pAuto;
+    p = Math.min(0.95, Math.max(0.05, p));
+    lblPv.textContent = Math.round(p * 100) + "%";
+    $("#simSrc").textContent = manual
+      ? "手动设定单局胜率（跳过实力评级与校准）"
+      : "实力评级 + 概率校准 · 自动单局 p " + K.pct(pAuto);
+
+    var rows = scoreLines(p, m);
+    var sum = rows.reduce(function (acc, r) { return acc + r.prob; }, 0);
+    var ps = manual ? series(p, bo) : psCal;
+    var expGames = rows.reduce(function (acc, r) { return acc + r.games * r.prob; }, 0);
+    var fullProb = rows.filter(function (r) { return r.games === 2 * m - 1; })
+      .reduce(function (acc, r) { return acc + r.prob; }, 0);
+
+    var A = teamSpec(a), B = teamSpec(b);
+    function teamHead(spec) {
+      return (spec.icon ? '<img src="' + K.esc(spec.icon) + '" alt="">' : "") +
+        "<span>" + K.esc(spec.name) + "</span>";
+    }
+    $("#svAName").innerHTML = teamHead(A);
+    $("#svBName").innerHTML = teamHead(B);
+    $("#svAP").textContent = K.pct(ps, 1);
+    $("#svBP").textContent = K.pct(1 - ps, 1);
+    $("#svAS").textContent = "大场胜率 · BO" + bo;
+    $("#svBS").textContent = "大场胜率 · BO" + bo;
+    $("#splitA").style.width = (ps * 100).toFixed(2) + "%";
+    $("#splitB").style.width = ((1 - ps) * 100).toFixed(2) + "%";
+
+    var srt = rows.slice().sort(function (x, y) { return y.prob - x.prob; });
+    var top = srt[0];
+    var topScore = top.win ? top.score : top.score.split("-").reverse().join("-");
+    $("#simKpis").innerHTML =
+      '<div class="sim-kpi"><div class="k">' + K.esc(a) + ' 单局 p</div><div class="v">' + K.pct(p) +
+      '</div><div class="s">' + (manual ? "手动设定" : "实力评级 + 校准") + '</div></div>' +
+      '<div class="sim-kpi hl"><div class="k">最可能比分</div><div class="v">' + topScore +
+      '</div><div class="s">概率 ' + K.pct(top.prob) + " · 平均 " + expGames.toFixed(2) + " 局</div></div>" +
+      '<div class="sim-kpi"><div class="k">打满概率</div><div class="v">' + K.pct(fullProb) +
+      '</div><div class="s">' + (m === 1 ? "BO1 无决胜局" : "比分 " + m + "-" + (m - 1) + " 或 " + (m - 1) + "-" + m) + '</div></div>';
+
+    var mx = srt[0].prob;
+    $("#simDist").innerHTML = srt.map(function (r) {
+      return '<div class="sd-row ' + (r.win ? "win" : "lose") + '"><span class="lab">' + r.score + '</span>' +
+        '<span class="bar"><i style="width:' + (r.prob / mx * 100).toFixed(1) + '%"></i></span>' +
+        '<span class="pct">' + K.pct(r.prob) + "</span></div>";
+    }).join("");
+
+    var okSum = Math.abs(sum - 1) < 5e-4;
+    $("#sumCheck").className = "sum-badge" + (okSum ? " ok" : "");
+    $("#sumCheck").innerHTML = '<span class="s">' + (okSum ? "✓" : "!") + '</span>' +
+      '<span>全部比分概率合计 = <b style="font-family:var(--mono)">' + (sum * 100).toFixed(4) + '%</b>' +
+      ' · ' + (okSum ? "校验通过（= 100%）" : "校验异常") + "</span>" +
+      '<span style="margin-left:auto;color:var(--muted)">局分条数 ' + rows.length + '</span>';
+
+    function chainRow(k, v, tag, note, hl) {
+      return '<div class="model-row' + (hl ? " hl" : "") + '"><span class="mk">' + K.esc(k) + "</span>" +
+        '<span class="mp">' + v + "</span>" +
+        '<span class="mw">' + K.esc(tag) + "</span>" +
+        '<span class="mn">' + K.esc(note) + "</span></div>";
+    }
+    $("#modelRows").innerHTML =
+      chainRow("实力评级", K.pct(p0), "单局 p", "Elo " + (da0.elo || "—") + " vs " + (db0.elo || "—") +
+        " · 全站第 " + (da0.rank || "—") + " / " + (db0.rank || "—")) +
+      chainRow("赛制展开", K.pct(ps0), "BO" + bo, "按先赢 " + m + " 局逐局展开") +
+      chainRow("独立校准", K.pct(psCal), "α=" + ALPHA, "保持胜负判断不变，只收缩概率幅度", true) +
+      chainRow("校准后单局", K.pct(pAuto), "比分用", "由校准后的大场概率反推，保证比分分布自洽");
+    $("#mtA").textContent = a;
+    $("#mtP").textContent = K.pct(pAuto);
+    $("#modelNote").textContent = CAL
+      ? "α 按赛季滚动（当前 " + (CAL.currentSeason || "—") + " 赛季 α=" +
+        Number(CAL.alpha).toFixed(2) + "，只用该赛季之前的完整赛季拟合）；" +
+        CAL.test.n + " 场走步测试：命中率 " + K.pct(CAL.test.acc, 1) +
+        "，Brier " + CAL.test.brier.toFixed(3) +
+        "（原始 Elo " + CAL.test.rawBrier.toFixed(3) + "）。"
+      : "校准参数尚未生成。";
+
+    if (CAL) {
+      var t = CAL.test;
+      $("#btGrid").innerHTML =
+        '<div class="bt-cell"><div class="k">α 训练 / 测试</div><div class="v">' + CAL.trainN + " / " + t.n +
+          '</div><div class="s">α 只用此前完整赛季 · 2025+ 走步测试</div></div>' +
+        '<div class="bt-cell"><div class="k">测试命中率</div><div class="v">' + K.pct(t.acc, 1) +
+          '</div><div class="s">原始 Elo ' + K.pct(t.rawAcc, 1) + " · 校准不改变胜负判断</div></div>" +
+        '<div class="bt-cell hl"><div class="k">测试 Brier</div><div class="v">' + t.brier.toFixed(3) +
+          '</div><div class="s">原始 Elo ' + t.rawBrier.toFixed(3) + " · 越低越好</div></div>" +
+        '<div class="bt-cell"><div class="k">测试 LogLoss</div><div class="v">' + t.logloss.toFixed(3) +
+          '</div><div class="s">概率越接近真实频率，值越低</div></div>';
+      $("#btNote").textContent = "走步回测按时间顺序逐场预测，只用该场之前的比赛更新实力评级；" +
+        "每个赛季的 α 只用此前一个完整赛季（不足则扩展到更早赛季）拟合。" +
+        "实力评级采用 K=40、年度回归 25%、不含分差加成；最终只保留实力评级并做无截距校准：" +
+        "命中率不变，Brier 从 " + t.rawBrier.toFixed(3) + " 降到 " + t.brier.toFixed(3) +
+        "。生产概率不引入状态、交手、首发与英雄环境，这些只作为赛前情报展示。";
+    }
+
+    var da = DEEP[a] || {}, db = DEEP[b] || {};
+    var ba = boStats(a, bo), bb = boStats(b, bo);
+    $("#formBox").innerHTML =
+      '<div class="ctx-line"><span>' + K.esc(a) + "</span><span>" + formChips(da.form || "") + "</span></div>" +
+      '<div class="ctx-line"><span>' + K.esc(b) + "</span><span>" + formChips(db.form || "") + "</span></div>" +
+      '<div class="ctx-line"><span>实力评级 / 排名</span><b>' + (da.elo || "—") + " / " + (da.rank || "—") +
+        " · " + (db.elo || "—") + " / " + (db.rank || "—") + "</b></div>" +
+      '<div class="ctx-line"><span>BO' + bo + ' 战绩</span><b>' +
+        (ba ? ba.w + "-" + (ba.n - ba.w) + "（" + ba.n + " 场）" : "样本不足") + " · " +
+        (bb ? bb.w + "-" + (bb.n - bb.w) + "（" + bb.n + " 场）" : "样本不足") + "</b></div>" +
+      '<div class="ctx-line"><span>最近首发</span><b>' +
+        (LINEUPS[a] && LINEUPS[a].strength != null ? K.esc(LINEUPS[a].names.join(" / ")) : "暂无") + "</b></div>" +
+      '<div class="ctx-line"><span>英雄环境</span><b>' +
+        (LINEUPS[a] && LINEUPS[a].heroComfort != null ? LINEUPS[a].heroComfort.toFixed(0) : "—") + " / " +
+        (LINEUPS[b] && LINEUPS[b].heroComfort != null ? LINEUPS[b].heroComfort.toFixed(0) : "—") +
+        "（环境舒适度，0–100）</b></div>";
+
+    var h = h2h(a, b);
+    $("#h2hBox").innerHTML = h.rows.length ? h.rows.map(function (r) {
+      var aScore = r.team1 === a ? r.score1 : r.score2;
+      var bScore = r.team1 === a ? r.score2 : r.score1;
+      return '<div class="h2h-line"><span class="d">' + K.esc(String(r.date).slice(5)) + "</span>" +
+        "<span>" + K.esc(r.team1) + " vs " + K.esc(r.team2) + "</span>" +
+        '<span class="sc">' + aScore + " : " + bScore + "</span></div>";
+    }).join("") : '<div class="empty-tip" style="padding:20px">两队暂无交手记录</div>';
+
+    var firstWin = seriesFrom(1, 0, m, p), leftWin = seriesFrom(0, 1, m, p);
+    var up = series(Math.min(0.95, p + 0.05), bo), down = series(Math.max(0.05, p - 0.05), bo);
+    var decA = da.decN ? da.decW / da.decN : null;
+    var decB = db.decN ? db.decW / db.decN : null;
+    var qa = [
+      ["01", "最可能的比分是 <b>" + topScore + "</b>（" + (top.win ? K.esc(a) : K.esc(b)) + " 胜），概率 <b>" +
+        K.pct(top.prob) + "</b>；平均会打 <b>" + expGames.toFixed(2) + "</b> 局。"],
+      ["02", K.esc(a) + " 拿下大场的概率 <b>" + K.pct(ps) + "</b>，" + K.esc(b) + " 为 <b>" + K.pct(1 - ps) + "</b>。"],
+      ["03", "打满决胜局的概率 <b>" + K.pct(fullProb) + "</b>；" +
+        (decA != null && decB != null
+          ? "历史上 " + K.esc(a) + " 的决胜局胜率 " + K.pct(decA, 0) + "（" + da.decN + " 场），" +
+            K.esc(b) + " 为 " + K.pct(decB, 0) + "（" + db.decN + " 场）。"
+          : "决胜局历史样本不足，不做额外修正。")],
+      ["04", "第 1 局若 " + K.esc(a) + " 获胜，大场概率升至 <b>" + K.pct(firstWin) + "</b>；若失利降至 <b>" +
+        K.pct(leftWin) + "</b>（初值 " + K.pct(ps) + "）。"],
+      ["05", "灵敏度：单局胜率变动 ±5 个百分点，大场胜率约在 <b>" + K.pct(down) + " ~ " + K.pct(up) + "</b> 之间。"]
+    ];
+    $("#qaList").innerHTML = qa.map(function (x) {
+      return '<div class="qa-item"><span class="q">' + x[0] + '</span><span>' + x[1] + "</span></div>";
+    }).join("");
+
+    if ($("#treeOn").checked) {
+      $("#treeBox").innerHTML = treeSVG(p, m);
+      $("#treeTip").textContent = "节点「i-j」= " + a + " 已胜 i 局、" + b + " 已胜 j 局；红色边 = " +
+        a + " 拿下该局，深灰边 = " + b + " 拿下该局，边越粗概率越大。节点上方百分比是从开局走到该状态的概率之和。";
+    }
+  }
+
+  function treeSVG(p, m) {
+    var CP = K.chartPalette();
+    var states = {};
+    (function walk(i, j, pr) {
+      var k = i + "-" + j;
+      if (!states[k]) states[k] = { i: i, j: j, prob: 0, lvl: i + j, term: i === m || j === m };
+      states[k].prob += pr;
+      if (i === m || j === m) return;
+      walk(i + 1, j, pr * p);
+      walk(i, j + 1, pr * (1 - p));
+    })(0, 0, 1);
+
+    var levels = {};
+    Object.keys(states).forEach(function (k) {
+      var st = states[k];
+      (levels[st.lvl] || (levels[st.lvl] = [])).push(k);
+    });
+    Object.keys(levels).forEach(function (L) {
+      levels[L].sort(function (x, y) { return states[x].i - states[y].i; });
+    });
+    var maxLvl = 2 * m - 1, maxN = 1;
+    Object.keys(levels).forEach(function (L) { maxN = Math.max(maxN, levels[L].length); });
+
+    var W = 760, H = Math.max(260, maxN * 54 + 40), PL = 34, PR = 34, PT = 22, PB = 30;
+    var colW = (W - PL - PR) / maxLvl;
+    var X = function (lvl) { return PL + lvl * colW; };
+    var Y = function (lvl, idx, cnt) {
+      var usable = H - PT - PB;
+      return PT + (idx + 0.5) * (usable / cnt);
+    };
+    function pos(k) {
+      var st = states[k];
+      var arr = levels[st.lvl];
+      return [X(st.lvl), Y(st.lvl, arr.indexOf(k), arr.length)];
+    }
+    var s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="大场概率树">';
+    Object.keys(states).forEach(function (k) {
+      var st = states[k];
+      if (st.term) return;
+      var from = pos(k);
+      [["p", st.i + 1, st.j], ["q", st.i, st.j + 1]].forEach(function (e) {
+        var ck = e[1] + "-" + e[2];
+        if (!states[ck]) return;
+        var to = pos(ck);
+        var col = e[0] === "p" ? CP.mark : CP.onLine;
+        var width = (0.8 + 3 * states[ck].prob).toFixed(2);
+        s += '<line x1="' + from[0].toFixed(1) + '" y1="' + from[1].toFixed(1) + '" x2="' + to[0].toFixed(1) +
+          '" y2="' + to[1].toFixed(1) + '" stroke="' + col + '" stroke-opacity=".4" stroke-width="' + width + '"/>';
+      });
+    });
+    Object.keys(states).forEach(function (k) {
+      var st = states[k], xy = pos(k);
+      var r = st.term ? 15 : 11;
+      var fill = st.term ? (st.i === m ? "rgba(240,47,85,.14)" : "rgba(25,27,35,.05)") : "#FFFFFF";
+      var stroke = st.term ? (st.i === m ? CP.mark : CP.onLine) : CP.grid;
+      s += '<circle cx="' + xy[0].toFixed(1) + '" cy="' + xy[1].toFixed(1) + '" r="' + r +
+        '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.4"/>';
+      s += '<text x="' + xy[0].toFixed(1) + '" y="' + (xy[1] + 3.4).toFixed(1) +
+        '" text-anchor="middle" font-size="10" fill="' + CP.label + '" font-family="Inter,monospace">' + st.i + "-" + st.j + "</text>";
+      s += '<text x="' + xy[0].toFixed(1) + '" y="' + (xy[1] - r - 4).toFixed(1) +
+        '" text-anchor="middle" font-size="9.5" fill="' + CP.label + '" font-family="Inter,monospace">' + K.pct(st.prob) + "</text>";
+    });
+    s += "</svg>";
+    return s;
+  }
+
+  selA.addEventListener("change", run);
+  selB.addEventListener("change", run);
+  selBo.addEventListener("change", run);
+  ckManual.addEventListener("change", run);
+  rngP.addEventListener("input", run);
+  $("#simSwap").addEventListener("click", function () {
+    var a = selA.value; selA.value = selB.value; selB.value = a; run();
+  });
+  $("#treeOn").addEventListener("change", function () {
+    $("#treePanel").style.display = this.checked ? "" : "none";
+    run();
+  });
+
+  SCOPE = K.scopeBar("#scopeBar", function (id) { SCOPE = id; fillTeams(id); });
+  fillTeams(SCOPE);
+  K.refresh();
+})();
+</script>
+</body>
+</html>

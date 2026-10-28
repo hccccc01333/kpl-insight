@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>教练任期与 BP 指纹 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="教练任期与 BP 指纹 · 峡谷有数">
+<meta property="og:description" content="把教练任期、大场/小局赛果和完整 20 手 BP 的选禁偏好放在一张档案里；来源与置信度、任期边界和未归属样本全部可见。">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="coach.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">COACH · 任期与 BP 指纹</div>
+    <h1>教练任期与 BP 指纹</h1>
+    <p>把教练任期、战队赛果和完整 BP 的选禁偏好放在一张档案里：先看<b>大场 / 小局</b>，再看<b>完整 20 手 BP</b>的选择集中度、联赛 Lift、禁用资源与组合。风格不等于效果，任期只是关联，不作换帅因果。</p>
+    <p class="mono" style="font-size:12px;opacity:.78;margin-top:10px">来源：Liquipedia 赛季名单（社区整理，非官方任免公告）。只纳入赛季内主教练唯一、来源可追溯的队-赛季；中途换帅 / 角色不明确不进入 BP 归属。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="panel coach-controls">
+    <label class="fld"><span>教练</span><select id="coachSelect"></select></label>
+    <label class="fld"><span>任期</span><select id="tenureSelect"></select></label>
+    <div class="coach-meta mono" id="coachMeta"></div>
+  </div>
+
+  <div id="coachSummary" class="coach-summary"></div>
+  <div id="coachCareer" class="coach-career-row"></div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="panel-title">来源与置信 <em class="mono">先看边界，再看数字</em></div>
+    <div id="coachSource"></div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="panel-title">BP 指纹 <em class="mono">完整 20 手 · 选用与禁用分离</em></div>
+    <div id="coachFingerprint"></div>
+  </div>
+
+  <div class="coach-two">
+    <div class="panel">
+      <div class="panel-title">己方禁用 Top <em class="mono">该队主动 Ban</em></div>
+      <div id="coachBans"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">对手禁用 Top <em class="mono">面对该队时 Ban</em></div>
+      <div id="coachBansAgainst"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="panel-title">双人组合 <em class="mono">同队同局 · 只描述共现</em></div>
+    <div id="coachCombos"></div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="panel-title">教练任期档案 <em class="mono">同教练换队 / 换赛季分开</em></div>
+    <div id="coachTenures"></div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="panel-title" id="coachEvidenceTitle">BP 证据</div>
+    <div class="coach-evidence-wrap"><table id="coachEvidenceTable"></table></div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="panel-title">覆盖、来源与边界</div>
+    <div id="coachCoverage"></div>
+    <div class="block-note" style="margin-top:10px">
+      1. 任期按赛事起止日期，来源为 Liquipedia 赛季名单；当前为社区整理，不是官方任免公告，置信度标为「中 / 待官方核验」；<br>
+      2. 只纳入赛季内主教练唯一、无记录变更的 63 个队-赛季；中途换帅、角色不明确或无主教练的 9 个队-赛季不进入 BP 归属，明细见上方；<br>
+      3. 大场 / 小局胜率来自站内逐局赛果；BP 指纹只使用完整 20 手 BP 局，选用与禁用分开，禁用不进入英雄胜率分母；<br>
+      4. 教练名称为 Liquipedia 常用 handle，不冒充官方全名；当前赛季不能回填往年赛果；<br>
+      5. 同一教练换队 / 换赛季按任期分开，不把多个角色当作独立胜利累加；只展示任期关联，不宣称换帅导致胜率提高；<br>
+      6. 当前覆盖 2025 春、2025 夏、2026 春、2026 夏；2016–2024 缺完整 BP 或任期来源，未混入。
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/coach_data.js?v=20261027e"></script>
+<script src="assets/coach_app.js?v=20261027e"></script>
+</body>
+</html>

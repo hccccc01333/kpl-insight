@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>选手对比 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="选手对比 · 峡谷有数">
+<meta property="og:description" content="把 2–4 名选手放在一起对比：KDA、胜率、MVP 率、参团率与输出占比。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="compare-player.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">COMPARE · 选手对比</div>
+    <h1>选手对比</h1>
+    <p>默认取<b>当前数据范围内出场达标（≥ 8 局）的前 3 名选手</b>放在一起，打开即可看结论，换对象在「高级条件」里改。
+      雷达默认按<b>同位置分位</b>归一化（每名选手只和同位置选手比，越靠外越强），虚线为同位置中位 P50；可切「跨位置」看全选手口径。选择「位置」后，候选、分位与基准都只在该位置内计算。
+      表格里的 KDA / 输出仍是原始值，跨位置不可直接比；要按分路看整体，用
+      <a href="compare-lane.html" style="color:var(--gold);font-weight:700">「位置对比」</a>。
+      想看战队 / 英雄？用 <a href="compare-team.html" style="color:var(--gold);font-weight:700">「战队对比」</a>
+      / <a href="compare.html" style="color:var(--gold);font-weight:700">「英雄对比」</a>。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="scopebar" id="scopeBar"></div>
+
+  <div class="filterbar">
+    <label class="fld"><span>位置</span>
+      <select id="posFilter">
+        <option value="all">全部位置</option>
+        <option>对抗路</option>
+        <option>打野</option>
+        <option>中路</option>
+        <option>发育路</option>
+        <option>游走</option>
+      </select>
+    </label>
+    <label class="fld"><span>分位口径</span>
+      <select id="posNorm">
+        <option value="pos" selected>同位置</option>
+        <option value="all">跨位置</option>
+      </select>
+    </label>
+    <div class="pickers" id="pickers"></div>
+  </div>
+
+  <div class="cmp-grid">
+    <div class="cmp-radar">
+      <div id="radar"></div>
+      <div class="cmp-legend" id="legend"></div>
+    </div>
+    <div class="cmp-table">
+      <table id="cmpTable"></table>
+      <div class="cmp-tip" id="cmpTip"></div>
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/share.js?v=85"></script>
+<script src="assets/compare.js?v=20261026f"></script>
+<script>
+KPL_COMPARE.init("player");
+SHARE.mount(document.querySelector(".filterbar"), KPL_COMPARE.spec, "kpl-compare-player.png");
+</script>
+</body>
+</html>

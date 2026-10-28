@@ -45,7 +45,7 @@ from kpl_insight.models.display import (  # noqa: E402
     prior_weight,
 )
 
-SITE = Path(os.environ.get("KPL_SITE_DIR", str(PROJECT_ROOT / "output" / "site"))).expanduser().resolve()
+SITE = Path(os.environ.get("KPL_SITE_DIR") or Path(__file__).resolve().parents[1] / "frontend").expanduser().resolve()
 OUT = SITE / "assets" / "live.js"
 PRIOR_PATH = PROJECT_ROOT / "data" / "realtime" / "prematch_priors.json"
 _MODEL = load_model()

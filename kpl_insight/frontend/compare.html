@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英雄对比 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="英雄对比 · 峡谷有数">
+<meta property="og:description" content="把 2–4 个英雄放在一起对比：胜率、选用率、禁用率、输出、承伤与 KDA，并看多年份趋势。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="compare.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">COMPARE · 英雄对比</div>
+    <h1>英雄对比</h1>
+    <p>默认把<b>当前数据范围内出场最多的 3 个英雄</b>放在一起，下方即刻给出雷达与原始数字；想换对象就在「高级条件」里改。
+      雷达按<b>当前范围内全部合格英雄的分位</b>归一化（越靠外越强），虚线为加权范围均值。也可切「趋势视图」看某几个英雄逐年胜率 / 禁用率。
+      想看战队？用 <a href="compare-team.html" style="color:var(--gold);font-weight:700">「战队对比」</a>；
+      想看选手或分路？用 <a href="compare-player.html" style="color:var(--gold);font-weight:700">「选手对比」</a>
+      / <a href="compare-lane.html" style="color:var(--gold);font-weight:700">「位置对比」</a>；
+      看两个赛段之间的变化？用 <a href="stage.html" style="color:var(--gold);font-weight:700">「赛段对比」</a>。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="scopebar" id="scopeBar"></div>
+
+  <div class="filterbar">
+    <label class="fld" id="trendWrap"><span>视图</span>
+      <label class="wb-toggle"><input type="checkbox" id="trendToggle"> 趋势视图（逐年）</label>
+    </label>
+    <label class="fld" id="metricWrap" style="display:none"><span>趋势指标</span>
+      <select id="trendMetric">
+        <option value="wr" selected>胜率</option>
+        <option value="ban">禁用率</option>
+      </select>
+    </label>
+    <div class="pickers" id="pickers"></div>
+  </div>
+
+  <div class="cmp-grid">
+    <div class="cmp-radar">
+      <div id="radar"></div>
+      <div class="cmp-legend" id="legend"></div>
+    </div>
+    <div class="cmp-table">
+      <table id="cmpTable"></table>
+      <div class="cmp-tip" id="cmpTip"></div>
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/share.js?v=85"></script>
+<script src="assets/compare.js?v=20261026f"></script>
+<script>
+KPL_COMPARE.init("hero");
+SHARE.mount(document.querySelector(".filterbar"), KPL_COMPARE.spec, "kpl-compare-hero.png");
+</script>
+</body>
+</html>

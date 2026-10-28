@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>战队 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="战队 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="teams.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">TEAMS · 战队</div>
+    <h1>战队战力榜</h1>
+    <p>2019–2026 全部战队的<b>多维战力分</b>（对手强度校正胜率 / 局分优势 / 经济 / 对抗 / 推进 / 资源 / 稳定性），
+      不是单一胜率排序。可用上方「数据范围」切换年份或单个赛事，战力分与能力雷达都会按所选基准重算；
+      想看两队的历史恩怨，直接用
+      <a href="h2h.html" style="color:var(--gold);font-weight:700">「交手记录」</a> 对起来查。</p>
+    <div class="ph-meta mono">
+      <span>战队 <b id="tCount">—</b></span><i>/</i>
+      <span>范围对局 <b id="tGames">—</b></span><i>/</i>
+      <span>数据时钟 <b id="genAt">—</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:22px">
+  <section class="block" style="margin-top:0">
+    <div class="block-head">
+      <h2><i></i>冠军墙</h2>
+      <span class="block-note mono">历届决赛真实结果（冠军 / 亚军 / 大比分 / 日期，点击进该场复盘）</span>
+    </div>
+    <div class="champ-strip" id="champStrip"></div>
+  </section>
+  <div class="scopebar" id="scopeBar"></div>
+  <div class="brief" id="brief"></div>
+  <div class="filterbar">
+    <label class="fld"><span>最少场次</span>
+      <select id="fMin">
+        <option value="0" selected>不限（全部展示）</option>
+        <option value="30">≥ 30 局</option>
+        <option value="50">≥ 50 局</option>
+        <option value="200">≥ 200 局</option>
+      </select>
+    </label>
+    <span class="block-note mono" id="countNote"></span>
+    <span class="block-note mono" id="srcNote"></span>
+    <button class="btn ghost sm" id="expBtn" type="button">导出 CSV</button>
+  </div>
+  <div class="team-grid" id="teamGrid"></div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/power.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  var P = window.KPL_POWER || { scopes: {}, champions: [], meta: {} };
+  K.init();
+  $("#genAt").textContent = D.generatedAt;
+
+  var curScope = "all";
+  var DIMS = [["wr", "胜率"], ["mm", "局分"], ["gold", "经济"], ["kill", "对抗"], ["tower", "推进"], ["res", "资源"]];
+
+  function powerScope(id) { return P.scopes[id] || { n: 0, threshold: { g: 0, m: 0 }, teams: [] }; }
+
+  function membersFor(scopeData, team) {
+    return (scopeData.players || []).filter(function (p) { return p.team === team; })
+      .sort(function (a, b) { return b.games - a.games; }).slice(0, 8);
+  }
+  function wilson(w, n) {
+    if (!n) return [0, 0];
+    var z = 1.96, p = w / n, d = 1 + z * z / n;
+    var c = p + z * z / (2 * n);
+    var m = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n));
+    return [Math.max(0, (c - m) / d), Math.min(1, (c + m) / d)];
+  }
+
+  /* 冠军墙：真实决赛（冠军 / 亚军 / 大比分 / 日期 / 该场链接），未完赛显示当前战力领先方 */
+  (function () {
+    var icons = {};
+    powerScope("all").teams.forEach(function (t) { if (t.t) icons[t.t] = t.ic; });
+    document.getElementById("champStrip").innerHTML = (P.champions || []).map(function (c) {
+      var ic = icons[c.champion] || icons[c.leader] || "";
+      if (c.finished) {
+        return '<a class="champ" href="match.html?id=' + encodeURIComponent(c.matchId) + '" title="' +
+          K.esc(c.name) + " · " + K.esc(c.stage) + '">' +
+          (ic ? '<img src="' + K.esc(ic) + '" alt="" loading="lazy">' : "") +
+          "<div><b>" + K.esc(c.champion) + "</b><span>" + K.esc(c.name) + " · <b>" + c.s1 + ":" + c.s2 + "</b> vs " +
+          K.esc(c.runner) + " · " + K.esc(String(c.date).slice(5)) + "</span></div></a>";
+      }
+      return '<a class="champ pending" href="schedule.html" title="' + K.esc(c.name) + '">' +
+        (ic ? '<img src="' + K.esc(ic) + '" alt="" loading="lazy">' : "") +
+        "<div><b>" + K.esc(c.leader || "待定") + ' <em class="mono">领先中</em></b><span>' +
+        K.esc(c.name) + " · 进行中</span></div></a>";
+    }).join("") || '<div class="empty-tip">暂无冠军数据</div>';
+  })();
+
+  function bars(r) {
+    return '<div class="pwbars">' + DIMS.map(function (d, i) {
+      var v = r[i];
+      return '<div class="pwbar"><span class="pk">' + d[1] + '</span>' +
+        '<span class="pb"><i style="width:' + v + '%"></i></span>' +
+        '<span class="pv mono">' + v + "</span></div>";
+    }).join("") + "</div>";
+  }
+
+  function render() {
+    var sc = powerScope(curScope);
+    var src = K.scopeOf(curScope) || {};
+    var min = parseInt($("#fMin").value, 10) || 0;
+    var teams = sc.teams.filter(function (t) { return t.g >= min; });
+    var scored = teams.filter(function (t) { return t.score !== undefined; });
+    var unscored = teams.filter(function (t) { return t.score === undefined; });
+
+    $("#tCount").textContent = teams.length;
+    $("#tGames").textContent = K.fmtInt(teams.reduce(function (a, t) { return a + t.g; }, 0));
+    $("#countNote").textContent = "共 " + teams.length + " 支战队 · 已评级 " + scored.length + " 支（" + K.scopeName(curScope) + "）";
+    $("#srcNote").textContent = "基准 " + K.scopeName(curScope) + " · 门槛 ≥" + sc.threshold.g + " 局 / ≥" +
+      sc.threshold.m + " 大场 · " + (P.meta.algorithmVersion || "power-v1");
+
+    var rank = 0;
+    $("#teamGrid").innerHTML = teams.map(function (t) {
+      var isScored = t.score !== undefined;
+      rank = isScored ? rank + 1 : rank;
+      var tier = K.tierOf(t.wr);
+      var ci = wilson(t.gw, t.g);
+      var members = membersFor(src, t.t).map(function (m) {
+        return '<a href="players.html?q=' + encodeURIComponent(m.name) + '">' + K.esc(m.name) +
+          '<span class="w">' + m.games + "局 " + K.pct(m.wr, 0) + "</span></a>";
+      }).join("");
+      var rk = isScored ? rank : "—";
+      var cls = isScored && rank <= 3 ? " r" + rank : "";
+      return '<div class="tcard reveal">' +
+        '<div class="top"><span class="rk' + cls + '">' + rk + "</span>" +
+        (t.ic ? '<img class="ic" src="' + K.esc(t.ic) + '" alt="" loading="lazy">' : "") +
+        '<div><div class="nm"><a href="team.html?id=' + encodeURIComponent(t.t) + '" style="color:inherit">' +
+        K.esc(t.t) + "</a></div>" + '<div class="rec">大场 ' + t.mw + "-" + t.ml +
+        " · " + K.fmtInt(t.g) + " 局</div></div>" +
+        '<span class="tier ' + tier + '" style="margin-left:auto">' + tier + "</span></div>" +
+        (isScored
+          ? '<div class="pw"><span class="pwl">多维战力分</span><b>' + t.score + "</b>" +
+            '<span class="pwv mono">基准 ' + K.esc(K.scopeName(curScope)) + "</span></div>" + bars(t.r)
+          : '<div class="pw low"><span class="pwl">多维战力分</span><b>—</b>' +
+            '<span class="pwv mono">样本不足（＜' + sc.threshold.g + " 局）</span></div>") +
+        '<div class="nums">' +
+        '<div class="num-cell"><div class="k">单局胜率</div><div class="v">' + K.pct(t.wr) + "</div>" +
+        '<div class="s mono">95% ' + K.pct(ci[0], 0) + "–" + K.pct(ci[1], 0) + "</div></div>" +
+        '<div class="num-cell"><div class="k">场均金差</div><div class="v">' + K.signed(t.gold) + "</div>" +
+        '<div class="s mono">校正胜率 ' + K.pct(t.adjWR) + "</div></div>" +
+        '<div class="num-cell"><div class="k">场均推塔差</div><div class="v">' + K.signed(t.tower, 1) + "</div>" +
+        '<div class="s mono">击杀差 ' + K.signed(t.kill, 1) + "</div></div>" +
+        "</div>" +
+        '<details><summary>阵容名单</summary>' +
+        (members ? '<div class="members">' + members + "</div>"
+                 : '<div class="block-note mono" style="margin-top:8px">该范围暂无选手明细</div>') +
+        "</details></div>";
+    }).join("");
+
+    /* 数据简报 */
+    if (scored.length) {
+      var top = scored[0];
+      var bestGold = scored.slice().sort(function (a, b) { return b.gold - a.gold; })[0];
+      var bestRes = scored.slice().sort(function (a, b) { return b.res - a.res; })[0];
+      K.brief("#brief", "当前范围共 <b>" + teams.length + "</b> 支战队、<b>" + K.fmtInt(teams.reduce(function (a, t) { return a + t.g; }, 0)) +
+        "</b> 局比赛，<b>" + scored.length + "</b> 支达到门槛进入评分。" + K.scopeName(curScope) +
+        "战力分最高的是 <b>" + K.esc(top.t) + "</b>（<b>" + top.score + "</b> 分，" + top.mw + "-" + top.ml + " 大场）；" +
+        "场均经济差最强 <b>" + K.esc(bestGold.t) + "</b>（<b>" + K.signed(bestGold.gold) + "</b>）、" +
+        "资源控制最强 <b>" + K.esc(bestRes.t) + "</b>（<b>" + K.signed(bestRes.res, 2) + "</b>）。" +
+        "展开任意卡片可看阵容名单，点击战队名进入详情三层页。");
+    } else if (teams.length) {
+      K.brief("#brief", K.scopeName(curScope) + " 有 <b>" + teams.length + "</b> 支战队参赛，但均未达到评分门槛（≥" +
+        sc.threshold.g + " 局 / ≥" + sc.threshold.m + " 大场），暂只展示基础战绩。");
+    } else {
+      K.brief("#brief", "当前条件下没有战队数据，试试放宽筛选。");
+    }
+    K.refresh();
+  }
+
+  $("#fMin").addEventListener("change", render);
+  $("#expBtn").addEventListener("click", function () {
+    var sc = powerScope(curScope);
+    var min = parseInt($("#fMin").value, 10) || 0;
+    var teams = sc.teams.filter(function (t) { return t.g >= min; });
+    var rows = [["排名", "战队", "战力分", "大场胜", "大场负", "局数", "局胜", "局负", "单局胜率",
+                 "校正胜率", "场均金差", "场均击杀差", "场均推塔差", "场均资源差", "场均时长", "基准"]];
+    var rank = 0;
+    teams.forEach(function (t) {
+      var rk = t.score !== undefined ? ++rank : "";
+      rows.push([rk, t.t, t.score !== undefined ? t.score : "", t.mw, t.ml, t.g, t.gw, t.gl,
+                 (t.wr * 100).toFixed(1) + "%", (t.adjWR * 100).toFixed(1) + "%", t.gold, t.kill, t.tower,
+                 t.res, t.dur, K.scopeName(curScope)]);
+    });
+    K.exportCSV("战队战力榜_" + K.scopeName(curScope) + ".csv", rows);
+  });
+
+  curScope = K.scopeBar("#scopeBar", function (id) { curScope = id; render(); }) || "all";
+  render();
+})();
+</script>
+</body>
+</html>

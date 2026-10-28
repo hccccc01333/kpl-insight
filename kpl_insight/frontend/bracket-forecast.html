@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>冠军预测 · 双败淘汰赛 · 峡谷有数</title>
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<style>
+  .bf-page { --paper:#f6f2ea; --paper2:#fbf8f2; --ink:#2c2a26; --muted:#8b8275; --line:#e4dbcb;
+           --gold:#d3a24a; --gold-soft:#f7e4bd; --blue:#6f93c4; --blue-soft:#dce7f5; --navy:#101a2b;
+           background:var(--paper); color:var(--ink); font-size:15px; line-height:1.7;
+           font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; }
+  body { margin:0; background:#f6f2ea; }
+  * { box-sizing:border-box; }
+  .bf-wrap { max-width:1240px; margin:0 auto; padding:22px 20px 60px; }
+  .bf-crumb { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:12px; margin-bottom:14px; }
+  .bf-crumb a { color:var(--muted); }
+  .bf-hero { display:grid; grid-template-columns:1.05fr 1fr; gap:18px; align-items:stretch; }
+  .bf-hcopy { padding:10px 4px; }
+  .bf-kick { color:var(--gold); font-size:12px; letter-spacing:1.6px; }
+  .bf-page h1 { font-size:30px; margin:8px 0 8px; letter-spacing:.5px; }
+  .bf-sub { color:var(--muted); font-size:13px; line-height:1.9; }
+  .bf-hcard { background:var(--navy); color:#fff; border-radius:18px; padding:20px 22px; box-shadow:0 14px 30px #101a2b22; }
+  .bf-hcard .bf-ck { color:#e6c578; font-size:11px; letter-spacing:1.4px; }
+  .bf-hcard .bf-cname { font-size:30px; font-weight:800; margin:2px 0; }
+  .bf-hcard .bf-cp { color:#e6c578; font-size:38px; font-weight:800; line-height:1.1; }
+  .bf-hcard .bf-cs { color:#9fb0c6; font-size:12px; }
+  .bf-bars { margin-top:14px; display:grid; gap:7px; }
+  .bf-brow { display:grid; grid-template-columns:82px 1fr 52px; gap:9px; align-items:center; font-size:12px; color:#cdd8e6; }
+  .bf-bar { height:8px; background:#223049; border-radius:99px; overflow:hidden; }
+  .bf-bar i { display:block; height:100%; background:linear-gradient(90deg,#a9772a,#e6c578); border-radius:99px; }
+  .brow b { text-align:right; color:#fff; font-weight:600; }
+  .bf-brhead { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin:30px 0 10px; }
+  .bf-brhead h2 { font-size:18px; margin:0; }
+  .bf-brhead .bf-sub { font-size:12px; }
+  .bf-brhead a { color:var(--blue); font-size:12px; }
+  .bracket-scroll { overflow-x:auto; border:1px solid var(--line); border-radius:16px; background:linear-gradient(180deg,#fbf8f2,#f4efe5); }
+  .bracket { position:relative; width:1180px; height:1060px; margin:0 auto; }
+  .bracket::before { content:""; position:absolute; left:0; right:0; top:720px; border-top:1px dashed #ddcfb8; }
+  .bracket::after { content:"胜者组 / 败者组"; position:absolute; left:18px; top:724px; color:#b3a58e; font-size:11px; letter-spacing:1px; }
+  .lines { position:absolute; inset:0; width:100%; height:100%; }
+  .mcard { position:absolute; background:#fff; border:1px solid #e8dfd0; border-radius:10px; padding:8px 10px 7px; box-shadow:0 4px 12px #8a74521a; }
+  .mcard.upper { border-top:3px solid var(--gold); }
+  .mcard.lower { border-top:3px solid var(--blue); }
+  .mcard.final { border-top:3px solid var(--gold); box-shadow:0 8px 22px #8a745233; }
+  .mhead { display:flex; justify-content:space-between; gap:6px; align-items:center; font-size:10px;
+            margin:-8px -10px 6px; padding:5px 8px; border-radius:7px 7px 0 0; border-bottom:1px solid #f0e9dc; }
+  .mcard.upper .mhead, .mcard.final .mhead { background:var(--gold-soft); color:#7a5a20; }
+  .mcard.lower .mhead { background:var(--blue-soft); color:#3f5f86; }
+  .mhead span { font-weight:700; }
+  .mhead em { font-style:normal; opacity:.78; }
+  .mrow { display:flex; align-items:center; gap:7px; padding:4px 5px; border-radius:6px; font-size:12px; color:#6f675c; }
+  .mrow .logo { width:19px; height:19px; border-radius:50%; object-fit:cover; background:#eee7db; flex:none; }
+  .mrow .logo.ph { display:flex; align-items:center; justify-content:center; color:#a79a86; font-size:10px; }
+  .mrow .mname { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mrow b { font-size:12px; color:#9b9182; font-weight:600; }
+  .mrow.win { background:#fbf1d9; color:#2c2a26; }
+  .mcard.lower .mrow.win { background:#eef4fb; }
+  .mrow.win b { color:#a9772a; font-weight:800; }
+  .mcard.lower .mrow.win b { color:#4f76a8; }
+  .mfoot { margin-top:3px; font-size:9.5px; color:#a89b87; }
+  .mfoot b { color:#6f675c; }
+  .lower-sec { position:absolute; left:0; right:0; top:720px; height:1px; }
+  .tablewrap { margin-top:22px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:6px 14px; }
+  .bf-page table { width:100%; border-collapse:collapse; font-size:13px; }
+  .bf-page th, .bf-page td { padding:9px 6px; border-bottom:1px solid #f1ebdf; text-align:left; }
+  .bf-page th { color:var(--muted); font-weight:500; font-size:12px; }
+  .bf-page td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .bf-note { margin-top:20px; color:#8d8272; font-size:12px; line-height:1.9; }
+  .bf-note b { color:#5f584d; }
+  .bf-page a { color:var(--blue); }
+  @media (max-width:900px) { .bf-hero { grid-template-columns:1fr; } .bf-page h1 { font-size:24px; } }
+</style>
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="bracket-forecast.html">
+<header id="siteHeader" class="topbar"></header>
+<div class="bf-page">
+<div class="bf-wrap">
+  <div class="bf-crumb"><a href="schedule.html">← 返回赛程</a><span>·</span><a href="bracket.html">官方赛事进程</a></div>
+  <div class="bf-hero">
+    <div class="bf-hcopy">
+      <div class="bf-kick">2026 KPL 年度总决赛 · 双败淘汰</div>
+      <h1>冠军预测 · 8 队双败签表</h1>
+      <div class="bf-sub">按官方比赛进程的胜者组 / 败者组框架，用 prematch_v2 逐场计算概率，再做 50,000 次双败模拟。<br>
+      金色 = 胜者组，蓝色 = 败者组；卡片右侧的百分比是系列赛（BO7）胜率。<br>
+      生成时间 2026-10-23 12:19:00 · <a href="bracket.html">官方赛事进程 →</a></div>
+    </div>
+    <div class="bf-hcard">
+      <div class="bf-ck">CHAMPION PICK</div>
+      <div class="bf-cname">重庆狼队</div>
+      <div class="bf-cp">35.8%</div>
+      <div class="bf-cs">模拟冠军概率最高 · 50,000 次</div>
+      <div class="bf-bars"><div class="bf-brow"><span>重庆狼队</span><div class="bf-bar"><i style="width:100.0%"></i></div><b>35.8%</b></div><div class="bf-brow"><span>北京JDG</span><div class="bf-bar"><i style="width:44.9%"></i></div><b>16.1%</b></div><div class="bf-brow"><span>广州TTG</span><div class="bf-bar"><i style="width:42.7%"></i></div><b>15.3%</b></div><div class="bf-brow"><span>上海EDG.M</span><div class="bf-bar"><i style="width:36.0%"></i></div><b>12.9%</b></div><div class="bf-brow"><span>KSG</span><div class="bf-bar"><i style="width:24.0%"></i></div><b>8.6%</b></div><div class="bf-brow"><span>北京WB</span><div class="bf-bar"><i style="width:21.3%"></i></div><b>7.6%</b></div><div class="bf-brow"><span>杭州LGD.NBW</span><div class="bf-bar"><i style="width:7.1%"></i></div><b>2.5%</b></div><div class="bf-brow"><span>长沙TES.A</span><div class="bf-bar"><i style="width:3.4%"></i></div><b>1.2%</b></div></div>
+    </div>
+  </div>
+
+  <div class="bf-brhead">
+    <div><h2>双败签表 · 最可能路径</h2>
+      <div class="bf-sub">每场按模型优势方推进；冠军概率来自全部签表路径，不是这一条路径的必然结果。</div></div>
+    <div class="bf-sub">BO7 · 总决赛单场</div>
+  </div>
+  <div class="bracket-scroll">
+    <div class="bracket">
+      <svg class="lines" viewBox="0 0 1180 1060" preserveAspectRatio="none">
+        <path d="M246,162 H293 V242 H340" stroke="#d8b25f" stroke-width="1.6" fill="none"/><path d="M246,322 H293 V242 H340" stroke="#d8b25f" stroke-width="1.6" fill="none"/><path d="M246,482 H293 V562 H340" stroke="#d8b25f" stroke-width="1.6" fill="none"/><path d="M246,642 H293 V562 H340" stroke="#d8b25f" stroke-width="1.6" fill="none"/><path d="M546,242 H593 V402 H640" stroke="#d8b25f" stroke-width="1.6" fill="none"/><path d="M546,562 H593 V402 H640" stroke="#d8b25f" stroke-width="1.6" fill="none"/><path d="M846,402 H893 V390 H940" stroke="#d8b25f" stroke-width="1.6" fill="none"/><path d="M246,812 H293 V812 H340" stroke="#9db7d8" stroke-width="1.6" fill="none"/><path d="M246,972 H293 V972 H340" stroke="#9db7d8" stroke-width="1.6" fill="none"/><path d="M546,812 H593 V892 H640" stroke="#9db7d8" stroke-width="1.6" fill="none"/><path d="M546,972 H593 V892 H640" stroke="#9db7d8" stroke-width="1.6" fill="none"/><path d="M846,892 H893 V892 H940" stroke="#9db7d8" stroke-width="1.6" fill="none"/><path d="M1040,834 H1040 V462 H1040" stroke="#c7b27e" stroke-width="1.6" fill="none"/>
+        <path d="M443,300 L570,300 L570,890 L443,890 L443,914" stroke="#b9a98f" stroke-width="1.4" stroke-dasharray="5 4" fill="none"/><path d="M437,906 L443,914 L449,906" stroke="#b9a98f" stroke-width="1.6" fill="none"/><text x="582" y="596" font-size="10.5" fill="#9a8d7a">11-02 负者 → 11-05</text><path d="M443,620 L443,754" stroke="#b9a98f" stroke-width="1.4" stroke-dasharray="5 4" fill="none"/><path d="M437,746 L443,754 L449,746" stroke="#b9a98f" stroke-width="1.6" fill="none"/><text x="455" y="690" font-size="10.5" fill="#9a8d7a">11-03 负者 → 11-04</text><path d="M743,460 L743,700 L1040,700 L1040,834" stroke="#b9a98f" stroke-width="1.4" stroke-dasharray="5 4" fill="none"/><path d="M1034,826 L1040,834 L1046,826" stroke="#b9a98f" stroke-width="1.6" fill="none"/><text x="1052" y="700" font-size="10.5" fill="#9a8d7a">11-06 负者 → 11-08</text>
+      </svg>
+
+  <div class="mcard upper" style="left:40px;top:104px;width:206px;height:116px">
+    <div class="mhead"><span>10月27日 周二</span><em>淘汰赛</em></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/bc18df69dd91643409c09a3503737cb3.png" alt="" loading="lazy"><span class="mname">北京JDG</span><b>51%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/0a05fdfba20fa3823db5c8c44fae6abe.png" alt="" loading="lazy"><span class="mname">广州TTG</span><b>49%</b></div>
+    <div class="mfoot">模型看好 <b>北京JDG</b></div>
+  </div>
+  <div class="mcard upper" style="left:40px;top:264px;width:206px;height:116px">
+    <div class="mhead"><span>10月28日 周三</span><em>淘汰赛</em></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/a85f1428dd1ef3eaeeb5e203f17b9b25.png" alt="" loading="lazy"><span class="mname">重庆狼队</span><b>80%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/48f18204fa257197ec49bb6345d14a33.png" alt="" loading="lazy"><span class="mname">长沙TES.A</span><b>20%</b></div>
+    <div class="mfoot">模型看好 <b>重庆狼队</b></div>
+  </div>
+  <div class="mcard upper" style="left:40px;top:424px;width:206px;height:116px">
+    <div class="mhead"><span>10月29日 周四</span><em>淘汰赛</em></div>
+    <div class="mrow win"><img class="logo" src="https://smobatv-pic.tga.qq.com/e7f3ca48aa29a89c5cf7e04d7f83534f.png" alt="" loading="lazy"><span class="mname">KSG</span><b>51%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/75b41b2357febfa17764f8bc1f423d2c.png" alt="" loading="lazy"><span class="mname">北京WB</span><b>49%</b></div>
+    <div class="mfoot">模型看好 <b>KSG</b></div>
+  </div>
+  <div class="mcard upper" style="left:40px;top:584px;width:206px;height:116px">
+    <div class="mhead"><span>10月30日 周五</span><em>淘汰赛</em></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/7209fb2509e991052852dd872981c8f3.png" alt="" loading="lazy"><span class="mname">上海EDG.M</span><b>66%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/a29bcb1a579369888cc9a87637274822.png" alt="" loading="lazy"><span class="mname">杭州LGD.NBW</span><b>34%</b></div>
+    <div class="mfoot">模型看好 <b>上海EDG.M</b></div>
+  </div>
+  <div class="mcard upper" style="left:340px;top:184px;width:206px;height:116px">
+    <div class="mhead"><span>11月2日 周一</span><em>胜者组 R2</em></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/bc18df69dd91643409c09a3503737cb3.png" alt="" loading="lazy"><span class="mname">北京JDG</span><b>41%</b></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/a85f1428dd1ef3eaeeb5e203f17b9b25.png" alt="" loading="lazy"><span class="mname">重庆狼队</span><b>59%</b></div>
+    <div class="mfoot">模型看好 <b>重庆狼队</b></div>
+  </div>
+  <div class="mcard upper" style="left:340px;top:504px;width:206px;height:116px">
+    <div class="mhead"><span>11月3日 周二</span><em>胜者组 R2</em></div>
+    <div class="mrow"><img class="logo" src="https://smobatv-pic.tga.qq.com/e7f3ca48aa29a89c5cf7e04d7f83534f.png" alt="" loading="lazy"><span class="mname">KSG</span><b>46%</b></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/7209fb2509e991052852dd872981c8f3.png" alt="" loading="lazy"><span class="mname">上海EDG.M</span><b>54%</b></div>
+    <div class="mfoot">模型看好 <b>上海EDG.M</b></div>
+  </div>
+  <div class="mcard upper" style="left:640px;top:344px;width:206px;height:116px">
+    <div class="mhead"><span>11月6日 周五</span><em>胜者组决赛</em></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/a85f1428dd1ef3eaeeb5e203f17b9b25.png" alt="" loading="lazy"><span class="mname">重庆狼队</span><b>65%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/7209fb2509e991052852dd872981c8f3.png" alt="" loading="lazy"><span class="mname">上海EDG.M</span><b>35%</b></div>
+    <div class="mfoot">模型看好 <b>重庆狼队</b></div>
+  </div>
+  <div class="mcard final" style="left:940px;top:330px;width:220px;height:132px">
+    <div class="mhead"><span>11月14日 周六</span><em>总决赛</em></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/a85f1428dd1ef3eaeeb5e203f17b9b25.png" alt="" loading="lazy"><span class="mname">重庆狼队</span><b>59%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/bc18df69dd91643409c09a3503737cb3.png" alt="" loading="lazy"><span class="mname">北京JDG</span><b>41%</b></div>
+    <div class="mfoot">模型看好 <b>重庆狼队</b></div>
+  </div>
+  <div class="mcard lower" style="left:40px;top:754px;width:206px;height:116px">
+    <div class="mhead"><span>10月31日 周六</span><em>败者组 R1</em></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/0a05fdfba20fa3823db5c8c44fae6abe.png" alt="" loading="lazy"><span class="mname">广州TTG</span><b>73%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/48f18204fa257197ec49bb6345d14a33.png" alt="" loading="lazy"><span class="mname">长沙TES.A</span><b>27%</b></div>
+    <div class="mfoot">模型看好 <b>广州TTG</b></div>
+  </div>
+  <div class="mcard lower" style="left:40px;top:914px;width:206px;height:116px">
+    <div class="mhead"><span>11月1日 周日</span><em>败者组 R1</em></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/75b41b2357febfa17764f8bc1f423d2c.png" alt="" loading="lazy"><span class="mname">北京WB</span><b>61%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/a29bcb1a579369888cc9a87637274822.png" alt="" loading="lazy"><span class="mname">杭州LGD.NBW</span><b>39%</b></div>
+    <div class="mfoot">模型看好 <b>北京WB</b></div>
+  </div>
+  <div class="mcard lower" style="left:340px;top:754px;width:206px;height:116px">
+    <div class="mhead"><span>11月4日 周三</span><em>败者组 R2</em></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/0a05fdfba20fa3823db5c8c44fae6abe.png" alt="" loading="lazy"><span class="mname">广州TTG</span><b>59%</b></div>
+    <div class="mrow"><img class="logo" src="https://smobatv-pic.tga.qq.com/e7f3ca48aa29a89c5cf7e04d7f83534f.png" alt="" loading="lazy"><span class="mname">KSG</span><b>41%</b></div>
+    <div class="mfoot">模型看好 <b>广州TTG</b></div>
+  </div>
+  <div class="mcard lower" style="left:340px;top:914px;width:206px;height:116px">
+    <div class="mhead"><span>11月5日 周四</span><em>败者组 R2</em></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/75b41b2357febfa17764f8bc1f423d2c.png" alt="" loading="lazy"><span class="mname">北京WB</span><b>40%</b></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/bc18df69dd91643409c09a3503737cb3.png" alt="" loading="lazy"><span class="mname">北京JDG</span><b>60%</b></div>
+    <div class="mfoot">模型看好 <b>北京JDG</b></div>
+  </div>
+  <div class="mcard lower" style="left:640px;top:834px;width:206px;height:116px">
+    <div class="mhead"><span>11月7日 周六</span><em>败者组 R3</em></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/0a05fdfba20fa3823db5c8c44fae6abe.png" alt="" loading="lazy"><span class="mname">广州TTG</span><b>50%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/bc18df69dd91643409c09a3503737cb3.png" alt="" loading="lazy"><span class="mname">北京JDG</span><b>50%</b></div>
+    <div class="mfoot">五五开 · 路径取 北京JDG</div>
+  </div>
+  <div class="mcard lower" style="left:940px;top:834px;width:206px;height:116px">
+    <div class="mhead"><span>11月8日 周日</span><em>败者组决赛</em></div>
+    <div class="mrow win"><img class="logo" src="https://smhtv-pic.tga.qq.com/bc18df69dd91643409c09a3503737cb3.png" alt="" loading="lazy"><span class="mname">北京JDG</span><b>55%</b></div>
+    <div class="mrow"><img class="logo" src="https://smhtv-pic.tga.qq.com/7209fb2509e991052852dd872981c8f3.png" alt="" loading="lazy"><span class="mname">上海EDG.M</span><b>45%</b></div>
+    <div class="mfoot">模型看好 <b>北京JDG</b></div>
+  </div>
+    </div>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>战队</th><th class="num">冠军</th><th class="num">进决赛</th><th class="num">胜者组出线</th><th class="num">败者组出线</th></tr></thead>
+      <tbody><tr><td>重庆狼队</td><td class='num'>35.8%</td><td class='num'>55.2%</td><td class='num'>32.2%</td><td class='num'>23.0%</td></tr><tr><td>北京JDG</td><td class='num'>16.1%</td><td class='num'>30.3%</td><td class='num'>14.4%</td><td class='num'>15.9%</td></tr><tr><td>广州TTG</td><td class='num'>15.3%</td><td class='num'>29.3%</td><td class='num'>13.9%</td><td class='num'>15.5%</td></tr><tr><td>上海EDG.M</td><td class='num'>12.9%</td><td class='num'>30.4%</td><td class='num'>14.6%</td><td class='num'>15.7%</td></tr><tr><td>KSG</td><td class='num'>8.6%</td><td class='num'>21.8%</td><td class='num'>10.0%</td><td class='num'>11.8%</td></tr><tr><td>北京WB</td><td class='num'>7.6%</td><td class='num'>20.1%</td><td class='num'>9.1%</td><td class='num'>11.0%</td></tr><tr><td>杭州LGD.NBW</td><td class='num'>2.5%</td><td class='num'>8.8%</td><td class='num'>3.9%</td><td class='num'>4.9%</td></tr><tr><td>长沙TES.A</td><td class='num'>1.2%</td><td class='num'>4.2%</td><td class='num'>2.0%</td><td class='num'>2.2%</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="bf-note">
+    <b>口径：</b>官方签表为 8 队 BO7 双败；胜者组 R1/R2/决赛，败者组 R1/R2/R3/决赛，总决赛单场，无 bracket reset。<br>
+    <b>败者组交叉：</b>按标准 8 队双败签表假设——10-31 胜者 vs 11-03 负者、11-01 胜者 vs 11-02 负者；11-06 负者进入 11-08。
+    官方页面只给日期/槽位，不公布交叉；如果官方交叉不同，冠军概率会变。<br>
+    <b>模型：</b>prematch_v2（Elo + LR + 阵容延续 + 近期状态 + H2H）；不使用未来 BP/首发/局内数据；首轮 10-27、10-29 接近五五开。
+    页面结构参考官方比赛进程的视觉框架，预测数字由本站模型生成。
+  </div>
+</div>
+</div>
+<footer id="siteFooter" class="footer"></footer>
+<script src="assets/data.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>KPL.init();</script>
+</body>
+</html>

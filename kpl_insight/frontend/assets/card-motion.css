@@ -1,0 +1,61 @@
+/* Motion communicates entry, selection, depth and browsing position. */
+html.world-site.v55 .motion-card,html.world-site.v55 .motion-surface { position:relative; isolation:isolate; transition:border-color .22s ease,box-shadow .22s ease,transform .28s cubic-bezier(.2,.7,.2,1)!important; }
+.motion-card { --card-rx:0deg; --card-ry:0deg; --card-x:50%; --card-y:40%; }
+.motion-card::before { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; border-radius:inherit; background:radial-gradient(circle at var(--card-x) var(--card-y),rgba(91,183,255,.16),transparent 66%); opacity:0; transition:opacity .25s; }
+.motion-card:focus-within::before,.motion-card:hover::before { opacity:1; }
+html.world-site.v55 .motion-card:focus-visible,html.world-site.v55 .motion-card:focus-within { outline:2px solid #81d7ff; outline-offset:3px; }
+html.world-site.v55 .motion-surface:hover { border-color:rgba(112,184,255,.44)!important; box-shadow:0 12px 38px rgba(1,5,24,.16)!important; }
+html.world-site.v55 .motion-card img { transition:filter .3s,scale .3s; }
+html.world-site.v55 .motion-card:hover .p-ava,html.world-site.v55 .motion-card:hover>img,html.world-site.v55 .motion-card:hover .top>.ic { filter:drop-shadow(0 0 9px rgba(114,196,255,.25)); scale:1.035; }
+.pwbar .pb i,.minibar i,.pred-row .bar i { transform-origin:left center; }
+.motion-browse { display:flex; align-items:center; justify-content:space-between; gap:14px; margin:8px 0 14px; min-height:34px; }
+.motion-browse[hidden] { display:none; }
+.motion-browse-title { color:#c9dcf5; font-size:11px; letter-spacing:.03em; }
+.motion-browse-title small { font-size:10px; font-weight:400; color:#95a9c7; margin-left:10px; }
+.motion-browse-right { display:flex; align-items:center; gap:9px; margin-left:auto; }
+.motion-position { font:10px var(--mono); font-variant-numeric:tabular-nums; color:#adc4df; min-width:48px; text-align:right; }
+.motion-track { width:55px; height:2px; background:#314263; overflow:hidden; }
+.motion-track i { display:block; height:100%; background:linear-gradient(90deg,#75e9ff,#e2a5ef); transform-origin:left center; transition:transform .15s linear; }
+.motion-browse button { border:1px solid #3b4b70; color:#b9cce8; background:rgba(14,25,55,.82); border-radius:4px; font:11px var(--sans); cursor:pointer; min-height:32px; min-width:34px; padding:6px 10px; transition:background .18s,border-color .18s,color .18s; }
+.motion-browse button:hover:not(:disabled) { border-color:#8acbff; background:#243d64; color:white; }
+.motion-browse button:disabled { opacity:.3; cursor:default; }
+.motion-browse button:focus-visible,.motion-collection:focus-visible { outline:2px solid #81dbff; outline-offset:4px; }
+.motion-view { display:flex; gap:3px; padding:3px; border:1px solid rgba(141,176,226,.2); border-radius:6px; background:rgba(7,15,38,.6); }
+.motion-view button { border-color:transparent; min-height:26px; padding:3px 12px; background:transparent; }
+.motion-view button[aria-pressed="true"] { color:#dff8ff; background:#294361; border-color:#547fa5; }
+.motion-collection { min-width:0; }
+html.world-site.v55 .motion-collection.motion-rail { display:flex!important; gap:14px; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x proximity; scroll-padding-inline:3px; overscroll-behavior-x:contain; scrollbar-width:thin; scrollbar-color:#537898 transparent; padding:7px 3px 17px; cursor:grab; }
+.motion-collection.motion-rail>* { flex:0 0 auto; scroll-snap-align:start; }
+html.world-site.v55 .team-grid.motion-rail>.tcard { width:min(360px,85vw); }
+html.world-site.v55 .player-grid.motion-rail>.player { width:min(330px,85vw); }
+html.world-site.v55 .hero-grid.motion-rail>.hcard { width:175px; }
+html.world-site.v55 .hn-lanes.motion-rail>.hn-lane { width:min(300px,83vw); }
+html.world-site.v55 .replay-picks.motion-rail>.rp-pick,html.world-site.v55 .pick-grid.motion-rail>.pick-card { width:min(480px,87vw); }
+html.world-site.v55 .entry-grid.motion-rail>.entry { width:min(390px,86vw); }
+.motion-collection.motion-dragging { cursor:grabbing!important; scroll-snap-type:none!important; user-select:none; }
+.motion-collection.motion-dragging * { cursor:grabbing!important; user-select:none; }
+.motion-tabs { position:relative; isolation:isolate; }
+.motion-tabs::before { content:""; position:absolute; z-index:-1; pointer-events:none; left:var(--tab-left,0px); top:var(--tab-top,0px); width:var(--tab-width,0px); height:var(--tab-height,0px); opacity:var(--tab-opacity,0); border:1px solid #7bc5f4; border-radius:5px; background:linear-gradient(105deg,rgba(48,114,168,.65),rgba(96,69,135,.55)); box-sizing:border-box; transition:left .25s cubic-bezier(.2,.7,.2,1),top .25s,width .25s,height .25s,opacity .15s; }
+html.world-site.v55 .motion-tabs button { position:relative; background:transparent!important; transition:color .2s,box-shadow .2s!important; }
+html.world-site.v55 .motion-tabs button.on,html.world-site.v55 .motion-tabs button.active,html.world-site.v55 .motion-tabs button[aria-selected="true"] { color:#f0f8ff!important; background:transparent!important; border-color:transparent!important; box-shadow:none!important; }
+html.world-site.v55 .motion-tabs .hn-kbtn.on em { color:#b4daef; }
+.motion-card details summary { cursor:pointer; padding-block:9px; transition:color .2s; }
+.motion-card details summary:hover { color:#96e1ff; }
+@media(hover:hover) and (pointer:fine) {
+  html.world-site.v55 .motion-card:hover { transform:perspective(1000px) translateY(-4px) rotateX(var(--card-rx)) rotateY(var(--card-ry))!important; border-color:#709dc4!important; box-shadow:0 14px 36px rgba(0,5,24,.24)!important; }
+  html.world-site.v55 .motion-rail .motion-card:hover { transform:translateY(-3px)!important; }
+  html.world-site.v55 .motion-card:has(details[open]):hover { transform:none!important; }
+}
+@media(max-width:600px) {
+  .motion-browse { gap:8px; margin:9px 0 11px; }
+  .motion-browse-title small { display:none; }
+  .motion-browse button { font-size:10px; min-width:32px; min-height:32px; }
+  .motion-browse-right { gap:6px; }
+  .motion-track { width:30px; }
+  .motion-view button { padding:3px 9px; }
+  .motion-position { font-size:9px; min-width:40px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  html.world-site.v55 .motion-card,html.world-site.v55 .motion-surface,.motion-card::before,html.world-site.v55 .motion-card img,.motion-track i,.motion-tabs::before { transition:none!important; }
+  html.world-site.v55 .motion-card:hover { transform:none!important; }
+}

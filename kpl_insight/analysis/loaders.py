@@ -20,7 +20,7 @@ from .models import Frame, Game, Series
 
 DEFAULT_SITE_DIR = Path(
     os.environ.get("KPL_SITE_DIR")
-    or (Path(__file__).resolve().parents[2].parent / "kpl-data-center-site")
+    or (Path(__file__).resolve().parents[1] / "frontend")
 )
 
 

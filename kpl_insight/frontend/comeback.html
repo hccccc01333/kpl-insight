@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>翻盘路径研究所 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A111C'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<style>
+/* 只在本页使用的分布条：label + 条 + 计数 */
+.cb-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12.5px}
+.cb-row > .k{flex:none;width:74px;color:var(--muted)}
+.cb-bar{flex:1;height:12px;border-radius:4px;background:var(--inset);overflow:hidden}
+.cb-bar i{display:block;height:100%;background:var(--brand)}
+.cb-row > .v{flex:none;width:74px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2)}
+.cb-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="翻盘路径研究所 · 峡谷有数">
+<meta property="og:description" content="用分钟级胜率序列看「胜方一度被判死」的对局：翻盘率、低点时段分布与典型翻盘。样本仅覆盖有分钟级快照的对局。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="comeback.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">ANALYSIS · 翻盘路径研究所</div>
+    <h1>翻盘路径研究所</h1>
+    <p>用站内已有的分钟级胜率序列，回答一个问题：<b>最终赢下这局的一方，有多少次曾在第 <span id="cbWin">8</span> 分钟之后被模型判到 25% 胜率以下？</b>
+       低点出现在什么时段、典型翻盘是哪几局，都列在下面。只对有分钟级快照的对局成立。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:24px">
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-title">样本概览</div>
+    <div class="hd-stats" id="cbKpi"></div>
+  </div>
+
+  <div class="cb-two">
+    <section class="block">
+      <div class="block-head">
+        <h2><i></i>胜方低点分档</h2>
+        <span class="block-note mono">胜方在第 8 分钟后被压到的最低胜率落在哪一档</span>
+      </div>
+      <div class="panel" id="cbBins"></div>
+    </section>
+    <section class="block">
+      <div class="block-head">
+        <h2><i></i>低点时段分布</h2>
+        <span class="block-note mono">最低胜率出现在第几分钟 · 样本内的时间分布</span>
+      </div>
+      <div class="panel" id="cbLows"></div>
+    </section>
+  </div>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>典型翻盘榜</h2>
+      <span class="block-note mono">按「低点胜率越低越靠前」排序 · 点复盘回到那一局</span>
+    </div>
+    <div class="panel table-panel"><table class="tbl">
+      <thead><tr><th>日期</th><th>对局</th><th>胜方</th><th class="num">低点胜率</th>
+      <th class="num">低点时刻</th><th class="num">时长</th><th class="num">复盘</th></tr></thead>
+      <tbody id="cbRows"></tbody>
+    </table></div>
+  </section>
+
+  <div class="panel">
+    <div class="panel-title">口径说明</div>
+    <div class="block-note" id="cbNote"></div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/comeback.js?v=85"></script>
+<script src="assets/share.js?v=85"></script>
+<script>
+(function () {
+  "use strict";
+  var K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  var C = window.KPL_COMEBACK || { meta: {}, stats: {}, bins: [], lowBuckets: [], comebacks: [] };
+  var M = C.meta || {}, S = C.stats || {};
+
+  function pct1(v) { return (Number(v) || 0).toFixed(1) + "%"; }
+
+  $("#cbWin").textContent = M.windowMin || 8;
+  $("#cbKpi").innerHTML =
+    '<div class="hd-cell"><div class="k">样本局数</div><div class="v">' + K.fmtInt(M.battles || 0) + '</div>' +
+    '<div class="s">覆盖率 ' + pct1(M.coverPct) + "（全量 " + K.fmtInt(M.totalBattles || 0) + ' 局）</div></div>' +
+    '<div class="hd-cell"><div class="k">翻盘率</div><div class="v">' + pct1(S.comebackRate) + '</div>' +
+    '<div class="s">低点 &lt; ' + (M.comebackLine || 25) + '% 共 ' + K.fmtInt(S.comebackCount || 0) + ' 局</div></div>' +
+    '<div class="hd-cell"><div class="k">最深低点</div><div class="v">' + pct1((S.deepest || 0) * 100) + '</div>' +
+    '<div class="s">胜方最惨的时刻</div></div>' +
+    '<div class="hd-cell"><div class="k">中位低点</div><div class="v">' + pct1((S.medianLow || 0) * 100) + '</div>' +
+    '<div class="s">样本中位水平</div></div>';
+
+  function bars(el, rows, total, suffix) {
+    var max = Math.max.apply(null, rows.map(function (r) { return r[1]; }).concat([1]));
+    el.innerHTML = rows.map(function (r) {
+      var p = total ? (r[1] / total * 100) : 0;
+      return '<div class="cb-row"><span class="k">' + K.esc(r[0]) + '</span>' +
+        '<span class="cb-bar"><i style="width:' + (r[1] / max * 100).toFixed(1) + '%"></i></span>' +
+        '<span class="v mono">' + K.fmtInt(r[1]) + " · " + p.toFixed(1) + (suffix || "%") + "</span></div>";
+    }).join("") || '<div class="block-note">暂无样本</div>';
+  }
+  bars($("#cbBins"), C.bins || [], M.battles || 0);
+  bars($("#cbLows"), C.lowBuckets || [], M.battles || 0);
+
+  var list = C.comebacks || [];
+  $("#cbRows").innerHTML = list.length ? list.map(function (c) {
+    var href = "match.html?id=" + encodeURIComponent(c.mid) + "&g=" + c.seq + "&m=" + Math.round(c.lowMin);
+    return "<tr><td class='mono'>" + K.esc(c.date) + "</td>" +
+      "<td>" + K.esc(c.t1) + " vs " + K.esc(c.t2) + " <span class='mono' style='color:var(--muted)'>G" + c.seq + "</span></td>" +
+      "<td><span class='team-cell'>" + K.esc(c.winner) + "</span></td>" +
+      '<td class="num mono" style="color:var(--red)">' + pct1(c.lowP * 100) + "</td>" +
+      '<td class="num mono">' + c.lowMin + "′</td>" +
+      '<td class="num mono">' + c.dur + "′</td>" +
+      '<td class="num"><a class="go" href="' + href + '" style="color:var(--gold);font-weight:700">复盘 →</a></td></tr>';
+  }).join("") : "<tr><td colspan='7' style='color:var(--muted)'>样本内没有低点低于门槛的对局</td></tr>";
+
+  $("#cbNote").innerHTML = K.esc(M.note || "") +
+    "<br>1. 胜率是<b>模型视角</b>的胜率（camp1 视角换算到胜方视角），不是客观实力差；低点低只说明模型当时把胜方判得很死；<br>" +
+    "2. 低点只从第 " + (M.windowMin || 8) + " 分钟起算——开局 1–3 分钟模型缺对线期特征，会外推 0.98 / 0.02 这类极端先验值，纳入会造出假的翻盘结论；<br>" +
+    "3. 赛后重放的局（" + K.fmtInt(M.replay || 0) + " 局）曲线波动大，只列举、不参与分档统计；<br>" +
+    "4. 样本只有覆盖率 " + pct1(M.coverPct) + "，<b>不能代表全部 KPL 对局</b>，也不做跨样本外推。";
+
+  if (window.SHARE) {
+    SHARE.mount($("#cbKpi"), function () {
+      return {
+        kind: "翻盘研究所",
+        title: "翻盘路径研究所 · " + K.fmtInt(M.battles || 0) + " 局样本",
+        sub: "胜方在第 " + (M.windowMin || 8) + " 分钟后的最低胜率 · 覆盖率 " + pct1(M.coverPct),
+        stats: [
+          ["翻盘率（低于 " + (M.comebackLine || 25) + "%）", pct1(S.comebackRate)],
+          ["翻盘局数", K.fmtInt(S.comebackCount || 0) + " 局"],
+          ["最深低点", pct1((S.deepest || 0) * 100)],
+          ["中位低点", pct1((S.medianLow || 0) * 100)]
+        ],
+        note: "口径：模型视角胜率、低点从第 " + (M.windowMin || 8) + " 分钟起算，仅覆盖有分钟级快照的对局。来源：KPL 官方赛事数据 + 站内实时预测。",
+        url: location.href
+      };
+    }, "kpl-comeback.png");
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>比赛详情 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="比赛详情 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="schedule.html">
+<header id="siteHeader" class="topbar"></header>
+<div id="wrapHero"></div>
+<main class="wrap" id="main" style="margin-top:26px"></main>
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/site_totals.js?v=85"></script>
+<script src="assets/details.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/games/index.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/replay/index.js?v=85"></script>
+<script src="assets/coverage.js?v=85"></script>
+<script src="assets/replay.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/share.js?v=85"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, DT = KPL.details, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  var QS = new URLSearchParams(location.search);
+  var id = QS.get("id");
+  // 复盘分享链接：?g=3&m=12 → 直接落到第 3 局第 12 分钟
+  var SHARE_SEQ = parseInt(QS.get("g") || "", 10);
+  var SHARE_MIN = QS.get("m") != null ? parseFloat(QS.get("m")) : null;
+
+  /* 分享图规格：对局卡片。数值一律取官方赛程行，避免与 DT.matches 的字段口径混用 */
+  function matchShareSpec() {
+    var sr = (window.KPL_SCHEDULE_ALL || []).filter(function (r) { return r.matchId === id; })[0];
+    if (!sr) return null;
+    var done = !!(sr.done || sr.st === 2);
+    var winner = done ? (Number(sr.score1) > Number(sr.score2) ? sr.team1 : sr.team2) : "";
+    return {
+      kind: "对局卡片",
+      title: sr.team1 + " vs " + sr.team2,
+      sub: (sr.date || "") + " " + (sr.time || "") + (done ? " · 已结束" : (sr.st === 1 ? " · 进行中" : " · 待开赛")),
+      stats: [
+        ["比分", done ? sr.score1 + " : " + sr.score2 : "—"],
+        ["胜方", winner || "—"],
+        ["比赛日期", sr.date || "—"],
+        ["数据范围", "2019–2026 全部赛事"]
+      ],
+      note: "口径：官方赛程与逐局结果；比分以官方赛事接口为准，逐局明细与胜率曲线以站内复盘页为准。",
+      url: "kpldata-site.hccccc01333.workers.dev/match.html?id=" + encodeURIComponent(id)
+    };
+  }
+  var list = DT.matches || [];
+  var idx = -1;
+  for (var i = 0; i < list.length; i++) if (list[i].matchId === id) { idx = i; break; }
+
+  if (idx < 0) {
+    var schedRow = (window.KPL_SCHEDULE_ALL || []).filter(function (r) { return r.matchId === id; })[0];
+    var gidx = (window.KPL_GAME_INDEX || {})[id];
+    if (!schedRow) {
+      $("#wrapHero").innerHTML = '<header class="page-hero"><div class="wrap">' +
+        '<div class="ph-kicker mono">MATCH · 比赛详情</div><h1>未找到该场比赛</h1>' +
+        "<p>2019–2026 全部赛程可在赛程中心查看；有逐分钟曲线的场次显示完整复盘。</p>" +
+        '<div class="slide-cta" style="margin-top:18px"><a class="btn primary" href="schedule.html">返回赛程中心</a></div>' +
+        "</div></header>";
+      return;
+    }
+    renderBasic(schedRow, gidx);
+    SHARE.mount($("#wrapHero"), matchShareSpec, "kpldata-match.png");
+    return;
+  }
+  var M = list[idx], KEY = M.key;
+  var LG_NAME = { "20260003": "2026 夏季赛", "20260004": "2026 年度总决赛" };
+
+  var GIDX = (window.KPL_GAME_INDEX || {})[M.matchId] || { b: [] };
+  function bidOfSeq(seq) {
+    for (var i = 0; i < GIDX.b.length; i++) if (GIDX.b[i][1] === seq) return GIDX.b[i][0];
+    return "";
+  }
+
+  /* ---------- 基础版：无逐分钟曲线的场次 ---------- */
+  function renderBasic(sr, gi) {
+    var battles = (gi && gi.b) || [];
+    var liveNow = sr.st === 1 || K.isLive({ done: false, date: sr.date, time: sr.time });
+    var winName = sr.score1 > sr.score2 ? sr.team1 : sr.team2;
+    // b[3] 是【本局阵营】序号（1=camp1 / 2=camp2），跟大场 team1/team2 的顺序无关；
+    // 优先用索引里的胜方队名 b[4]，没有时才退回大场顺序。
+    function battleWinName(b) {
+      return b[4] || (b[3] === 1 ? sr.team1 : sr.team2);
+    }
+    var strip = battles.map(function (b) {
+      var isLiveB = b[3] === 0 && (b[1] === battles[battles.length - 1][1]);
+      return '<a class="battle-chip' + (isLiveB ? " win" : "") + '" href="game.html?id=' + encodeURIComponent(b[0]) + '" style="text-decoration:none">G' + b[1] +
+        (isLiveB ? " · 进行中" : " · " + K.esc(battleWinName(b))) +
+        '<span class="tag">' + b[2] + "′ · 详情</span></a>";
+    }).join("");
+    var rows = battles.map(function (b) {
+      var isLiveB = b[3] === 0 && (b[1] === battles[battles.length - 1][1]);
+      return "<tr>" +
+        '<td class="num">G' + b[1] + "</td>" +
+        '<td><span class="team-cell">' + (isLiveB ? '<span style="color:var(--muted)">对局中…</span>' : K.esc(battleWinName(b))) + "</span></td>" +
+        '<td class="num">' + (b[2] || "—") + "′</td>" +
+        "<td>" + (isLiveB ? K.liveBadge() : K.coverageBadges(K.battleCoverageMask(sr.matchId, b[0]))) + "</td>" +
+        '<td class="num"><a class="go" href="game.html?id=' + encodeURIComponent(b[0]) + '" style="color:var(--gold);font-weight:700">' + (isLiveB ? "实时数据 →" : "对局详情 →") + "</a></td></tr>";
+    }).join("");
+    $("#wrapHero").innerHTML = '<header class="page-hero"><div class="wrap">' +
+      '<div class="ph-kicker mono">MATCH · ' + K.esc(sr.leagueName || "") +
+      (sr.stage ? " · " + K.esc(sr.stage) : "") + " · " + K.esc(sr.date) + "</div>" +
+      (liveNow ? '<div id="liveFlag" style="margin-top:10px">' + K.liveBadge() + "</div>" : "") +
+      '<div class="mh-grid" style="margin-top:14px">' +
+      '<div class="mh-team">' + (sr.icon1 ? '<img src="' + K.esc(sr.icon1) + '" alt="">' : "") +
+      '<a class="n" href="team.html?id=' + encodeURIComponent(sr.team1) + '">' + K.esc(sr.team1) + "</a>" +
+      '<span class="mono" style="color:var(--muted);font-size:12px">' + sr.score1 + " 局胜</span></div>" +
+      '<div class="mh-score">' + sr.score1 + " : " + sr.score2 + "<small>大场比分 · BO" + sr.bo +
+      (liveNow ? " · <span style='color:var(--red)'>正在进行</span>" : "") + "</small></div>" +
+      '<div class="mh-team">' + (sr.icon2 ? '<img src="' + K.esc(sr.icon2) + '" alt="">' : "") +
+      '<a class="n" href="team.html?id=' + encodeURIComponent(sr.team2) + '">' + K.esc(sr.team2) + "</a>" +
+      '<span class="mono" style="color:var(--muted);font-size:12px">' + sr.score2 + " 局胜</span></div></div>" +
+      '<div class="mh-sub mono">' + K.dateCN(sr.date) + " " + K.weekdayCN(sr.date) + " · 胜方：" + K.esc(winName) +
+      " " + K.favBtn({ kind: "match", id: sr.matchId, label: sr.date + " " + sr.team1 + " vs " + sr.team2,
+                        icon: sr.icon1, href: "match.html?id=" + encodeURIComponent(sr.matchId) }) + "</div>" +
+      '<div class="battle-strip">' + strip + "</div>" +
+      (sr.video ? '<div style="margin-top:16px;display:flex;gap:12px;align-items:center">' +
+        '<a class="btn primary" href="' + K.esc(sr.video) + '" target="_blank" rel="noopener">看整场回放 ↗</a>' +
+        '<span class="block-note mono">腾讯视频 · 官方录像</span></div>' : "") +
+      "</div></header>";
+    $("#main").innerHTML =
+      replaySectionHTML(sr.matchId) +
+      '<div class="live-zone" id="liveZone" style="display:none"></div>' +
+      '<div class="live-zone" id="histZone" style="display:none"></div>' +
+      '<div class="block-head"><h2><i></i>本大场对局</h2>' +
+      '<span class="block-note mono">每局都有选手数据、BP 与出装</span></div>' +
+      '<div class="panel table-panel"><table class="tbl"><thead><tr><th class="num">局</th><th>胜方</th><th class="num">时长</th><th>数据完整度</th><th class="num">明细</th></tr></thead><tbody id="battleRows">' +
+      rows + "</tbody></table></div>" +
+      '<div class="mnav"><a href="schedule.html">返回赛程中心</a>' +
+      '<span class="block-note mono">' + (liveNow
+        ? "比赛进行中 · 结束后自动更新比分与复盘" : "本场暂无逐分钟胜率曲线（曲线仅覆盖有完整快照的对局）") + "</span></div>";
+    if (liveNow && !rows) {
+      $("#main").innerHTML = '<div class="block-head"><h2><i></i>本大场对局</h2></div>' +
+        '<div class="panel" style="padding:26px;text-align:center;color:var(--muted);font-size:13.5px">' +
+        "BP / 开局准备中——第一局开始后，实时胜率、指标与对局数据会自动出现在这里。</div>" +
+        '<div class="mnav"><a href="schedule.html">返回赛程中心</a></div>';
+    }
+    mountReplay(sr.matchId, "");
+    if (liveNow) initLive(sr.matchId);
+    else initHistoryOnly(sr.matchId);
+    initTodayOverlay(sr.matchId);
+    K.refresh();
+  }
+
+  /* 直播补行：把正在进行的局追加到对局列表（静态数据没有它） */
+  function extendBattleRows(L, matchId) {
+    var tbody = document.getElementById("battleRows");
+    if (!tbody) return;
+    var lv = ((L && L.matches) || []).filter(function (x) { return x.matchId === matchId; })[0];
+    if (!lv) return;
+    var has = false;
+    Array.prototype.some.call(tbody.querySelectorAll("tr"), function (r) {
+      if (r.cells && r.cells[0] && r.cells[0].textContent.trim() === "G" + lv.seq) { has = true; return true; }
+      return false;
+    });
+    if (has || document.getElementById("liveRow" + lv.seq)) return;
+    var tr = document.createElement("tr");
+    tr.id = "liveRow" + lv.seq;
+    tr.innerHTML = '<td class="num">G' + lv.seq + "</td>" +
+      '<td><span class="team-cell"><span style="color:var(--muted)">对局中…</span></span></td>' +
+      '<td class="num">' + Math.round(lv.minute) + "′</td>" +
+      "<td>" + K.liveBadge() + "</td>" +
+      '<td class="num"><a class="go" href="game.html?id=' + encodeURIComponent(lv.battleId) +
+      '" style="color:var(--gold);font-weight:700">实时数据 →</a></td>';
+    tbody.appendChild(tr);
+  }
+
+  function initTodayOverlay(matchId) {
+    function apply() {
+      loadLiveScript(function (L) {
+        var t = liveRowOf(L, matchId);
+        if (!t || t.score1 == null) return;
+        var scEl = document.querySelector(".mh-score");
+        if (scEl) {
+          var tail = t.st === 1 ? " · <span style='color:var(--red)'>正在进行</span>"
+                   : (t.st === 2 ? " · 已结束" : "");
+          scEl.innerHTML = t.score1 + " : " + t.score2 + "<small>大场比分 · BO" + (t.bo || 5) + tail + "</small>";
+        }
+        if (t.st === 2) {
+          var flag = document.getElementById("liveFlag");
+          if (flag) flag.remove();
+        }
+        var sub = document.querySelector(".mh-sub");
+        if (sub && !document.getElementById("liveAtMini")) {
+          sub.insertAdjacentHTML("beforeend",
+            '<span class="mono" id="liveAtMini" style="color:var(--muted);margin-left:10px">实时同步 ' +
+            String(L.updatedAt || "").slice(11, 19) + "</span>");
+        }
+      });
+    }
+    apply();
+    setInterval(apply, 30000);
+  }
+
+
+  /* ---------- 实时比分覆盖（live.today，防重建滞后） ---------- */
+  function loadLiveScript(cb) {
+    var sc = document.createElement("script");
+    sc.src = "assets/live.js?ts=" + Date.now();
+    sc.onload = function () { cb(window.KPL_LIVE); sc.remove(); };
+    sc.onerror = function () { cb(null); sc.remove(); };
+    document.head.appendChild(sc);
+  }
+  function liveRowOf(L, matchId) {
+    if (!L) return null;
+    return (L.today || []).filter(function (x) { return x.matchId === matchId; })[0] ||
+           (L.matches || []).filter(function (x) { return x.matchId === matchId; })[0] || null;
+  }
+
+  /* ---------- 实时区（30 秒自动刷新） ---------- */
+  var _liveTimer = null;
+  function initLive(matchId) {
+    function draw(L) {
+      renderHistory(L, matchId);
+      extendBattleRows(L, matchId);
+      var zone = document.getElementById("liveZone");
+      if (!zone) return;
+      var m = L && (L.matches || []).filter(function (x) { return x.matchId === matchId; })[0];
+      if (!m) { zone.style.display = "none"; return; }
+      zone.style.display = "";
+      var disp = m.display || null;
+      // 样本不足时 display.prob 为 null；倾向要用融合后的 raw，不能退回旧模型单点
+      var baseProb = disp
+        ? (disp.prob != null ? disp.prob : (disp.raw != null ? disp.raw : m.prob))
+        : m.prob;
+      var low = !!(disp && disp.state !== "normal");
+      var pointLeadName = baseProb >= 0.5 ? m.t1 : m.t2;  // prob 为 camp1 视角
+      var rangeTxt = disp ? (Math.round(disp.lo * 100) + "%–" + Math.round(disp.hi * 100) + "%") : "";
+      // 区间是 camp1 视角；正常卡展示"领先方"的区间，需要翻转到领先方
+      var leadRangeTxt = disp
+        ? (baseProb >= 0.5
+            ? (Math.round(disp.lo * 100) + "%–" + Math.round(disp.hi * 100) + "%")
+            : (Math.round((1 - disp.hi) * 100) + "%–" + Math.round((1 - disp.lo) * 100) + "%"))
+        : "";
+      var straddles = !!(disp && disp.lo <= 0.5 && disp.hi >= 0.5);
+      var pNow = Math.round((baseProb >= 0.5 ? baseProb : 1 - baseProb) * 100);
+      var fc = m.forecast || {};
+      function fcell(label, p, g, ahead) {
+        // 低置信阶段不做趋势外推：避免把高方差时刻包装成确定预测
+        if (p == null || low) return "";
+        var pTxt = Math.round(p * 100) + "%";  // 与当前卡一致：camp1 视角
+        var arrow = (p - baseProb) * 100 > 2 ? ' <span style="opacity:.75">↑</span>'
+                  : ((p - baseProb) * 100 < -2 ? ' <span style="opacity:.75">↓</span>' : "");
+        var gTxt = (g == null) ? "" : ('预计金差 <b>' + (g > 0 ? "+" : "") + g + "</b>");
+        return '<div class="live-kpi"><div class="k">' + K.esc(m.t1) + " · " + ahead + ' 分钟后胜率（趋势外推）</div>' +
+          '<div class="v">' + pTxt + arrow + '</div><div class="s">' + gTxt + "</div></div>";
+      }
+      var probCard;
+      if (disp && disp.state === "insufficient") {
+        probCard = '<div class="live-kpi hl"><div class="k">当前胜率</div><div class="v" style="font-size:22px">样本不足</div>' +
+          '<div class="s">' + K.esc(m.t1) + ' 区间 ' + rangeTxt + ' · 模型仍在观察</div></div>';
+      } else if (disp && disp.state === "low_confidence") {
+        probCard = '<div class="live-kpi hl"><div class="k">当前胜率 · 低置信</div><div class="v" style="font-size:22px">' + rangeTxt + '</div>' +
+          '<div class="s">' + K.esc(m.t1) + ' 区间 · ' + K.esc(disp.note || "样本偏少，仅供参考") + '</div></div>';
+      } else {
+        probCard = '<div class="live-kpi hl"><div class="k">' + K.esc(pointLeadName) + ' 当前胜率（模型估算）</div><div class="v">' + pNow + '%</div>' +
+          '<div class="s">' + (disp ? ("区间 " + leadRangeTxt + " · 已做 2–3 分钟平滑") : "该局即时推算") + '</div></div>';
+      }
+      var advName = straddles ? "未定" : pointLeadName;
+      var advSub = straddles ? "区间跨过五五开" : (low ? "低置信" : "模型胜率领先");
+      var headTag = (disp && disp.objective_window)
+        ? '<span class="mono" style="color:#C08A8D;margin-left:8px">● ' + K.esc(disp.objective_label) + '窗口</span>' : "";
+      zone.innerHTML = '<div class="live-card">' +
+        '<div class="live-head">' + K.liveBadge() +
+        '<span class="t">' + K.esc(m.t1) + " vs " + K.esc(m.t2) + " · 第 " + m.seq + " 局 · 第 " + m.minute + " 分钟</span>" + headTag +
+        '<span class="upd">数据更新 ' + K.esc(L.updatedAt) + " · 每 30 秒刷新</span></div>" +
+        '<div class="live-kpis">' + probCard +
+        '<div class="live-kpi"><div class="k">当前金币差</div><div class="v">' + (m.gd > 0 ? "+" : "") + m.gd + '</div>' +
+        '<div class="s">' + K.esc(m.t1) + ' 视角</div></div>' +
+        '<div class="live-kpi"><div class="k">金差走势</div><div class="v">' + (m.goldSpd > 0 ? "+" : "") + m.goldSpd + '</div>' +
+        '<div class="s ' + (m.goldSpd > 0 ? "up" : "down") + '">每分钟金币差</div></div>' +
+        '<div class="live-kpi"><div class="k">模型倾向</div><div class="v">' + K.esc(advName) + '</div><div class="s">' + advSub + "</div></div>" +
+        "</div>" +
+        '<div class="live-chart" id="liveChart"></div>' +
+        fcell("", fc.p3, fc.g3, "3") + fcell("", fc.p5, fc.g5, "5") +
+        '<div class="live-note">' + (low
+          ? "开局或资源刷新窗口只展示区间，避免把高方差时刻当成确定预测。"
+          : "未来值为「趋势外推」：按当前胜率与金差走势线性推演（已收敛处理），仅供参考，非官方预测。") + '</div>' +
+        "</div>";
+      var fcPts = [];
+      if (fc.p3 != null) fcPts.push([m.minute + 3, fc.p3]);
+      if (fc.p5 != null) fcPts.push([m.minute + 5, fc.p5]);
+      // 主曲线用后端平滑后的序列；原始点仍保留在 m.pts 供分析
+      var seriesPts = (m.ptsSmooth && m.ptsSmooth.length) ? m.ptsSmooth
+        : (m.pts || []).map(function (t) { return [t[0], t[1]]; });
+      K.wrChart(document.getElementById("liveChart"),
+        { timeline: seriesPts.map(function (t) { return { m: t[0], p: t[1] }; }),
+          phases: [], events: [], forecast: low ? [] : fcPts },
+        m.t1);
+    }
+    function reload() {
+      var sc = document.createElement("script");
+      sc.src = "assets/live.js?ts=" + Date.now();
+      sc.onload = function () { draw(window.KPL_LIVE); sc.remove(); };
+      sc.onerror = function () { sc.remove(); };
+      document.head.appendChild(sc);
+    }
+    reload();
+    if (_liveTimer) clearInterval(_liveTimer);
+    _liveTimer = setInterval(reload, 30000);
+  }
+
+  /* ---------- 预测复盘（已结束的局 · 保留当时的模型推算） ---------- */
+  function loadHistShard(matchId, cb) {
+    var cache = window._KPL_HIST_SHARD || (window._KPL_HIST_SHARD = {});
+    if (cache[matchId]) { cb(cache[matchId]); return; }
+    var sc = document.createElement("script");
+    sc.src = "assets/live_hist/" + encodeURIComponent(matchId) + ".js?v=85";
+    sc.onload = function () {
+      cache[matchId] = window.KPL_LIVE_HIST || [];
+      sc.remove(); cb(cache[matchId]);
+    };
+    sc.onerror = function () { sc.remove(); cb([]); };
+    document.head.appendChild(sc);
+  }
+
+  function renderHistory(L, matchId) {
+    var zone = document.getElementById("histZone");
+    if (!zone) return;
+    // 先看 live.js 内联的最近局；没有再去按场分片里取（早先的比赛）
+    var inline = ((L && L.history) || []).filter(function (x) { return x.matchId === matchId; });
+    if (inline.length) { drawHistory(inline, matchId); return; }
+    loadHistShard(matchId, function (rows) {
+      var hs = (rows || []).filter(function (x) { return x.matchId === matchId; });
+      if (!hs.length) { zone.style.display = "none"; return; }
+      drawHistory(hs, matchId);
+    });
+  }
+
+  /* 已结束的比赛：不走实时轮询，但复盘仍要能看 */
+  function initHistoryOnly(matchId) {
+    loadHistShard(matchId, function (rows) {
+      var hs = (rows || []).filter(function (x) { return x.matchId === matchId; });
+      if (hs.length) drawHistory(hs, matchId);
+    });
+  }
+
+  function drawHistory(raw, matchId) {
+    var zone = document.getElementById("histZone");
+    if (!zone) return;
+    var hs = raw.filter(function (x) { return (x.pts || []).length > 1; });
+    if (!hs.length) { zone.style.display = "none"; return; }
+    // 30 秒轮询会重复进来；内容没变就不重建，否则用户展开的曲线会被合上
+    var sig = hs.map(function (h) { return h.seq + ":" + (h.pts || []).length + ":" + h.win; }).join("|");
+    if (zone.dataset.sig === sig) return;
+    zone.dataset.sig = sig;
+    zone.style.display = "";
+    hs.sort(function (a, b) { return a.seq - b.seq; });
+    zone.innerHTML = '<div class="live-card">' +
+      '<div class="live-head"><span class="t">预测复盘</span>' +
+      '<span class="upd">当时模型对每一局的逐分钟推算（已归档，可回看）</span>' +
+      '<a href="predict.html" style="margin-left:auto;color:var(--gold);font-weight:700;font-size:12.5px">模型准不准？看统计 →</a></div>' +
+      hs.map(function (h, i) {
+        var tl = h.pts;
+        var last = tl[tl.length - 1];
+        var predWin = last[1] >= 0.5 ? h.t1 : h.t2;
+        var predConf = last[1] >= 0.5 ? last[1] : 1 - last[1];
+        var actualWin = h.win === 1 ? h.t1 : h.t2;
+        var ok = predWin === actualWin;
+        return '<div class="hist-row">' +
+          '<span class="g">G' + h.seq + "</span>" +
+          '<span class="res">' + K.esc(actualWin) + " 胜</span>" +
+          '<span class="pred">终局前预测：' + K.esc(predWin) + " " + Math.round(predConf * 100) + "% " +
+          (ok ? '<em class="ok">命中 ✓</em>' : '<em class="no">未命中 ✗</em>') + "</span>" +
+          '<button class="btn ghost sm hist-btn" type="button" data-i="' + i + '">看预测曲线</button>' +
+          '<div class="hist-chart" id="histChart' + i + '" style="display:none;grid-column:1/-1"></div></div>';
+      }).join("") + "</div>";
+    zone.querySelectorAll(".hist-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var i = parseInt(btn.getAttribute("data-i"), 10);
+        var box = document.getElementById("histChart" + i);
+        if (box.style.display === "none") {
+          box.style.display = "";
+          if (!box.querySelector("svg")) {
+            // 曲线统一画"收官预判胜方"的胜率：pts[1] 是本局 camp1 的胜率，
+            // 若预判胜方是 camp2，就把整条曲线翻成 1-p，避免出现
+            // 上面写"KSG 82%"、下面曲线却标着对手一路跌到 18% 的割裂感。
+            var h = hs[i];
+            var lp = h.pts[h.pts.length - 1][1];
+            var leadIsCamp1 = lp >= 0.5;
+            K.wrChart(box, {
+              timeline: h.pts.map(function (t) { return { m: t[0], p: leadIsCamp1 ? t[1] : 1 - t[1] }; }),
+              phases: [], events: [],
+            }, leadIsCamp1 ? h.t1 : h.t2);
+          }
+        } else {
+          box.style.display = "none";
+        }
+      });
+    });
+  }
+
+  /* ---------- 复盘工作台（V4 阶段二：一条时间轴联动经济 / 资源 / 选手 / 胜率） ---------- */
+  function replaySectionHTML(matchId) {
+    var has = window.KPL_REPLAY && KPL_REPLAY.hasReplay(matchId);
+    return '<div class="block-head"><h2><i></i>复盘工作台</h2>' +
+      '<span class="block-note mono">' +
+      (has ? "先看一句话结论与三个转折 · 需要时再展开逐分钟时间轴"
+           : "本场没有分钟级快照 · 只有基础比分 / BP / 选手明细") + "</span></div>" +
+      '<div class="panel" style="padding:14px"><div id="replayWorkbench">' +
+      (has ? "" : '<div class="empty-tip">该场暂无分钟级复盘数据（仅覆盖有逐分钟快照的 ' +
+        ((Object.keys(window.KPL_REPLAY_INDEX || {}).length) || 0) + " 场比赛）" +
+        (window.KPL_TOTALS ? "；全站 " + KPL_TOTALS.replayBattles + " / " + K.fmtInt(KPL_TOTALS.battles) +
+          " 局有直播胜率，其余只展示赛果 / BP / 选手明细" : "") + "。</div>") +
+      "</div></div>";
+  }
+  function mountReplay(matchId, battleId) {
+    var box = document.getElementById("replayWorkbench");
+    if (!box) return;
+    if (window.KPL_REPLAY && KPL_REPLAY.hasReplay(matchId)) {
+      // 分享链接带了局号时，用它覆盖默认选中的局
+      var wantBattle = battleId || "";
+      if (SHARE_SEQ) {
+        var gi = (window.KPL_GAME_INDEX || {})[matchId];
+        if (gi) {
+          for (var i = 0; i < (gi.b || []).length; i++) {
+            if (Number(gi.b[i][1]) === SHARE_SEQ) { wantBattle = gi.b[i][0]; break; }
+          }
+        }
+      }
+      KPL_REPLAY.mount(box, {
+        matchId: matchId, battleId: wantBattle,
+        initialMinute: SHARE_MIN != null && !isNaN(SHARE_MIN) ? SHARE_MIN : null
+      });
+    }
+  }
+
+  /* ---------- 头图 ---------- */
+  var strip = (M.battles || []).map(function (b) {
+    var kw = b.gameNo === KEY.gameNo;
+    return '<span class="battle-chip' + (kw ? " win" : "") + '">G' + b.gameNo + " · " + K.esc(b.winner) +
+      '<span class="tag">' + (b.hasTl ? "可复盘" : "基础数据") + (kw ? " · 关键局" : "") + "</span></span>";
+  }).join("");
+  $("#wrapHero").innerHTML = '<header class="page-hero"><div class="wrap">' +
+    '<div class="ph-kicker mono">MATCH · ' + K.esc(LG_NAME[M.leagueId] || "2026 赛季") + ' · ' + K.esc(M.date) + "</div>" +
+    '<div class="mh-grid" style="margin-top:14px">' +
+    '<div class="mh-team">' + (M.icon1 ? '<img src="' + K.esc(M.icon1) + '" alt="">' : "") +
+    '<a class="n" href="team.html?id=' + encodeURIComponent(M.team1) + '">' + K.esc(M.team1) + "</a>" +
+    '<span class="mono" style="color:var(--muted);font-size:12px">' + M.score1 + " 局胜</span></div>" +
+    '<div class="mh-score">' + M.score1 + " : " + M.score2 + "<small>大场比分" + (KEY.comeback ? " · 含翻盘局" : "") + "</small></div>" +
+    '<div class="mh-team">' + (M.icon2 ? '<img src="' + K.esc(M.icon2) + '" alt="">' : "") +
+    '<a class="n" href="team.html?id=' + encodeURIComponent(M.team2) + '">' + K.esc(M.team2) + "</a>" +
+    '<span class="mono" style="color:var(--muted);font-size:12px">' + M.score2 + " 局胜</span></div></div>" +
+    '<div class="mh-sub mono">' + K.dateCN(M.date) + " " + K.weekdayCN(M.date) +
+    " · 胜方：" + K.esc(M.score1 > M.score2 ? M.team1 : M.team2) +
+    " " + K.favBtn({ kind: "match", id: M.matchId, label: M.date + " " + M.team1 + " vs " + M.team2,
+                      icon: M.icon1, href: "match.html?id=" + encodeURIComponent(M.matchId) }) + "</div>" +
+    '<div class="battle-strip">' + strip + "</div>" +
+    (function () {
+      var row = (window.KPL_SCHEDULE_ALL || []).filter(function (r) { return r.matchId === M.matchId; })[0];
+      if (row && row.video) {
+        return '<div style="margin-top:16px;display:flex;gap:12px;align-items:center">' +
+          '<a class="btn primary" href="' + K.esc(row.video) + '" target="_blank" rel="noopener">看整场回放 ↗</a>' +
+          '<span class="block-note mono">腾讯视频 · 官方录像</span></div>';
+      }
+      return "";
+    })() +
+    "</div></header>";
+
+  /* ---------- 关键局复盘 ---------- */
+  var phasesHTML = (KEY.phases || []).map(function (ph) {
+    var prob = ph.prob_mean == null ? "—" : K.pct(ph.prob_mean, 0);
+    return '<div class="ph-card"><div class="t">' + K.esc(ph.label) + "</div>" +
+      '<div class="v">' + K.signed(ph.end.gd) + "</div>" +
+      '<div class="d">段内 ' + K.signed(ph.delta.gd) + " · 胜率均值 " + prob + "</div>" +
+      '<div class="d">击杀 ' + K.signed(ph.end.kd) + " · 推塔 " + K.signed(ph.end.td) + " · 资源 " + K.signed(ph.end.rd) + "</div></div>";
+  }).join("");
+  var cardsHTML = (KEY.cards || []).map(function (c) {
+    return '<div class="fc"><div class="h"><span class="v">' + K.esc(c.value) + "</span>" +
+      '<span class="t">' + K.esc(c.title) + "</span></div>" +
+      '<div class="b">' + K.esc(c.headline) + '</div><div class="n">' + K.esc(c.note) + "</div></div>";
+  }).join("");
+
+  /* ---------- BP ---------- */
+  function bpSide(camp, cls, teamName) {
+    var picks = (KEY.bp["camp" + camp].picks || []).map(function (p) {
+      return '<span class="bp-pick">' + (p.icon ? '<img src="' + K.esc(p.icon) + '" alt="">' : "") + K.esc(p.name) + "</span>";
+    }).join("");
+    var bans = (KEY.bp["camp" + camp].bans || []).map(function (b) {
+      return (b.icon ? '<img src="' + K.esc(b.icon) + '" alt="" title="ban ' + K.esc(b.name) + '">' : "");
+    }).join("");
+    return '<div class="bp-side ' + cls + '"><div class="hd">' + K.esc(teamName) + "（" + (camp === 1 ? "蓝方" : "红方") + "）</div>" +
+      '<div class="bp-picks">' + picks + "</div>" +
+      '<div class="bp-bans">ban：' + bans + "</div></div>";
+  }
+
+  /* ---------- 对局列表 ---------- */
+  var rowsHTML = (M.battles || []).map(function (b) {
+    var bid = bidOfSeq(b.gameNo);
+    return "<tr><td class='num'>G" + b.gameNo + "</td>" +
+      "<td><span class='team-cell'>" + K.esc(b.winner) + "</span></td>" +
+      "<td class='num'>" + b.duration.toFixed(0) + "′</td>" +
+      "<td>" + K.coverageBadges(K.battleCoverageMask(M.matchId, bidOfSeq(b.gameNo))) + "</td>" +
+      "<td class='num'>" + (bid ? '<a class="go" href="game.html?id=' + encodeURIComponent(bid) + '" style="color:var(--gold);font-weight:700">对局详情 →</a>' : "—") + "</td></tr>";
+  }).join("");
+
+  var prev = list[idx + 1], next = list[idx - 1];
+  $("#main").innerHTML =
+    '<div class="live-zone" id="liveZone" style="display:none"></div>' +
+    '<div class="live-zone" id="histZone" style="display:none"></div>' +
+    replaySectionHTML(M.matchId) +
+    '<div class="block-head"><h2><i></i>关键局复盘 · G' + KEY.gameNo +
+    (KEY.comeback ? ' <span class="demo-tag">翻盘局</span>' : "") + "</h2>" +
+    '<span class="block-note mono">' + K.dateCN(M.date) + " · 时长 " + KEY.duration.toFixed(0) +
+    "′ · 胜方 " + K.esc(KEY.winner) + ' · 曲线为「估算」</span></div>' +
+    '<div class="feat-grid">' +
+    '<div class="panel"><div class="panel-title">实时胜率曲线 <em class="mono">' + K.esc(M.team1) + " 视角</em></div>" +
+    '<div class="wr-chart" id="wrChart"></div><div class="feat-phases">' + phasesHTML + "</div></div>" +
+    '<div class="panel"><div class="panel-title">关键事件解读 <em class="mono">描述性，非因果</em></div>' +
+    '<div class="feat-cards">' + cardsHTML + "</div></div></div>" +
+    '<div class="block-head sub-head"><h2><i></i>BP 与阵容（关键局）</h2>' +
+    '<span class="block-note mono">官方记录 · ' + (KEY.bp.camp1.picks.length + KEY.bp.camp2.picks.length) + " 选用 / " +
+    (KEY.bp.camp1.bans.length + KEY.bp.camp2.bans.length) + " 禁用</span></div>" +
+    '<div class="bp-grid">' + bpSide(1, "blue", M.team1) + bpSide(2, "red", M.team2) + "</div>" +
+    '<div class="block-head sub-head"><h2><i></i>本大场对局列表</h2></div>' +
+    '<div class="panel table-panel"><table class="tbl"><thead><tr><th class="num">局</th><th>胜方</th><th class="num">时长</th><th>数据</th><th class="num">明细</th></tr></thead><tbody>' +
+    rowsHTML + "</tbody></table></div>" +
+    '<div class="mnav">' +
+    (prev ? '<a href="match.html?id=' + K.esc(prev.matchId) + '">← ' + K.esc(prev.date) + " " + K.esc(prev.team1) + " vs " + K.esc(prev.team2) + "</a>" : "<span></span>") +
+    '<a href="schedule.html">返回赛程中心</a>' +
+    (next ? '<a href="match.html?id=' + K.esc(next.matchId) + '">' + K.esc(next.date) + " " + K.esc(next.team1) + " vs " + K.esc(next.team2) + " →</a>" : "<span></span>") +
+    "</div>";
+
+  mountReplay(M.matchId, KEY.battleId);
+  K.wrChart($("#wrChart"), KEY, M.team1);
+  initLive(M.matchId);
+  initTodayOverlay(M.matchId);
+  K.refresh();
+  SHARE.mount($("#wrapHero"), matchShareSpec, "kpldata-match.png");
+})();
+</script>
+<script src="assets/series_report.js?v=86"></script>
+</body>
+</html>

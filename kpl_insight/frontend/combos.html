@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英雄组合 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<style>
+.combo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+@media(max-width:900px){.combo-grid{grid-template-columns:1fr}}
+.combo-card{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);
+            border-radius:12px;padding:13px 16px;transition:border-color .15s}
+.combo-card:hover{border-color:var(--line2)}
+.combo-heroes{display:flex;align-items:center;flex:none}
+.combo-heroes a{display:block;width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid var(--line2);
+                transition:border-color .15s,transform .15s}
+.combo-heroes a:hover{border-color:var(--gold);transform:translateY(-2px)}
+.combo-heroes a + a{margin-left:-11px}
+.combo-heroes img{width:100%;height:100%;object-fit:cover}
+.combo-body{flex:1;min-width:0}
+.combo-names{font-size:14px;font-weight:800;display:flex;gap:6px;flex-wrap:wrap}
+.combo-names a:hover{color:var(--gold)}
+.combo-meta{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.combo-nums{flex:none;text-align:right}
+.combo-nums .wr{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--ink);line-height:1.1}
+.combo-nums .syn{font-family:var(--mono);font-size:12.5px;font-weight:700;margin-top:2px}
+.combo-nums .syn.pos{color:var(--gold)}
+.combo-nums .syn.neg{color:var(--muted)}
+.combo-nums .syn small{color:var(--muted);font-weight:400}
+.combo-tip{background:var(--inset);border:1px solid var(--line);border-radius:10px;padding:12px 16px;
+           font-size:13px;color:var(--ink2);margin-bottom:14px;line-height:1.75}
+.combo-tip b{color:var(--gold)}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="英雄组合 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="combos.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">COMBOS · 英雄组合</div>
+    <h1>英雄组合</h1>
+    <p>哪些英雄配在一起最能赢？基于 2019–2026 全部比赛的组合统计：同队同局出场即算一组，
+      并用<b>协同加成</b>算法区分「真的化学反应」与「只是强英雄堆在一起」。</p>
+    <div class="ph-meta mono">
+      <span>范围对局 <b id="cGames">—</b></span><i>/</i>
+      <span>收录组合 <b id="cCount">—</b></span><i>/</i>
+      <span>数据时钟 <b id="genAt">—</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="scopebar" id="scopeBar"></div>
+
+  <div class="combo-tip">
+    <b>「协同加成」怎么读：</b>先看一组英雄一起打时的胜率，再跟这几个英雄各自单独出场时的平均胜率作比。
+    比如一组英雄一起打胜率 60%、各自平均只有 50%，协同加成就是 <b>+10</b>——说明这组搭配本身有价值；
+    如果一起打 55%、各自平均却有 58%，协同是负的——那只是把强英雄放在了一起。
+    出场太少的组合会标注「样本偏少」，结论仅供参考。
+  </div>
+
+  <div class="filterbar">
+    <div class="seg" id="modeTabs">
+      <button data-mode="combo2" class="on">双人组合</button>
+      <button data-mode="combo3">三人组合</button>
+    </div>
+    <label class="fld"><span>排序</span>
+      <select id="fSort">
+        <option value="syn" selected>按协同加成</option>
+        <option value="wr">按组合胜率</option>
+        <option value="n">按出场局数</option>
+      </select>
+    </label>
+    <label class="fld"><span>最少出场</span>
+      <select id="fMin">
+        <option value="0">不限</option>
+        <option value="20" selected>≥ 20 局</option>
+        <option value="50">≥ 50 局</option>
+        <option value="100">≥ 100 局</option>
+      </select>
+    </label>
+    <span class="block-note mono" id="countNote"></span>
+  </div>
+
+  <div class="combo-grid" id="comboGrid"></div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  $("#genAt").textContent = D.generatedAt;
+
+  var curScope = "all", mode = "combo2";
+
+  function heroIcon(name) {
+    var d = K.scopeOf(curScope);
+    var h = (d.heroes || []).filter(function (x) { return x.name === name; })[0];
+    if (h && h.icon) return h.icon;
+    var fallback = (D.heroes || []).filter(function (x) { return x.name === name; })[0];
+    return fallback ? fallback.icon : "";
+  }
+
+  function render() {
+    var d = K.scopeOf(curScope);
+    var rows = (d[mode] || []).filter(function (c) { return c.n >= (parseInt($("#fMin").value, 10) || 0); });
+    var key = $("#fSort").value;
+    rows = rows.slice().sort(function (a, b) {
+      if (key === "wr") return b.wr - a.wr || b.n - a.n;
+      if (key === "n") return b.n - a.n;
+      return b.syn - a.syn || b.n - a.n;
+    }).slice(0, 60);
+    $("#cGames").textContent = K.fmtInt(d.totals.battles);
+    $("#cCount").textContent = (d.combo2 || []).length + " / " + (d.combo3 || []).length;
+    $("#countNote").textContent = "共 " + rows.length + " 组（" + K.scopeName(curScope) + "）";
+    $("#comboGrid").innerHTML = rows.length ? rows.map(function (c, i) {
+      var avas = c.h.map(function (n) {
+        var ic = heroIcon(n);
+        return '<a href="hero.html?id=' + encodeURIComponent(n) + '" title="' + K.esc(n) + '">' +
+          (ic ? '<img src="' + K.esc(ic) + '" alt="" loading="lazy">' : "") + "</a>";
+      }).join("");
+      var names = c.h.map(function (n) {
+        return '<a href="hero.html?id=' + encodeURIComponent(n) + '">' + K.esc(n) + "</a>";
+      }).join("<span style='color:var(--muted)'>·</span>");
+      var synCls = c.syn >= 0 ? "pos" : "neg";
+      var synTxt = (c.syn >= 0 ? "+" : "") + (c.syn * 100).toFixed(1);
+      return '<div class="combo-card reveal" style="transition-delay:' + Math.min(i * 22, 260) + 'ms">' +
+        '<div class="combo-heroes">' + avas + "</div>" +
+        '<div class="combo-body"><div class="combo-names">' + names + "</div>" +
+        '<div class="combo-meta">出场 ' + c.n + " 局 · " + c.w + " 胜" +
+        (c.n < 20 ? ' · <span style="color:var(--orange)">样本偏少</span>' : "") +
+        (c.last ? ' · <a href="game.html?id=' + encodeURIComponent(c.last[1]) + '" style="color:var(--gold);font-weight:700">最近这场（' +
+          K.esc(c.last[2]) + " · " + K.esc(String(c.last[0]).slice(5)) + "）→</a>" : "") +
+        "</div></div>" +
+        '<div class="combo-nums"><div class="wr">' + K.pct(c.wr) + "</div>" +
+        '<div class="syn ' + synCls + '">协同 ' + synTxt + " <small>个百分点</small></div></div></div>";
+    }).join("") : '<div class="empty-tip">该范围没有达到门槛的组合（可放宽最少出场）</div>';
+    K.refresh();
+  }
+
+  $("#modeTabs").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    Array.prototype.forEach.call(this.children, function (x) { x.classList.toggle("on", x === b); });
+    mode = b.getAttribute("data-mode");
+    render();
+  });
+  ["fSort", "fMin"].forEach(function (id) { $("#" + id).addEventListener("change", render); });
+  curScope = K.scopeBar("#scopeBar", function (id) { curScope = id; render(); });
+  render();
+})();
+</script>
+</body>
+</html>

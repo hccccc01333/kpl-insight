@@ -36,4 +36,4 @@ Issues = "https://github.com/hccccc01333/kpl-insight/issues"
 include = ["kpl_insight*"]
 
 [tool.setuptools.package-data]
-kpl_insight = ["resources/*.json"]
+kpl_insight = ["resources/*.json", "frontend/**/*"]

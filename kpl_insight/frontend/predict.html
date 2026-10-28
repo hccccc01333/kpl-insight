@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>预测与准确率 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<link rel="stylesheet" href="assets/challenge.css?v=1">
+<style>
+.pr-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-top:8px}
+@media(max-width:900px){.pr-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pr-kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.pr-kpi .k{font-size:12px;color:var(--muted)}
+.pr-kpi .v{font-family:var(--mono);font-size:28px;font-weight:800;color:var(--ink);margin-top:4px}
+.pr-kpi.hl .v{color:var(--gold)}
+.pr-kpi .s{font-size:11.5px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.pr-row{display:grid;grid-template-columns:92px 1fr 52px 158px 130px 92px 74px;gap:10px;align-items:center;
+        padding:9px 8px;border-bottom:1px solid var(--line);font-size:13px}
+.pr-row:last-child{border-bottom:none}
+.pr-row:hover{background:var(--inset)}
+.pr-row .d{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.pr-row .vs{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-row .g{font-family:var(--mono);font-weight:800;color:var(--ink2)}
+.pr-row .pred{font-family:var(--mono);font-size:12.5px;color:var(--ink2)}
+.pr-row .pred b{color:var(--gold)}
+.pr-row .res{font-weight:700}
+.pr-row .hit{font-weight:800;text-align:center;border-radius:6px;padding:2px 0;font-size:12.5px}
+.pr-row .hit.y{color:var(--teal);background:rgba(143,179,174,.12)}
+.pr-row .hit.n{color:var(--red);background:rgba(192,138,141,.12)}
+.pr-row a.go{color:var(--gold);font-weight:700;font-size:12.5px;text-align:right}
+@media(max-width:1100px){.pr-row{grid-template-columns:84px 1fr 44px 140px 110px;}.pr-row .res,.pr-row a.go{display:none}}
+.pr-phase{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:10px}
+@media(max-width:800px){.pr-phase{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pr-ph{border:1px solid var(--line);border-radius:11px;padding:12px 14px;background:var(--inset)}
+.pr-ph .k{font-size:12px;color:var(--muted)}
+.pr-ph .v{font-family:var(--mono);font-size:24px;font-weight:800;color:var(--ink);margin-top:3px}
+.pr-ph .s{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.pr-bar{height:7px;background:var(--card2);border-radius:4px;overflow:hidden;margin-top:8px}
+.pr-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px}
+.pr-note{font-size:12.5px;color:var(--muted);line-height:1.8;margin-top:12px}
+.pr-note b{color:var(--ink2)}
+@media(max-width:760px){
+  .pr-row{grid-template-columns:62px minmax(0,1fr) 34px 84px}
+  .pr-row .pred{display:none}
+  .pr-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pr-phase{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="预测与准确率 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="predict.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">PREDICT · 预测与准确率</div>
+    <h1>预测与准确率</h1>
+    <p>模型说得准不准，我们把它公开。下面同时展示<b>每一局直播预测的成败</b>（可逐局核对）与
+      <b>历史回测</b>（用最新比赛当考卷的分阶段准确率）。</p>
+    <div class="ph-meta mono">
+      <span>归档预测 <b id="prN">—</b> 局</span><i>/</i>
+      <span>模型训练于 <b id="prTrained">—</b></span><i>/</i>
+      <span>数据更新 <b id="prAt">—</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:22px">
+  <div class="pr-kpis">
+    <div class="pr-kpi hl"><div class="k">第 8 分钟命中率 <em class="mono">可信口径</em></div><div class="v" id="kCp8">—</div><div class="s" id="kCp8S">—</div></div>
+    <div class="pr-kpi"><div class="k">第 12 / 16 分钟命中率</div><div class="v" id="kCp12">—</div><div class="s" id="kCp12S">—</div></div>
+    <div class="pr-kpi"><div class="k" id="kAccK">回测总体准确率（holdout）</div><div class="v" id="kAcc">—</div><div class="s" id="kAccS">—</div></div>
+    <div class="pr-kpi"><div class="k">最后一帧（参考，不可当能力）</div><div class="v" id="kLast">—</div><div class="s">比赛已基本结束，命中率趋近 100% 属于口径而非模型</div></div>
+  </div>
+
+  <section class="block" id="challengeBlock" style="margin-top:22px">
+    <div class="block-head">
+      <h2><i></i>赛前预测挑战</h2>
+      <span class="block-note mono">本地记录 · 不涉及账户 / 投注</span>
+    </div>
+    <div class="panel">
+      <div class="ch-top">
+        <div class="ch-stats" id="chStats">—</div>
+        <button class="btn ghost sm" id="chReset" type="button">清空记录</button>
+      </div>
+      <div id="chList"><div class="ch-muted">滚动到这里后加载赛程…</div></div>
+      <div class="block-note mono" style="margin-top:10px">只记录你的选择；结果以官方赛果为准，不构成预测或投注建议。</div>
+    </div>
+  </section>
+
+  <div class="panel" style="margin-top:14px">
+    <div class="panel-title">分时点命中率 <em class="mono">同一批对局，在不同时间点做预测</em></div>
+    <div class="table-panel"><table class="tbl">
+      <thead><tr><th>预测时点</th><th class="num">样本</th><th class="num">命中</th><th class="num">准确率</th><th class="num">Brier</th><th>说明</th></tr></thead>
+      <tbody id="cpRows"></tbody>
+    </table></div>
+    <div class="block-note mono" style="margin-top:8px">
+      口径：每个时间点取"该分钟及之前最后一帧"的预测，不插值、不外推。<span id="cpN">—</span>
+      「最后一帧」加入对比是为了说明：把口径压在收官前，命中率会自然虚高。
+    </div>
+  </div>
+
+  <div class="panel" id="rvlPanel" style="margin-top:14px;display:none">
+    <div class="panel-title">重放 vs 直播 <em class="mono">同一批局、同一分钟，两条口径差多少</em></div>
+    <div class="pr-kpis" id="rvlGrid" style="margin-top:0"></div>
+    <div class="block-note mono" style="margin-top:8px" id="rvlNote">—</div>
+  </div>
+
+  <div class="brief" id="brief"></div>
+
+  <section class="block" style="margin-top:26px">
+    <div class="block-head">
+      <h2><i></i>直播预测档案</h2>
+      <span class="block-note mono" id="prTableNote">每一局的"终局前最后一次预测" vs 实际结果 · 点击可回看完整预测曲线</span>
+    </div>
+    <div class="panel table-panel">
+      <div class="pr-row" style="font-weight:600;color:var(--muted);font-size:12px;border-bottom:1px solid var(--line2)">
+        <span>日期</span><span>对阵</span><span>局</span><span>终局前预测</span><span>实际胜方</span><span>结果</span><span></span>
+      </div>
+      <div id="prRows"></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>模型回测（历史考卷）</h2>
+      <span class="block-note mono">用这一批最新的比赛做检验，分阶段算准确率</span>
+    </div>
+    <div class="panel">
+      <div class="pr-phase" id="prPhases"></div>
+      <div class="pr-note">
+        <b>怎么读：</b>准确率 = 模型在该阶段内的判断与最终结果一致的比例；越到后期（双方经济咬死、局势反复）越难，准确率下降是正常现象，
+        我们不做粉饰。 <b>验收：</b>所有阶段误差均达到设定门槛（<span id="prGate">—</span>）。
+        <b>预测口径：</b>胜率曲线与「预测」均为模型估算，非官方预测；仅供数据参考。
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/predict.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/challenge.js?v=1"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  var P = window.KPL_PREDICT;
+
+  var teamIcon = {};
+  ((K.scopeOf("all") || {}).teams || []).forEach(function (t) { teamIcon[t.team] = t.icon; });
+
+  var acc = P.accuracy || { n: 0, hits: 0, rate: 0 };
+  $("#prN").textContent = acc.n;
+  if (acc.shown && $("#prTableNote")) {
+    $("#prTableNote").textContent = "命中率按全部 " + acc.n + " 局统计 · 表格展示最近 " + acc.shown +
+      " 局（收尾帧）· 点击可回看完整预测曲线";
+  }
+  $("#prAt").textContent = P.updatedAt;
+  $("#prTrained").textContent = (P.backtest || {}).trainedAt || "—";
+
+  /* 分时点命中率 */
+  var cps = P.checkpoints || [];
+  var lastF = P.lastFrame || {};
+  function cpAt(m) { return cps.filter(function (c) { return c.m === m; })[0]; }
+  var c8 = cpAt(8), c12 = cpAt(12), c16 = cpAt(16);
+  if (c8) {
+    $("#kCp8").textContent = Math.round(c8.acc * 100) + "%";
+    $("#kCp8S").textContent = "命中 " + c8.hits + " / " + c8.n + " 局 · Brier " + c8.brier.toFixed(3);
+  }
+  if (c12) {
+    $("#kCp12").textContent = Math.round(c12.acc * 100) + " / " + (c16 ? Math.round(c16.acc * 100) : "—") + "%";
+    $("#kCp12S").textContent = "样本 " + c12.n + " 局 · 越往后越接近真实结果";
+  }
+  $("#kLast").textContent = lastF.n ? Math.round((lastF.acc || 0) * 100) + "%" : "—";
+  if ($("#cpN")) {
+    $("#cpN").textContent = "档案共 " + ((P.accuracy || {}).n || 0) + " 局，各时间点样本因采集时长不同略有差异。";
+  }
+  var cpRows = cps.slice();
+  if (lastF.n) cpRows.push({ m: "最后一帧", n: lastF.n, hits: Math.round((lastF.acc || 0) * lastF.n), acc: lastF.acc || 0, brier: lastF.brier || 0, last: true });
+  $("#cpRows").innerHTML = cpRows.map(function (c) {
+    return "<tr><td>" + (c.last ? "最后一帧" : "第 " + c.m + " 分钟") + "</td>" +
+      '<td class="num mono">' + c.n + "</td>" +
+      '<td class="num mono">' + c.hits + "</td>" +
+      '<td class="num mono"' + (c.last ? ' style="color:var(--muted)"' : "") + ">" + Math.round(c.acc * 100) + "%</td>" +
+      '<td class="num mono">' + Number(c.brier || 0).toFixed(3) + "</td>" +
+      "<td>" + (c.last ? "比赛已基本结束，命中率高是口径使然" : "赛前中期，样本少，仅供参考") + "</td></tr>";
+  }).join("") || '<tr><td colspan="6" style="color:var(--muted)">暂无预测档案</td></tr>';
+
+  var bt = P.backtest || {};
+  var ph = bt.phases || {};
+  if (ph.all) {
+    $("#kAcc").textContent = Math.round(ph.all.acc * 100) + "%";
+    // 同时给"局数"和"帧数"：只写帧数会让人以为样本有几百场
+    var nb = bt.holdoutN || 0;
+    $("#kAccK").textContent = "回测总体准确率（近 " + nb + " 局 holdout）";
+    $("#kAccS").textContent = nb + " 局 · " + ph.all.n + " 帧";
+  }
+  $("#prGate").textContent = bt.gatesPassed ? "全部通过 ✓" : "部分未达标";
+
+  /* 重放 vs 直播 */
+  (function () {
+    var rv = P.replayVsLive;
+    if (!rv || !rv.battles) return;
+    $("#rvlPanel").style.display = "";
+    var pct = function (x) { return Math.round(x * 100) + "%"; };
+    var cells = [
+      ["对齐局数", rv.battles + " 局", rv.frames + " 帧（按分钟对齐）", false],
+      ["同一分钟偏差 |Δp|", rv.medianDelta.toFixed(3), "中位 · p90 " + rv.p90Delta.toFixed(3), false],
+      ["方向一致率", pct(rv.directionAgree), "两边看好同一队的比例", false],
+      ["Brier 差（重放−直播）", (rv.gapAll > 0 ? "+" : "") + rv.gapAll.toFixed(3),
+        "live " + rv.brierLive.toFixed(3) + " · replay " + rv.brierReplay.toFixed(3), true],
+      ["其中考试段（干净估计）", (rv.gapTest > 0 ? "+" : "") + (rv.gapTest || 0).toFixed(3),
+        (rv.testFrames || 0) + " 帧 · 模型没见过的局", true]
+    ];
+    $("#rvlGrid").innerHTML = cells.map(function (c) {
+      return '<div class="pr-kpi"><div class="k">' + K.esc(c[0]) + '</div><div class="v">' +
+        K.esc(c[1]) + '</div><div class="s">' + K.esc(c[2]) + "</div></div>";
+    }).join("");
+    $("#rvlNote").textContent =
+      "「直播」= 比赛当时写下的预测（旧模型 + 实时数据延迟）；「重放」= 当前模型拿同一批快照重算。" +
+      "两者差 0.08 Brier 说明：上面那张分时点命中率是历史记录，不是当前模型的能力；" +
+      "反过来说，回测的那批局也是重放口径，真到直播时大概会更差一些。" +
+      (rv.generatedAt ? " 数据：" + rv.generatedAt : "");
+  })();
+
+  /* 预测档案表 */
+  var LABELS = { early: "早期（≤8′）", mid: "中期（9–15′）", late: "后期（16′+）", all: "全部阶段" };
+  $("#prPhases").innerHTML = ["early", "mid", "late", "all"].filter(function (k) { return ph[k]; }).map(function (k) {
+    var m = ph[k];
+    if (k === "all") {
+      return '<div class="pr-ph" style="border-color:rgba(255,255,255,.45)"><div class="k">' + LABELS[k] +
+        '</div><div class="v">' + Math.round(m.acc * 100) + '%</div><div class="s">Brier ' + m.brier.toFixed(3) +
+        ' · n=' + m.n + '</div><div class="pr-bar"><i style="width:' + (m.acc * 100).toFixed(0) + '%"></i></div></div>';
+    }
+    return '<div class="pr-ph"><div class="k">' + LABELS[k] + '</div><div class="v">' + Math.round(m.acc * 100) +
+      '%</div><div class="s">Brier ' + m.brier.toFixed(3) + ' · n=' + m.n +
+      '</div><div class="pr-bar"><i style="width:' + (m.acc * 100).toFixed(0) + '%"></i></div></div>';
+  }).join("");
+
+  /* 归档行 */
+  $("#prRows").innerHTML = (P.archived || []).map(function (a) {
+    var predTeam = a.prob >= 0.5 ? a.t1 : a.t2;
+    var predProb = a.prob >= 0.5 ? a.prob : 1 - a.prob;
+    var actualTeam = a.win === 1 ? a.t1 : a.t2;
+    var li = teamIcon[a.t1] ? '<img src="' + K.esc(teamIcon[a.t1]) + '" alt="" style="width:18px;height:18px;vertical-align:-4px;margin-right:5px">' : "";
+    var link = a.matchId ? '<a class="go" href="match.html?id=' + K.esc(a.matchId) + '">回看 →</a>' : "<span></span>";
+    return '<div class="pr-row">' +
+      '<span class="d">' + K.esc(a.date.slice(5)) + "</span>" +
+      '<span class="vs">' + li + K.esc(a.t1) + " vs " + K.esc(a.t2) + "</span>" +
+      '<span class="g">G' + a.seq + "</span>" +
+      '<span class="pred">' + K.esc(predTeam) + " <b>" + Math.round(predProb * 100) + "%</b>（" + a.frames + " 个预测点）</span>" +
+      '<span class="res">' + K.esc(actualTeam) + " 胜</span>" +
+      '<span class="hit ' + (a.hit ? "y" : "n") + '">' + (a.hit ? "命中 ✓" : "未命中 ✗") + "</span>" +
+      link + "</div>";
+  }).join("") || '<div class="empty-tip">暂无归档预测（比赛日自动积累）</div>';
+
+  /* 数据简报 */
+  {
+    var last = (P.archived || [])[P.archived.length - 1];
+    var txt = "直播预测已归档 <b>" + acc.n + "</b> 局，命中 <b>" + acc.hits + "</b> 局（<b>" + Math.round(acc.rate * 100) +
+      "%</b>）。用最近一批比赛做检验，模型在早期/中期阶段判断约 <b>" +
+      (ph.early ? Math.round(ph.early.acc * 100) : "—") + "%</b> 准确，后期局势反复时约 <b>" +
+      (ph.late ? Math.round(ph.late.acc * 100) : "—") + "%</b>——每一条都可在上方逐局核对。";
+    if (last) {
+      txt += "最近归档：" + K.esc(last.date) + " " + K.esc(last.t1) + " vs " + K.esc(last.t2) + "（G" + last.seq + "）。";
+    }
+    K.brief("#brief", txt);
+  }
+})();
+</script>
+</body>
+</html>

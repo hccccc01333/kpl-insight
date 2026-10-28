@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="KPLdata BP 赛事演播室：基于真实逐局数据重放职业比赛选禁过程、查看双方最终阵容与系列赛英雄使用记录。">
+<title>BP 赛事演播室 · KPLdata</title>
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<link rel="stylesheet" href="assets/bp-studio.css?v=1">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="bp.html">
+<header id="siteHeader" class="topbar"></header>
+<main class="studio wrap" id="studio">
+  <div class="studio-crumb"><a href="schedule.html">赛事</a><span>/</span><a href="bp.html">BP 分析</a><span>/</span><b>BP 赛事演播室</b></div>
+  <section class="studio-lead">
+    <div>
+      <div class="studio-eyebrow">KPLDATA / DRAFT BROADCAST STUDIO</div>
+      <h1>BP 赛事演播室<span class="studio-spark">.</span></h1>
+      <p>选择一场真实比赛，逐手回放双方选禁，查看最终阵容和前几局英雄使用情况。</p>
+    </div>
+    <div class="studio-lead-actions"><a href="bp.html" class="studio-secondary">研究 BP 统计 ↗</a><a id="detailLink" href="schedule.html" class="studio-main-link">进入整场比赛 ↗</a></div>
+  </section>
+  <section class="studio-filters" aria-label="选择真实比赛">
+    <label>赛事年份<select id="yearSelect"><option value="">全部年份</option></select></label>
+    <label class="studio-search">搜索战队或赛事<input id="matchQuery" type="search" placeholder="例如 狼队 / AG / 总决赛" autocomplete="off"></label>
+    <label class="studio-match-filter">真实比赛<select id="matchSelect" aria-label="选择比赛"></select></label>
+    <label>对局<select id="gameSelect" aria-label="选择第几局"></select></label>
+  </section>
+  <div class="studio-feedback" id="studioFeedback" role="status" aria-live="polite">正在载入赛事资料…</div>
+
+  <section class="studio-arena" aria-label="赛事阵容">
+    <div class="studio-arena-top">
+      <div class="studio-context">
+        <span class="studio-context-k">PRO SERIES / REAL MATCH DATA</span>
+        <strong id="matchContext">—</strong>
+        <span id="matchDate">—</span>
+      </div>
+      <div class="studio-state" id="stateChip">数据准备中</div>
+    </div>
+    <div class="studio-versus">
+      <div class="studio-team studio-team-blue"><div class="studio-team-head"><img id="logoBlue" alt="" class="studio-team-logo"><span><small>蓝方 · BLUE</small><strong id="nameBlue">—</strong></span></div><div class="studio-series" id="blueSeries">—</div></div>
+      <div class="studio-versus-center"><div class="studio-vs">VS</div><div id="seriesNote">BO 系列赛</div></div>
+      <div class="studio-team studio-team-red"><div class="studio-series" id="redSeries">—</div><div class="studio-team-head"><span><small>红方 · RED</small><strong id="nameRed">—</strong></span><img id="logoRed" alt="" class="studio-team-logo"></div></div>
+    </div>
+    <div class="studio-lineup-wrap">
+      <div class="studio-side studio-side-blue"><div class="studio-side-top"><b>BLUE SIDE / 阵容</b><span id="bluePickCount">0 / 5 已选</span></div><div id="blueLineup" class="studio-lineup"></div><div id="blueBans" class="studio-bans"></div></div>
+      <div class="studio-midmark"><span>FINAL</span><b>VS</b><span>LINEUP</span></div>
+      <div class="studio-side studio-side-red"><div class="studio-side-top"><b>RED SIDE / 阵容</b><span id="redPickCount">0 / 5 已选</span></div><div id="redLineup" class="studio-lineup"></div><div id="redBans" class="studio-bans"></div></div>
+    </div>
+    <div class="studio-arena-bottom"><span id="winHint">从历史对局还原真实 BP</span><span id="dataHint">官方比赛记录 · 非实时直播</span></div>
+  </section>
+
+  <section class="studio-workbench" aria-label="BP 逐手回放">
+    <div class="studio-workbench-head">
+      <div><div class="studio-eyebrow">DRAFT REPLAY</div><h2>选禁时间线</h2></div>
+      <div class="studio-tabs" role="group" aria-label="回放模式">
+        <button type="button" id="draftMode">逐手回放</button>
+        <button type="button" id="finalMode">最终阵容</button>
+      </div>
+    </div>
+    <div class="studio-actions-scroll"><div class="studio-actions" id="bpActions" aria-label="BP 步骤"></div></div>
+    <div class="studio-player">
+      <div class="studio-control-buttons">
+        <button type="button" id="startBtn" title="回到第一手" aria-label="回到开始">↶</button>
+        <button type="button" id="prevBtn" title="上一手" aria-label="上一手">‹</button>
+        <button type="button" id="playBtn" class="studio-play" title="播放或暂停" aria-label="播放">▶</button>
+        <button type="button" id="nextBtn" title="下一手" aria-label="下一手">›</button>
+        <button type="button" id="endBtn" title="跳转到最终阵容" aria-label="查看最终阵容">↷</button>
+      </div>
+      <label class="studio-slider-label">步骤<input id="stepRange" type="range" min="0" max="20" value="20"><span id="stepText">20 / 20</span></label>
+      <label class="studio-speed">播放速度<select id="speedSelect"><option value="1800">慢</option><option value="1100" selected>正常</option><option value="600">快</option></select></label>
+      <button type="button" id="copyLink" class="studio-share">复制当前画面链接 ↗</button>
+    </div>
+    <p class="studio-disclaimer" id="bpExplanation">逐手回放基于真实 BP 动作序列。播放速度是展示节奏，不代表比赛现场每次选禁的真实耗时。</p>
+  </section>
+
+  <div class="studio-lower">
+    <section class="studio-surface studio-used">
+      <div class="studio-panel-head"><div><div class="studio-eyebrow">BO SERIES</div><h2>前几局英雄使用</h2></div><span id="priorLabel">—</span></div>
+      <div id="previousPicks" class="studio-prev-list"><p class="studio-muted">选择对局后查看。</p></div>
+      <p class="studio-small">仅列出已记录的小局实际选用英雄。是否适用全局 BP 限制须以当届官方赛制为准，列表本身不代表可用英雄判断。</p>
+    </section>
+    <section class="studio-surface">
+      <div class="studio-panel-head"><div><div class="studio-eyebrow">POST MATCH</div><h2>本局赛后数据</h2></div><span>最终统计，非 BP 时点预测</span></div>
+      <div id="postStats" class="studio-stats"><p class="studio-muted">选择对局后查看。</p></div>
+      <div class="studio-links"><a id="gameLink" href="schedule.html">本局数据详情 →</a><a id="videoLink" href="schedule.html" hidden target="_blank" rel="noopener noreferrer">官方记录中的录像链接 ↗</a></div>
+    </section>
+  </div>
+  <footer class="studio-footnote">KPLdata 为独立赛事数据项目，与 KPL 官方无关联。选手、英雄、赛果及 BP 数据来自已归档的赛事记录；缺失字段不会补造。</footer>
+</main>
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/games/index.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/bp-studio.js?v=1"></script>
+</body>
+</html>

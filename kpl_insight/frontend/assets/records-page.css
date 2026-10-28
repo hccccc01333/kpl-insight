@@ -1,0 +1,39 @@
+/* Records: clear controls and a quiet reading surface over the moving world. */
+html.v55 body[data-page="records.html"] .records-coverage{display:flex;align-items:flex-start;gap:16px;padding:18px 22px;margin-bottom:20px;border:1px solid #3c5374;border-radius:10px;background:#101c32;color:#c4d3e9;font-size:13px;line-height:1.7}
+.records-coverage .coverage-label{flex-shrink:0;color:#a4dcff;font-size:11px;letter-spacing:.08em;padding-top:2px}
+.records-coverage strong{color:#edf5ff;font-weight:600}
+.records-coverage p{margin:4px 0 0}
+html.v55 body[data-page="records.html"] .records-controls{padding:20px!important;gap:18px;background:rgba(12,20,40,.96)!important;border-radius:10px!important}
+html.v55 body[data-page="records.html"] #recTabs{margin-left:0;flex-wrap:wrap;max-width:100%}
+html.v55 body[data-page="records.html"] #recTabs button,html.v55 body[data-page="records.html"] #recDir button{min-height:44px;padding:10px 18px}
+html.v55 body[data-page="records.html"] #themeWrap{border-top:1px solid #2c3c56;padding-top:18px;margin-top:0!important}
+html.v55 body[data-page="records.html"] .theme-chips{gap:10px}
+html.v55 body[data-page="records.html"] .theme-chips button{min-height:44px;padding:10px 18px;border:1px solid #415573;border-radius:8px;background:#152039!important;color:#d9e8fc!important;font-size:13px;line-height:1.4;transition:background .18s,border-color .18s}
+html.v55 body[data-page="records.html"] .theme-chips button:hover{background:#223655!important;border-color:#9ccfff}
+html.v55 body[data-page="records.html"] .theme-chips button.on{background:#c5e9ff!important;border-color:#c5e9ff!important;color:#10253b!important;font-weight:700;box-shadow:inset 0 -3px 0 #6bbce9}
+html.v55 body[data-page="records.html"] button:focus-visible,html.v55 body[data-page="records.html"] select:focus-visible{outline:2px solid #96ddff;outline-offset:4px}
+html.v55 body[data-page="records.html"] #recBrief{padding:18px 22px!important;line-height:1.9;border-radius:10px!important;background:rgba(12,20,40,.96)!important;color:#bdcde3;overflow-wrap:anywhere}
+html.v55 body[data-page="records.html"] .rec-list{border:1px solid #31425c;border-radius:12px;overflow:hidden;background:#101a2d!important}
+html.v55 body[data-page="records.html"] .rec-row{padding:23px 24px;gap:18px;border-color:#293a53}
+html.v55 body[data-page="records.html"] .rec-row.top1{background:linear-gradient(105deg,#18324e,#142139);border-left:3px solid #9bdcff}
+html.v55 body[data-page="records.html"] .rec-row .rec-who{min-width:0}
+html.v55 body[data-page="records.html"] .rec-who b{white-space:normal;overflow-wrap:anywhere;line-height:1.6}
+html.v55 body[data-page="records.html"] .rec-who em{white-space:normal;line-height:1.7;color:#aabed9;margin-top:5px}
+html.v55 body[data-page="records.html"] .rec-val{font-size:29px;color:#edf5ff;font-variant-numeric:tabular-nums;white-space:nowrap}
+html.v55 body[data-page="records.html"] .rec-row.top1 .rec-val{color:#a9e2ff}
+html.v55 body[data-page="records.html"] .rec-val small{font-size:12px;color:#aabed9;margin-left:7px}
+@media(max-width:700px){
+  html.v55 body[data-page="records.html"] main.wrap{padding-left:18px;padding-right:18px}
+  html.v55 body[data-page="records.html"] .records-controls{padding:14px!important;gap:14px}
+  html.v55 body[data-page="records.html"] #recTabs{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  html.v55 body[data-page="records.html"] #recTabs button{padding:10px 8px;border:0}
+  html.v55 body[data-page="records.html"] #metricWrap{flex-basis:100%;min-width:0}
+  html.v55 body[data-page="records.html"] #recDir{margin-left:0}
+  html.v55 body[data-page="records.html"] #recRandom{margin-left:auto;min-height:44px}
+  html.v55 body[data-page="records.html"] .theme-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  html.v55 body[data-page="records.html"] .theme-chips button{padding:10px 5px}
+  html.v55 body[data-page="records.html"] .records-coverage{flex-direction:column;gap:6px;padding:16px}
+  html.v55 body[data-page="records.html"] .rec-row{grid-template-columns:24px minmax(0,1fr);gap:8px 12px;padding:18px 14px}
+  html.v55 body[data-page="records.html"] .rec-val{grid-column:2;font-size:26px}
+}
+@media(prefers-reduced-motion:reduce){html.v55 body[data-page="records.html"] .theme-chips button{transition:none}}

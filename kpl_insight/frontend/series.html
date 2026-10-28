@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>系列赛研究 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2317181E'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' font-weight='bold' fill='%23F02F55' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="系列赛研究 · 峡谷有数">
+<meta property="og:description" content="首局胜负对系列赛的影响、决胜局战绩、让二追三档案与战队实力评级。">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="series.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">SERIES · 系列赛研究</div>
+    <h1>系列赛研究</h1>
+    <p>一场比赛不是一局定胜负。这里看三件事：<b>先赢首局到底有多重要</b>、<b>哪些战队最会打决胜局</b>、
+       <b>0:2 之后还能不能翻</b>。全部来自官方逐局结果，共 <b id="srN">—</b> 个系列赛。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:24px">
+
+  <div class="brief" id="srBrief"></div>
+
+  <section class="block" style="margin-top:36px">
+    <div class="block-head">
+      <h2><i></i>先赢首局，系列赛赢面有多大</h2>
+      <span class="block-note mono">按赛制拆分 · 只统计有逐局结果的系列赛</span>
+    </div>
+    <div class="panel table-panel"><table class="tbl">
+      <thead><tr><th>赛制</th><th class="num">系列赛</th><th class="num">首局胜者拿下系列赛</th>
+        <th style="width:28%">转化率</th><th class="num">首局败者翻盘</th><th class="num">打到决胜局</th><th class="num">平均局数</th></tr></thead>
+      <tbody id="boRows"></tbody>
+    </table></div>
+    <div class="br-note" style="margin-top:10px">读法：BO5 里先赢第一局的队伍，最终有
+      <b id="bo5FirstConv">—</b> 拿下整个系列赛；反过来，先丢一局的队伍仍有
+      <b id="bo5Comeback">—</b> 的机会翻盘。「打到决胜局」= 系列赛打满（3:2 / 4:3）。</div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>决胜局战绩</h2>
+      <span class="block-note mono">系列赛打满时的最后一局 · 至少 10 个决胜局样本</span>
+    </div>
+    <div class="panel table-panel"><table class="tbl">
+      <thead><tr><th class="num">#</th><th>战队</th><th class="num">决胜局</th><th class="num">胜率</th>
+        <th style="width:24%"></th><th class="num">系列赛总胜率</th></tr></thead>
+      <tbody id="decRows"></tbody>
+    </table></div>
+    <div class="br-note" style="margin-top:10px">决胜局样本天然偏少，10 局以下不进榜；胜率高不代表实力强，只说明「打到最后时刻」的把握。</div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>让二追三 / 让二追四</h2>
+      <span class="block-note mono">0:2 落后仍赢下系列赛 · 近 40 场</span>
+    </div>
+    <div class="panel table-panel"><table class="tbl">
+      <thead><tr><th class="num">日期</th><th>系列赛</th><th class="num">比分</th><th>翻盘方</th><th class="num">赛制</th></tr></thead>
+      <tbody id="revRows"></tbody>
+    </table></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>战队实力评级</h2>
+      <span class="block-note mono">逐场累计 · 按对手强度加权</span>
+    </div>
+    <div class="panel table-panel"><table class="tbl">
+      <thead><tr><th class="num">#</th><th>战队</th><th class="num">实力分</th><th class="num">对手平均分</th>
+        <th class="num">系列赛</th><th class="num">首局胜率</th><th class="num">近 10 场</th></tr></thead>
+      <tbody id="eloRows"></tbody>
+    </table></div>
+    <div class="br-note" style="margin-top:10px">实力分是「赢强队加分更多、输弱队扣分更多」的逐场累计值（初始 1500），
+      每年首场向 1500 回归 25%；跨年份可横向比较，但不代表当前版本绝对强弱。对手平均分为近 60 个系列赛的对手实力均值。</div>
+  </section>
+
+  <div class="panel">
+    <div class="panel-title">口径说明</div>
+    <div class="block-note">
+      1. 系列赛胜负以官方逐局结果为准；早年部分场次逐局缺失，仅用官方大场胜负计入系列赛统计，不参与「局分/决胜局」口径；<br>
+      2. 「首局胜者拿下系列赛」= 系列赛第一局胜方与最终胜方相同；BO1 天然 100%，仅作对照；<br>
+      3. 决胜局 = 系列赛打满时的最后一局（BO5 的 G5、BO7 的 G7）；<br>
+      4. 让二追三/让二追四 = 先输两局后赢下系列赛，BO5 及以上才可能出现；<br>
+      5. 实力分是本站自算的展示指标，不是官方排名。
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/deep.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  var D = window.KPL_DEEP || null;
+  if (!D) { $("#srBrief").innerHTML = '<span class="ico">!</span><div>深挖数据尚未生成，请先运行 <b>build_deep_data.py</b>。</div>'; return; }
+
+  function pct(v, d) { return (Number(v) * 100).toFixed(d == null ? 1 : d) + "%"; }
+  function esc(v) { return K.esc(v); }
+
+  $("#srN").textContent = D.matches.toLocaleString("en-US");
+
+  var bo5 = (D.series.byBo.filter(function (x) { return x.bo === 5; })[0] || {});
+  var revN = D.series.reverseSweeps.length;
+  $("#bo5FirstConv").textContent = pct(bo5.firstConv || 0, 1);
+  $("#bo5Comeback").textContent = pct(1 - (bo5.firstConv || 0), 1);
+  $("#srBrief").innerHTML = '<span class="ico">▍</span><div>' +
+    '共 <b>' + D.matches.toLocaleString("en-US") + '</b> 个系列赛、' + D.matches + ' 场大场。' +
+    'BO5 里先赢首局的队伍 <b>' + pct(bo5.firstConv || 0, 1) + '</b> 拿下系列赛；' +
+    '打到决胜局的比例 <b>' + pct(bo5.distance || 0, 1) + '</b>；' +
+    '近 40 场让二追三/四里，最新一场是 <b>' +
+    esc((D.series.reverseSweeps[0] || {}).date || "—") + '</b> 的 ' +
+    esc((D.series.reverseSweeps[0] || {}).winner || "—") + '。' +
+    '</div>';
+
+  /* ---------- 首局转化 ---------- */
+  $("#boRows").innerHTML = D.series.byBo.map(function (r) {
+    var w = Math.max(2, r.firstConv * 100);
+    return "<tr>" +
+      '<td><b>BO' + r.bo + "</b></td>" +
+      '<td class="num">' + r.n + "</td>" +
+      '<td class="num"><b>' + pct(r.firstConv) + "</b></td>" +
+      '<td><span class="sr-bar"><i style="width:' + w.toFixed(1) + '%"></i></span></td>' +
+      '<td class="num">' + pct(r.comeback) + "</td>" +
+      '<td class="num">' + pct(r.distance) + "</td>" +
+      '<td class="num">' + (r.avgGames || "—") + "</td></tr>";
+  }).join("");
+
+  /* ---------- 决胜局榜 ---------- */
+  var dec = (D.series.decBoard || []).slice();
+  $("#decRows").innerHTML = dec.map(function (t, i) {
+    var rate = t.decW / Math.max(1, t.decN);
+    var srRate = t.seriesW / Math.max(1, t.seriesN);
+    return "<tr>" +
+      '<td class="num"><span class="rank' + (i < 3 ? " r" + (i + 1) : "") + '">' + (i + 1) + "</span></td>" +
+      '<td><span class="team-cell">' + (t.icon ? '<img src="' + esc(t.icon) + '" alt="" loading="lazy">' : "") +
+      '<a href="team.html?id=' + encodeURIComponent(t.team) + '" style="color:inherit">' + esc(t.team) + "</a></span></td>" +
+      '<td class="num">' + t.decW + "-" + (t.decN - t.decW) + "</td>" +
+      '<td class="num"><b>' + pct(rate) + "</b></td>" +
+      '<td><span class="sr-bar"><i style="width:' + Math.max(2, rate * 100).toFixed(1) + '%"></i></span></td>' +
+      '<td class="num">' + pct(srRate) + "</td></tr>";
+  }).join("");
+
+  /* ---------- 让二追三 ---------- */
+  $("#revRows").innerHTML = (D.series.reverseSweeps || []).map(function (r) {
+    return "<tr>" +
+      '<td class="num mono">' + esc(String(r.date).slice(5)) + "</td>" +
+      '<td><a href="match.html?id=' + encodeURIComponent(r.mid) + '" style="color:inherit">' +
+      esc(r.t1) + " vs " + esc(r.t2) + "</a></td>" +
+      '<td class="num mono"><b>' + esc(r.score) + "</b></td>" +
+      '<td>' + esc(r.winner) + "</td>" +
+      '<td class="num mono">BO' + r.bo + "</td></tr>";
+  }).join("") || '<tr><td colspan="5"><div class="empty-tip">暂无记录</div></td></tr>';
+
+  /* ---------- Elo 榜 ---------- */
+  var teams = Object.keys(D.teams).map(function (k) { return D.teams[k]; })
+    .filter(function (t) { return t.seriesN >= 20; })      // 样本太少不进榜，避免「3 胜 1 负」排到前面
+    .sort(function (a, b) { return a.rank - b.rank; }).slice(0, 24);
+  function form(v) {
+    return '<span class="form-str">' + String(v || "").split("").slice(-10).map(function (c) {
+      return '<i class="' + (c === "W" ? "w" : "l") + '">' + c + "</i>";
+    }).join("") + "</span>";
+  }
+  $("#eloRows").innerHTML = teams.map(function (t, i) {
+    var fg = t.fgN ? t.fgW / t.fgN : 0;
+    return "<tr>" +
+      '<td class="num"><span class="rank' + (i < 3 ? " r" + (i + 1) : "") + '">' + t.rank + "</span></td>" +
+      '<td><span class="team-cell">' + (t.icon ? '<img src="' + esc(t.icon) + '" alt="" loading="lazy">' : "") +
+      '<a href="team.html?id=' + encodeURIComponent(t.team) + '" style="color:inherit">' + esc(t.team) + "</a></span></td>" +
+      '<td class="num"><b>' + t.elo + "</b></td>" +
+      '<td class="num">' + t.sos + "</td>" +
+      '<td class="num">' + t.seriesW + "-" + (t.seriesN - t.seriesW) + "</td>" +
+      '<td class="num">' + pct(fg) + "</td>" +
+      "<td>" + form(t.form) + "</td></tr>";
+  }).join("");
+
+  K.refresh();
+})();
+</script>
+</body>
+</html>

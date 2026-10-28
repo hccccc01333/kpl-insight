@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>赛事进程 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A111C'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="赛事进程 · 峡谷有数">
+<meta property="og:description" content="一届赛事打到哪一步：赛段推进、淘汰赛对阵、赛事积分榜与冠军归属。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="bracket.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">TOURNAMENT · 赛事进程</div>
+    <h1>赛事进程</h1>
+    <p>一届赛事从擂台赛打到总决赛的完整路径：每个赛段已打到哪一步、淘汰赛对阵与比分、赛事积分榜。
+       对阵按<b>官方赛段</b>归组，不推断官方尚未公布的对阵关系。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:24px">
+
+  <div class="br-head">
+    <div>
+      <h1 id="brName">—</h1>
+      <div class="sub" id="brSub"></div>
+      <a class="more" href="bracket-forecast.html" style="display:inline-block;margin-top:8px">冠军预测 →</a>
+    </div>
+    <label class="sel"><span class="block-note mono">切换赛事</span>
+      <select id="brSel"></select>
+    </label>
+  </div>
+
+  <div class="br-champ" id="brChamp" style="display:none"></div>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>赛段推进</h2>
+      <span class="block-note mono">已结束的赛段变淡 · 白线标出当前赛段</span>
+    </div>
+    <div class="tm-rail" id="brRail"></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>淘汰赛进程</h2>
+      <span class="block-note mono">按官方赛段分组 · 每场可点进复盘</span>
+    </div>
+    <div class="br-cols" id="brCols"></div>
+    <div class="br-note" id="brNote"></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i><span id="stTitle">赛事积分榜</span></h2>
+      <span class="block-note mono">只统计已结束的比赛 · 按大场胜场 → 净胜局排序</span>
+    </div>
+    <div class="panel table-panel"><table class="tbl">
+      <thead><tr><th class="num">#</th><th>战队</th><th class="num">大场</th>
+      <th class="num">净胜局</th><th class="num">单局胜率</th><th class="num">已完赛</th></tr></thead>
+      <tbody id="brStandings"></tbody>
+    </table></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head"><h2><i></i>赛制与口径</h2></div>
+    <div class="panel"><div class="block-note" id="brRules"></div></div>
+  </section>
+
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+
+  var ALL = window.KPL_SCHEDULE_ALL || [];
+  var KO_SKIP = /常规赛|擂台赛|季前|小组赛/;   // 非淘汰赛段不进对阵区
+
+  /* ---------- 赛事下拉：全部赛事，最近的在前 ---------- */
+  function leagueOptions() {
+    var seen = {};
+    ALL.forEach(function (r) {
+      if (!r.leagueId) return;
+      var e = seen[r.leagueId] || (seen[r.leagueId] = { id: r.leagueId, name: r.leagueName || r.leagueId, last: "" });
+      var key = String(r.date || "");
+      if (key > e.last) e.last = key;
+    });
+    return Object.keys(seen).map(function (k) { return seen[k]; })
+      .sort(function (a, b) { return b.last.localeCompare(a.last); });
+  }
+  var OPTS = leagueOptions();
+  function fillSel(cur) {
+    $("#brSel").innerHTML = OPTS.map(function (o) {
+      return '<option value="' + K.esc(o.id) + '"' + (o.id === cur ? " selected" : "") + ">" +
+        K.esc(o.name) + "</option>";
+    }).join("");
+  }
+
+  function md(d) { return String(d || "").slice(5).replace("-", "."); }
+  function iconOf(L2, team) {
+    var hit = L2.rows.filter(function (r) {
+      return (r.team1 === team && r.icon1) || (r.team2 === team && r.icon2);
+    })[0];
+    if (!hit) return "";
+    return hit.team1 === team ? (hit.icon1 || "") : (hit.icon2 || "");
+  }
+
+  /* ---------- 赛段推进条（与首页同一组件） ---------- */
+  function renderRail(L2) {
+    $("#brRail").innerHTML = L2.stages.map(function (s, i) {
+      var cls = "tm-seg" + (s.done ? " done" : (i === L2.nowIdx ? " now" : ""));
+      var st = s.done ? "已结束 · " + s.n + " 场"
+             : (i === L2.nowIdx ? "进行中 · " + s.doneN + "/" + s.n + " 场已完成" : "未开始 · " + s.n + " 场");
+      return '<a class="' + cls + '" href="#stage-' + i + '">' +
+        '<span class="sg-n">' + K.esc(s.label) + "</span>" +
+        '<span class="sg-d">' + K.esc(md(s.from) + (s.to !== s.from ? " — " + md(s.to) : "")) + "</span>" +
+        '<span class="sg-s">' + K.esc(st) + "</span></a>";
+    }).join("");
+  }
+
+  /* ---------- 淘汰赛对阵：一个赛段一列 ---------- */
+  function matchCard(r) {
+    var tbd = r.team1 === "待定" || r.team2 === "待定" || !r.team1 || !r.team2;
+    var intro = !r.done ? (r.st === 1 ? "进行中" : "未开始") : "已结束";
+    var meta = K.esc(md(r.date) + " " + (r.time || "")) + " · BO" + (r.bo || 5) + " · " + intro;
+    if (tbd) {
+      return '<div class="br-m tbd">' +
+        '<span class="mt"><span class="nm">待定</span><span class="sc">—</span></span>' +
+        '<span class="mt"><span class="nm">待定</span><span class="sc">—</span></span>' +
+        '<span class="ms">' + meta + "</span></div>";
+    }
+    var w1 = r.done && Number(r.score1) > Number(r.score2);
+    var w2 = r.done && Number(r.score2) > Number(r.score1);
+    function line(name, ic, sc, win, lose) {
+      return '<span class="mt' + (win ? " win" : "") + (lose ? " lose" : "") + '">' +
+        (ic ? '<img src="' + K.esc(ic) + '" alt="" loading="lazy">' : "") +
+        '<span class="nm">' + K.esc(name) + "</span>" +
+        '<span class="sc">' + (r.done || r.st === 1 ? sc : "—") + "</span></span>";
+    }
+    return '<a class="br-m" href="match.html?id=' + K.esc(r.matchId) + '">' +
+      line(r.team1, r.icon1, Number(r.score1) || 0, w1, w2) +
+      line(r.team2, r.icon2, Number(r.score2) || 0, w2, w1) +
+      '<span class="ms">' + meta + "</span></a>";
+  }
+
+  function renderBracket(L2) {
+    var ko = L2.stages.filter(function (s) { return !KO_SKIP.test(s.label); });
+    var box = $("#brCols"), note = $("#brNote");
+    if (!ko.length) {
+      box.innerHTML = '<div class="br-empty">该数据范围内没有细分到淘汰赛段的赛程（老赛事的赛段字段只到常规赛一级）。</div>';
+      note.innerHTML = "";
+      return;
+    }
+    box.innerHTML = ko.map(function (s, i) {
+      var idx = L2.stages.indexOf(s);
+      var cls = "br-col" + (idx === L2.nowIdx ? " cur" : "");
+      return '<section class="' + cls + '" id="stage-' + idx + '">' +
+        "<h3><span class=\"dot\"></span>" + K.esc(s.label) + "</h3>" +
+        '<div class="cd">' + K.esc(md(s.from) + (s.to !== s.from ? " — " + md(s.to) : "")) +
+        " · " + s.n + " 场 · " + (s.done ? "已结束" : (s.doneN + "/" + s.n + " 完成")) + "</div>" +
+        s.rows.map(matchCard).join("") + "</section>";
+    }).join("");
+    note.innerHTML = "按官方赛段归组；同一赛段内按时间排列。<b>不推断</b>官方未公布的对阵关系——" +
+      "轮次之间的晋级连线以官方发布为准，这里只呈现已确定的比赛。";
+  }
+
+  /* ---------- 积分榜 ---------- */
+  function renderStandings(L2) {
+    var rows = K.leagueStandings(L2.id);
+    var doneRows = L2.doneN;
+    $("#stTitle").textContent = K.leagueShortName(L2.name) + " · 赛事积分榜";
+    if (!rows.length) {
+      $("#brStandings").innerHTML = '<tr><td colspan="6"><div class="empty-tip">暂无已结束的比赛</div></td></tr>';
+      return;
+    }
+    $("#brStandings").innerHTML = rows.map(function (t, i) {
+      var diff = (t.diff > 0 ? "+" : "") + t.diff;
+      return "<tr>" +
+        '<td class="num"><span class="rank' + (i < 3 ? " r" + (i + 1) : "") + '">' + (i + 1) + "</span></td>" +
+        '<td><span class="team-cell">' + (t.icon ? '<img src="' + K.esc(t.icon) + '" alt="" loading="lazy">' : "") +
+        '<a href="team.html?id=' + encodeURIComponent(t.team) + '" style="color:inherit">' + K.esc(t.team) + "</a></span></td>" +
+        '<td class="num">' + t.w + "-" + t.l + "</td>" +
+        '<td class="num" style="color:' + (t.diff > 0 ? "var(--blue)" : "var(--muted)") + '">' + diff + "</td>" +
+        '<td class="num">' + K.pct(t.wr, 1) + "</td>" +
+        '<td class="num">' + t.m + "</td></tr>";
+    }).join("") + '<tr><td colspan="6"><div class="block-note mono" style="padding-top:8px">共 ' +
+      doneRows + " 场已结束的比赛计入本表</div></td></tr>";
+  }
+
+  /* ---------- 冠军条 ---------- */
+  function renderChamp(L2) {
+    var el = $("#brChamp");
+    if (!L2.champion) { el.style.display = "none"; return; }
+    var last = L2.rows.slice().sort(function (a, b) { return (a.date + a.time).localeCompare(b.date + b.time); }).pop();
+    var icon = iconOf(L2, L2.champion);
+    el.style.display = "";
+    el.innerHTML = (icon ? '<img src="' + K.esc(icon) + '" alt="">' : "") +
+      '<div><div class="ct mono">CHAMPION · 冠军</div><b>' + K.esc(L2.champion) + "</b></div>" +
+      (last ? '<div class="cn mono">决赛 ' + K.esc(md(last.date)) + " · " + K.esc(last.team1) + " " +
+        last.score1 + " : " + last.score2 + " " + K.esc(last.team2) + "</div>" : "");
+  }
+
+  /* ---------- 赛制与口径（按赛段自动生成 + 固定说明） ---------- */
+  function renderRules(L2) {
+    var lines = L2.stages.map(function (s) {
+      return s.label + "（" + md(s.from) + (s.to !== s.from ? " — " + md(s.to) : "") + "，" +
+        s.n + " 场" + (s.rows[0] && s.rows[0].bo ? "，BO" + s.rows[0].bo : "") + "）";
+    });
+    $("#brRules").innerHTML =
+      "<b>赛段构成：</b>" + lines.map(K.esc).join(" → ") + "<br>" +
+      "1. 赛段、赛制与对阵以官方发布的赛程为准，本页按官方字段自动归组，不做规则推断；<br>" +
+      "2. 积分榜为本站按「大场胜场 → 净胜局 → 单局胜率」自算的展示排序，<b>不是官方积分</b>（部分赛事另有积分/晋级规则）；<br>" +
+      "3. 「待定」表示官方对阵尚未确定，比赛结束后本页自动更新；<br>" +
+      "4. 比分与状态来自官方赛程接口，随比赛进程自动刷新。";
+  }
+
+  /* ---------- 主渲染 ---------- */
+  var q = new URLSearchParams(location.search);
+  var curId = q.get("id") || K.currentLeagueId() || (OPTS[0] && OPTS[0].id);
+
+  function render(lid) {
+    var L2 = K.leagueInfo(lid);
+    if (!L2) {
+      $("#brName").textContent = "未找到该赛事";
+      $("#brSub").innerHTML = "";
+      $("#brCols").innerHTML = '<div class="br-empty">换个赛事看看，或回到 <a href="schedule.html" style="color:var(--muted);border-bottom:1px solid rgba(255,255,255,.2)">赛程中心</a>。</div>';
+      $("#brChamp").style.display = "none";
+      return;
+    }
+    document.title = L2.name + " 赛事进程 · 峡谷有数";
+    $("#brName").textContent = L2.name;
+    var nowTxt = L2.nowIdx >= 0
+      ? "当前赛段 <b>" + K.esc(L2.stages[L2.nowIdx].label) + "</b>"
+      : "全部赛段已结束";
+    $("#brSub").innerHTML =
+      "<span><b>" + K.esc(md(L2.from)) + " — " + K.esc(md(L2.to)) + "</b></span>" +
+      "<span>" + L2.teamN + " 支战队</span>" +
+      "<span>已完赛 <b>" + L2.doneN + "</b> / " + L2.total + " 场</span>" +
+      "<span>" + nowTxt + "</span>" +
+      (L2.next ? "<span>下一场 <b>" + K.esc(md(L2.next.date) + " " + (L2.next.time || "")) + "</b> " +
+        K.esc(L2.next.team1) + " vs " + K.esc(L2.next.team2) + "</span>" : "");
+    fillSel(L2.id);
+    renderChamp(L2);
+    renderRail(L2);
+    renderBracket(L2);
+    renderStandings(L2);
+    renderRules(L2);
+    if (location.hash && /^#stage-\d+$/.test(location.hash)) {
+      var t = document.querySelector(location.hash);
+      if (t) t.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
+  }
+
+  $("#brSel").addEventListener("change", function () {
+    var id2 = $("#brSel").value;
+    history.replaceState(null, "", "bracket.html?id=" + encodeURIComponent(id2));
+    render(id2);
+  });
+
+  render(curId);
+  K.refresh();
+})();
+</script>
+</body>
+</html>

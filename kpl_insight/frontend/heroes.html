@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英雄 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="英雄 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="heroes.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">HEROES · 英雄</div>
+    <h1>英雄图鉴与同位置对位</h1>
+    <p>每个英雄的出场次数、胜率与禁用率，按强度分为 S/A/B/C 四档；同位置对位来自历史比赛记录，
+      场次太少的会标注「样本不足」。</p>
+    <div class="ph-meta mono">
+      <span>图鉴 <b id="hCount">—</b> 个</span><i>/</i>
+      <span>选用记录 <b id="hGames">—</b> 次</span><i>/</i>
+      <span>数据时钟 <b id="genAt">—</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:26px">
+  <div class="scopebar" id="scopeBar"></div>
+  <div class="brief" id="brief"></div>
+  <div class="filterbar">
+    <label class="fld grow"><span>搜索英雄</span>
+      <input class="search" id="fQ" placeholder="输入英雄名，如 戈娅">
+    </label>
+    <label class="fld"><span>档位</span>
+      <select id="fTier">
+        <option value="">全部档位</option>
+        <option>S</option><option>A</option><option>B</option><option>C</option>
+      </select>
+    </label>
+    <span class="block-note mono" id="countNote"></span>
+    <button class="btn ghost sm" id="expBtn" type="button">导出 CSV</button>
+  </div>
+  <div class="hero-grid" id="heroGrid"></div>
+
+  <div class="block-head sub-head">
+    <h2><i></i>热度 × 强度象限 <em class="mono">横轴 = 出场率 · 纵轴 = 胜率 · 气泡大小 = 禁用率</em></h2>
+  </div>
+  <div class="panel"><div id="scatter"></div></div>
+
+  <div class="block-head sub-head">
+    <h2><i></i>同位置对位 <em class="mono">同一局里蓝方与红方同位置英雄的交手记录 · 基于 2026 夏季赛与年度总决赛</em></h2>
+    <div class="seg" id="muTabs"></div>
+  </div>
+  <div class="panel table-panel">
+    <table class="tbl">
+      <thead><tr><th>蓝方英雄</th><th>红方英雄</th><th class="num">对位局数</th><th class="num">蓝方胜率</th><th>胜率区间</th><th>判定</th></tr></thead>
+      <tbody id="muBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/details.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  $("#genAt").textContent = D.generatedAt;
+
+  var curScope = "all";
+
+  function heroCardFrom(h, i) {
+    return K.heroCard(h, i);
+  }
+
+  function render() {
+    var d = K.scopeOf(curScope);
+    var q = $("#fQ").value.trim(), tier = $("#fTier").value;
+    var rows = (d.heroes || []).filter(function (h) {
+      if (q && h.name.indexOf(q) < 0) return false;
+      if (tier && h.tier !== tier) return false;
+      return true;
+    });
+    $("#hCount").textContent = rows.length;
+    $("#hGames").textContent = K.fmtInt(rows.reduce(function (a, h) { return a + h.games; }, 0));
+    $("#countNote").textContent = "共 " + rows.length + " 个英雄 · " + K.scopeName(curScope) + " · 点击卡片查看详情";
+    $("#heroGrid").innerHTML = rows.length ? rows.map(heroCardFrom).join("")
+      : '<div class="empty-tip">没有符合条件的英雄</div>';
+    renderScatter(d);
+    /* 数据简报 */
+    var main = (d.heroes || []).filter(function (h) { return h.games >= 30; });
+    if (main.length) {
+      var bW = main.slice().sort(function (a, b) { return b.wr - a.wr; })[0];
+      var bB = (d.heroes || []).slice().sort(function (a, b) { return b.bans - a.bans; })[0];
+      var bG = (d.heroes || []).slice().sort(function (a, b) { return b.games - a.games; })[0];
+      K.brief("#brief", K.scopeName(curScope) + "：超过 30 局的英雄里，胜率最高的是 <b>" + K.esc(bW.name) + "</b>（<b>" + K.pct(bW.wr, 1) +
+        "</b>，" + bW.games + " 局）；最常被禁的是 <b>" + K.esc(bB.name) + "</b>（<b>" + bB.bans + "</b> 次）；出场最多的是 <b>" +
+        K.esc(bG.name) + "</b>（<b>" + bG.games + "</b> 局）。点开任意英雄看选手使用榜与常见出装。");
+    }
+    K.refresh();
+  }
+
+  /* 出场率 × 胜率 散点象限 */
+  var CP = K.chartPalette();
+  var TIER_COLOR = { S: CP.mark, A: CP.onLine, B: CP.label, C: CP.grid };
+  function renderScatter(d) {
+    var el = document.getElementById("scatter");
+    if (!el) return;
+    var battles = (d.totals && d.totals.battles) || 1;
+    var pts = (d.heroes || []).filter(function (h) { return h.games >= 5; }).map(function (h) {
+      return { name: h.name, tier: h.tier, pick: h.games / battles, wr: h.wr, ban: h.bans / battles };
+    });
+    if (pts.length < 4) { el.innerHTML = '<div class="empty-tip">样本不足，暂不绘制</div>'; return; }
+    var xs = pts.map(function (p) { return p.pick; });
+    var ys = pts.map(function (p) { return p.wr; });
+    var xMax = Math.max.apply(null, xs) * 1.12;
+    var yLo = Math.min.apply(null, ys) - 0.03, yHi = Math.max.apply(null, ys) + 0.03;
+    var W = 1040, H = 460, P = { l: 56, r: 20, t: 20, b: 44 };
+    var X = function (v) { return P.l + v / xMax * (W - P.l - P.r); };
+    var Y = function (v) { return P.t + (1 - (v - yLo) / (yHi - yLo)) * (H - P.t - P.b); };
+    /* 中位线 */
+    var sx = xs.slice().sort(function (a, b) { return a - b; });
+    var xMed = sx[Math.floor(sx.length / 2)];
+    var s2 = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="热度强度象限图" style="width:100%;height:auto;display:block">';
+    for (var i = 0; i <= 4; i++) {
+      var gv = yLo + (yHi - yLo) * i / 4;
+      s2 += '<line x1="' + P.l + '" y1="' + Y(gv).toFixed(1) + '" x2="' + (W - P.r) + '" y2="' + Y(gv).toFixed(1) +
+        '" stroke=' + CP.grid + ' stroke-dasharray="4 6"/>' +
+        '<text x="' + (P.l - 8) + '" y="' + (Y(gv) + 4).toFixed(1) + '" text-anchor="end" font-size="10.5" fill=' + CP.label + ' font-family="Inter,monospace">' + Math.round(gv * 100) + "%</text>";
+    }
+    for (var k = 0; k <= 4; k++) {
+      var xv = xMax * k / 4;
+      s2 += '<text x="' + X(xv).toFixed(1) + '" y="' + (H - 16) + '" text-anchor="middle" font-size="10.5" fill=' + CP.label + ' font-family="Inter,monospace">' + (xv * 100).toFixed(0) + "%</text>";
+    }
+    s2 += '<line x1="' + X(xMed).toFixed(1) + '" y1="' + P.t + '" x2="' + X(xMed).toFixed(1) + '" y2="' + (H - P.b) + '" stroke=' + CP.axis + ' />' +
+      '<line x1="' + P.l + '" y1="' + Y(0.5).toFixed(1) + '" x2="' + (W - P.r) + '" y2="' + Y(0.5).toFixed(1) + '" stroke=' + CP.axis + ' />' +
+      '<text x="' + (W - P.r - 6) + '" y="' + (Y(0.5) - 6) + '" text-anchor="end" font-size="10.5" fill=' + CP.label + ' font-family="Inter,monospace">50% 胜率线</text>' +
+      '<text x="' + (X(xMed) + 6) + '" y="' + (P.t + 14) + '" font-size="10.5" fill=' + CP.label + ' font-family="Inter,monospace">出场率中位</text>';
+    /* 点（按 ban 排序绘制，避免小点被盖） */
+    pts.sort(function (a, b) { return a.ban - b.ban; });
+    var labeled = {};
+    pts.slice().sort(function (a, b) { return b.pick - a.pick; }).slice(0, 8).forEach(function (p2) { labeled[p2.name] = 1; });
+    pts.forEach(function (p2) {
+      var r = 3.5 + Math.min(p2.ban * 46, 13);
+      s2 += '<circle cx="' + X(p2.pick).toFixed(1) + '" cy="' + Y(p2.wr).toFixed(1) + '" r="' + r.toFixed(1) +
+        '" fill="' + (TIER_COLOR[p2.tier] || "#9FB3CE") + '" fill-opacity=".55" stroke="' + (TIER_COLOR[p2.tier] || "#9FB3CE") + '" stroke-width="1.4">' +
+        "<title>" + K.esc(p2.name) + " · 出场率 " + (p2.pick * 100).toFixed(1) + "% · 胜率 " + (p2.wr * 100).toFixed(1) +
+        "% · 禁用率 " + (p2.ban * 100).toFixed(1) + "% · " + p2.tier + " 档</title></circle>";
+      if (labeled[p2.name]) {
+        s2 += '<text x="' + X(p2.pick).toFixed(1) + '" y="' + (Y(p2.wr) - r - 4).toFixed(1) +
+          '" text-anchor="middle" font-size="10.5" fill="#EAF1FA" font-family="Inter,PingFang SC,sans-serif">' + K.esc(p2.name) + "</text>";
+      }
+    });
+    s2 += "</svg>";
+    el.innerHTML = '<div class="lc-legend"><span><i style="background:#FFFFFF"></i>S 档</span>' +
+      '<span><i style="background:#9DB2CC"></i>A 档</span><span><i style="background:#9FB3CE"></i>B 档</span>' +
+      '<span><i style="background:#6F84A3"></i>C 档</span>' +
+      '<span style="color:var(--muted)">右上角 = 又热又强（版本答案）</span></div>' + s2;
+  }
+  curScope = K.scopeBar("#scopeBar", function (id) { curScope = id; render(); });
+  $("#expBtn").addEventListener("click", function () {
+    var d = K.scopeOf(curScope);
+    var q = $("#fQ").value.trim(), tier = $("#fTier").value;
+    var rows2 = (d.heroes || []).filter(function (h) {
+      if (q && h.name.indexOf(q) < 0) return false;
+      if (tier && h.tier !== tier) return false;
+      return true;
+    });
+    var rows = [["英雄", "档位", "出场", "胜率", "禁用数", "KDA", "输出占比", "承伤占比", "场均经济", "范围"]];
+    rows2.forEach(function (h2) {
+      rows.push([h2.name, h2.tier, h2.games,
+        h2.wr != null ? K.pct(h2.wr, 1) : "—",
+        h2.bans != null ? h2.bans : "—",
+        h2.kda != null ? h2.kda : "—", h2.dmg != null ? h2.dmg : "—",
+        h2.bh != null ? h2.bh : "—", h2.gold != null ? h2.gold : "—",
+        K.scopeName(curScope)]);
+    });
+    K.exportCSV("英雄榜_" + K.scopeName(curScope) + ".csv", rows);
+  });
+  ["fQ", "fTier"].forEach(function (id) {
+    $("#" + id).addEventListener(id === "fQ" ? "input" : "change", render);
+  });
+  render();
+
+  /* 对位表 */
+  var POS = Object.keys(D.matchups || {});
+  if (POS.length) {
+    $("#muTabs").innerHTML = POS.map(function (p, i) {
+      return '<button data-pos="' + K.esc(p) + '" class="' + (i === 0 ? "on" : "") + '">' + K.esc(p) + "</button>";
+    }).join("");
+    $("#muTabs").addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      Array.prototype.forEach.call(this.children, function (x) { x.classList.toggle("on", x === b); });
+      $("#muBody").innerHTML = K.muBody(D.matchups[b.getAttribute("data-pos")] || []);
+    });
+    $("#muBody").innerHTML = K.muBody(D.matchups[POS[0]] || []);
+  }
+})();
+</script>
+</body>
+</html>

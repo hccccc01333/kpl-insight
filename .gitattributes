@@ -6,3 +6,6 @@
 *.json text eol=lf
 *.png binary
 tools/hooks/* text eol=lf
+
+# Preserve bundled assets byte-for-byte for manifest verification.
+/kpl_insight/frontend/** -text

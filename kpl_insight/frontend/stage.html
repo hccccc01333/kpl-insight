@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>赛段对比 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A111C'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="赛段对比 · 峡谷有数">
+<meta property="og:description" content="按赛事 / 年份对比战队表现、英雄出场率与禁用趋势。">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="stage.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">COMPARE · 赛段对比</div>
+    <h1>赛段对比</h1>
+    <p>选两个赛事 / 年份，看战队表现与英雄环境在赛季之间怎么变。严格版本对比需要补丁号元数据，当前先做<b>赛事 / 年份 / 赛段</b>维度。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:24px">
+  <div class="filterbar">
+    <label class="fld"><span>基线赛段</span><select id="scopeA"></select></label>
+    <label class="fld"><span>对比赛段</span><select id="scopeB"></select></label>
+    <label class="fld"><span>样本门槛</span><select id="minGames">
+      <option value="5">≥5 局</option>
+      <option value="10" selected>≥10 局</option>
+      <option value="20">≥20 局</option>
+    </select></label>
+    <span class="block-note mono" id="scopeNote">—</span>
+  </div>
+
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-title">赛段概览</div>
+    <div class="hd-stats" id="overview"></div>
+  </div>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>战队胜率变化</h2>
+      <span class="block-note mono">只比较两边都达到样本门槛的战队 · 按变化幅度排序</span>
+    </div>
+    <div class="panel table-panel"><table class="tbl">
+      <thead><tr><th>战队</th><th class="num">基线局数</th><th class="num">基线胜率</th>
+      <th class="num">对比局数</th><th class="num">对比胜率</th><th class="num">变化</th><th></th></tr></thead>
+      <tbody id="teamRows"></tbody>
+    </table></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>英雄环境变化</h2>
+      <span class="block-note mono">出场率 = 出场局数 / 该赛段总局数 · 按出场率变化排序</span>
+    </div>
+    <div class="panel table-panel"><table class="tbl">
+      <thead><tr><th>英雄</th><th class="num">基线出场率</th><th class="num">对比出场率</th>
+      <th class="num">变化</th><th class="num">基线胜率</th><th class="num">对比胜率</th><th class="num">禁用率变化</th></tr></thead>
+      <tbody id="heroRows"></tbody>
+    </table></div>
+  </section>
+
+  <div class="panel">
+    <div class="panel-title">口径说明</div>
+    <div class="block-note">
+      1. 出场率 = 该英雄出场局数 ÷ 赛段总局数，禁用率同理；<br>
+      2. 只展示两边都达到样本门槛的对象，避免小样本偶然值被当成趋势；<br>
+      3. 这是「赛事 / 年份」维度对比，<b>不是版本对比</b>——补丁与版本号元数据尚未采集，页面上不提供版本口径；<br>
+      4. 差异不代表因果（英雄增强、战术流行、对手强度都会影响）。
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  var S = window.KPL_SEASONS || { scopes: {}, years: [], leagues: [] };
+
+  var OPTS = [{ id: "all", label: "全部赛事" }]
+    .concat((S.years || []).slice().sort().reverse().map(function (y) { return { id: String(y), label: y + " 年" }; }))
+    .concat((S.leagues || []).slice().sort(function (a, b) { return String(b.year).localeCompare(String(a.year)); })
+      .map(function (l) { return { id: l.id, label: l.name }; }));
+
+  function fill(el, id) {
+    el.innerHTML = OPTS.map(function (o) {
+      return '<option value="' + K.esc(o.id) + '"' + (o.id === id ? " selected" : "") + ">" + K.esc(o.label) + "</option>";
+    }).join("");
+  }
+  function scopeOf(id) { return S.scopes[id] || { teams: [], heroes: [], totals: { matches: 0, battles: 0 } }; }
+  function label(id) { var o = OPTS.filter(function (x) { return x.id === id; })[0]; return o ? o.label : id; }
+  function pct(v) { return (v * 100).toFixed(1) + "%"; }
+  function signedPct(v) { return (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "pp"; }
+  function colorFor(v) { return v >= 0 ? "#1F8A53" : "#D5374B"; }
+
+  function render() {
+    var A = $("#scopeA").value, B = $("#scopeB").value;
+    var a = scopeOf(A), b = scopeOf(B);
+    var minG = parseInt($("#minGames").value, 10) || 10;
+    $("#scopeNote").textContent = label(A) + " vs " + label(B) + " · 门槛 " + minG + " 局";
+
+    /* 概览 */
+    $("#overview").innerHTML =
+      '<div class="hd-cell"><div class="k">' + K.esc(label(A)) + '</div><div class="v">' +
+      K.fmtInt((a.totals || {}).matches || 0) + '</div><div class="s">' + K.fmtInt((a.totals || {}).battles || 0) + " 局</div></div>" +
+      '<div class="hd-cell"><div class="k">' + K.esc(label(B)) + '</div><div class="v">' +
+      K.fmtInt((b.totals || {}).matches || 0) + '</div><div class="s">' + K.fmtInt((b.totals || {}).battles || 0) + " 局</div></div>" +
+      '<div class="hd-cell"><div class="k">战队数</div><div class="v">' + (a.teams || []).length + " / " + (b.teams || []).length +
+      '</div><div class="s">基线 / 对比</div></div>' +
+      '<div class="hd-cell"><div class="k">英雄数</div><div class="v">' + (a.heroes || []).length + " / " + (b.heroes || []).length +
+      '</div><div class="s">出场过的英雄</div></div>';
+
+    /* 战队变化 */
+    var tA = {}, tB = {};
+    (a.teams || []).forEach(function (t) { tA[t.team] = t; });
+    (b.teams || []).forEach(function (t) { tB[t.team] = t; });
+    var teamRows = Object.keys(tA).filter(function (n) { return !tB[n]; }).map(function (n) { return null; }).filter(Boolean);
+    var both = Object.keys(tA).filter(function (n) { return tB[n] && tA[n].games >= minG && tB[n].games >= minG; })
+      .map(function (n) {
+        return { team: n, icon: tA[n].icon || tB[n].icon, aw: tA[n].wr, bw: tB[n].wr, ag: tA[n].games, bg: tB[n].games, d: tB[n].wr - tA[n].wr };
+      })
+      .sort(function (x, y) { return y.d - x.d; });
+    $("#teamRows").innerHTML = both.length ? both.map(function (r) {
+      return "<tr><td><span class='team-cell'>" + (r.icon ? "<img src='" + K.esc(r.icon) + "' alt=''>" : "") +
+        "<a href='team.html?id=" + encodeURIComponent(r.team) + "' style='color:inherit'>" + K.esc(r.team) + "</a></span></td>" +
+        '<td class="num mono">' + r.ag + '</td><td class="num mono">' + pct(r.aw) + "</td>" +
+        '<td class="num mono">' + r.bg + '</td><td class="num mono">' + pct(r.bw) + "</td>" +
+        '<td class="num mono" style="color:' + colorFor(r.d) + '">' + signedPct(r.d) + "</td>" +
+        '<td class="num"><a class="go" href="team.html?id=' + encodeURIComponent(r.team) + '" style="color:var(--gold)">详情 →</a></td></tr>';
+    }).join("") : "<tr><td colspan='7' style='color:var(--muted)'>两边都达到门槛的战队不足，试试调低样本门槛或换赛段</td></tr>";
+
+    /* 英雄变化 */
+    var hA = {}, hB = {};
+    (a.heroes || []).forEach(function (h) { hA[h.name] = h; });
+    (b.heroes || []).forEach(function (h) { hB[h.name] = h; });
+    var ta = Math.max(1, (a.totals || {}).battles || 1), tb = Math.max(1, (b.totals || {}).battles || 1);
+    var heroes = Object.keys(hA).filter(function (n) { return hB[n] && hA[n].games >= minG && hB[n].games >= minG; })
+      .map(function (n) {
+        var x = hA[n], y = hB[n];
+        return {
+          name: n, icon: x.icon || y.icon,
+          ap: x.games / ta, bp: y.games / tb,
+          awr: x.wr, bwr: y.wr,
+          aBan: x.bans / ta, bBan: y.bans / tb
+        };
+      })
+      .sort(function (p, q) { return Math.abs(q.bp - q.ap) - Math.abs(p.bp - p.ap); })
+      .slice(0, 15);
+    $("#heroRows").innerHTML = heroes.length ? heroes.map(function (r) {
+      var d = r.bp - r.ap, db = r.bBan - r.aBan;
+      return "<tr><td><span class='team-cell'>" + (r.icon ? "<img src='" + K.esc(r.icon) + "' alt=''>" : "") +
+        "<a href='hero.html?id=" + encodeURIComponent(r.name) + "' style='color:inherit'>" + K.esc(r.name) + "</a></span></td>" +
+        '<td class="num mono">' + pct(r.ap) + '</td><td class="num mono">' + pct(r.bp) + "</td>" +
+        '<td class="num mono" style="color:' + colorFor(d) + '">' + signedPct(d) + "</td>" +
+        '<td class="num mono">' + pct(r.awr) + '</td><td class="num mono">' + pct(r.bwr) + "</td>" +
+        '<td class="num mono" style="color:' + colorFor(db) + '">' + signedPct(db) + "</td></tr>";
+    }).join("") : "<tr><td colspan='7' style='color:var(--muted)'>两边都达到门槛的英雄不足</td></tr>";
+
+    syncUrl(A, B, minG);
+  }
+
+  function syncUrl(A, B, minG) {
+    try {
+      history.replaceState(null, "", "?a=" + A + "&b=" + B + "&min=" + minG);
+    } catch (e) {}
+  }
+
+  var sp = new URLSearchParams(location.search);
+  var ys = (S.years || []).slice().sort();
+  var initA = sp.get("a") || String(ys[ys.length - 2] || "all");   // 默认对比最近两年，避免一进来全是 +0.0pp
+  var initB = sp.get("b") || String(ys[ys.length - 1] || "all");
+  fill($("#scopeA"), initA);
+  fill($("#scopeB"), initB);
+  if (sp.get("min")) $("#minGames").value = sp.get("min");
+  ["scopeA", "scopeB", "minGames"].forEach(function (id) {
+    $("#" + id).addEventListener("change", render);
+  });
+  render();
+})();
+</script>
+</body>
+</html>

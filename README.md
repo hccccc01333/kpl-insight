@@ -639,21 +639,19 @@ https://prod.comp.smoba.qq.com/leaguesite/battle/open
 
 GitHub Pages 在部分网络环境中可能访问不稳定，可尝试 [Workers 备用地址](https://kpldata-site.hccccc01333.workers.dev)，或使用本地副本。
 
-### 想在自己的电脑上运行网站
+### 默认：运行项目自带前端
 
-已安装 Git 和 Python 3 的用户，可以获取站点仓库并启动本地 HTTP 服务：
+前端页面、交互和已归档展示数据已随本项目提供，默认使用这套界面。下载或克隆本项目后，在项目根目录运行：
 
 ```bash
-git clone https://github.com/hccccc01333/KPLdata-site.git
-cd KPLdata-site
-python -m http.server 8000 --bind 127.0.0.1
+python start.py
 ```
 
-在浏览器打开 `http://127.0.0.1:8000/`，保持终端运行；结束时按 `Ctrl+C`。网页按需请求数据，请通过本地 HTTP 服务访问。
+Windows 也可双击根目录的“启动网站.bat”。只需 Python 3.10 或以上，无需安装模型依赖、Node 或另行克隆网站仓库。启动后自动打开 **http://127.0.0.1:8000/**，按 `Ctrl+C` 停止；端口被占用时使用 `python start.py --port 8001`，不自动打开浏览器时加 `--no-browser`。
 
-Windows 用户也可以下载[静态体验包](https://github.com/hccccc01333/kpl-insight/releases/download/static-site-20261023/kpl-insight-static-20261023.zip)，完整解压后双击“启动网站.bat”。体验包无需安装 Python 或 Node。
+前端源码及展示数据在 [`kpl_insight/frontend/`](kpl_insight/frontend/README.md)，可以直接修改 HTML、CSS 和 JavaScript。内置数据是打包时的归档快照；启动网页不等于启动实时采集与预测，部分外部图片和录像仍需联网。
 
-体验包是 **2026-10-23 的固定快照**，不包含此后全部新增功能，也不会自动更新或采集比赛。部分图片、第三方资源及原始录像仍需联网。
+本地页面只提供“一键启动 / 停止”和状态监控。系统自动选择赛事和运行方式：有模型时实时预测，没有模型时仅采集并标注。无需填写 ID、选择模式或输入命令；线上网站不显示此面板。
 
 ### 想看实时胜率：先在本地启动
 
@@ -753,7 +751,7 @@ python -m unittest discover -s tests -v
 ### 从一个小功能开始
 
 1. **说清楚想解决的问题。** 例如“想在选手页面同时比较两名选手使用同一英雄的表现”，明确筛选条件和希望看到的结果。
-2. **让 AI 先阅读现有实现。** 页面功能从[网站仓库](https://github.com/hccccc01333/KPLdata-site)入手；采集、模型和分析逻辑从[数据与模型仓库](https://github.com/hccccc01333/kpl-insight)入手。先确认已有数据能否支持需求，再决定怎么改。
+2. **让 AI 先阅读现有实现。** 页面功能从本项目的 `kpl_insight/frontend/` 入手；采集、模型和分析逻辑从[数据与模型仓库](https://github.com/hccccc01333/kpl-insight)入手。先确认已有数据能否支持需求，再决定怎么改。
 3. **在本地完成一个最小版本。** 一次只增加一个功能，尽量复用已有数据与组件，不让 AI 编造缺失字段或比赛记录。
 4. **亲自检查结果。** 选择几场熟悉的比赛核对统计，检查筛选、空数据和手机显示；涉及计算逻辑时补充或运行相关测试。
 5. **愿意分享时再提交 PR。** Fork 对应仓库（在自己的 GitHub 账号下创建副本），提交修改并发起 PR，说明用途、实现方法和验证结果。也可以先通过 Issue 交流想法，减少重复开发。

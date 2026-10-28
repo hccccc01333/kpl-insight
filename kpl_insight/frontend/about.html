@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数据说明 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="数据说明 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="about.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">DATA · 数据说明</div>
+    <h1>数据说明与口径</h1>
+    <p>数据从哪来、多久更新一次、每个数字怎么算——全部写在明面上。个人搭建的赛事数据产品，非官方，
+      赛程与比分请对照官方发布使用。</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <div class="block-head"><h2><i></i>数据来源与更新</h2></div>
+    <div class="model-grid">
+      <div class="panel">
+        <dl class="kv">
+          <dt>数据来源</dt><dd>腾讯 KPL 公开赛事接口（赛程 / 对局 / 局内快照）</dd>
+          <dt>覆盖范围</dt><dd id="kvRange">—</dd>
+          <dt>更新方式</dt><dd>比赛日高频采集（局内快照分钟级）；赛后自动回补与榜单重算</dd>
+          <dt>数据更新</dt><dd class="mono" id="kvClock">—</dd>
+          <dt>身份声明</dt><dd>个人学习产品，与腾讯无关联；比分与赛程以官方发布为准</dd>
+        </dl>
+      </div>
+      <div class="panel">
+        <div class="panel-title">统计口径</div>
+        <ul class="rules">
+          <li><b>「局」和「场」分开算。</b>榜单默认按单局统计；按整场比赛（大场）统计的会在卡片上注明。</li>
+          <li><b>先看样本再看结论。</b>卡片上的浅色条表示真实胜率的合理浮动范围——比赛越多范围越窄；样本太少会标「样本不足」，不给结论色。</li>
+          <li><b>哪些是「估算」。</b>模型算出来的数字（胜率曲线、模拟结果）都标「估算」；官方原始数据照抄官方，不做加工。</li>
+          <li><b>未结算不计入。</b>胜负未确认的对局不计入任何榜单。</li>
+          <li><b>覆盖边界。</b>逐分钟胜率只覆盖 <span id="covProb">—</span> / <span id="covTotal">—</span> 局（<span id="covPct">—</span>）；其余只展示赛果、BP 与选手数据，不用赛后重放曲线冒充直播判断。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="pipeline">
+    <div class="block-head">
+      <h2><i></i>数据链路</h2>
+      <span class="block-note mono">从官方接口到你屏幕上的一格数字</span>
+    </div>
+    <div class="panel pipe-panel">
+      <svg viewBox="0 0 1120 190" role="img" aria-label="数据链路图">
+        <defs>
+          <marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 z" fill="#C9CDD5"/>
+          </marker>
+        </defs>
+        <g font-family="Inter,PingFang SC,Microsoft YaHei,sans-serif" font-size="12.5">
+          <rect x="8" y="24" width="150" height="56" rx="8" fill="#FFFFFF" stroke="#D9DCE2"/>
+          <text x="83" y="47" text-anchor="middle" fill="#191B23" font-weight="700">官方公开接口</text>
+          <text x="83" y="66" text-anchor="middle" fill="#6E7480" font-size="11">赛程 / 对局 / 局内快照</text>
+          <rect x="200" y="24" width="168" height="56" rx="8" fill="#FFFFFF" stroke="#D9DCE2"/>
+          <text x="284" y="47" text-anchor="middle" fill="#191B23" font-weight="700">高频采集</text>
+          <text x="284" y="66" text-anchor="middle" fill="#6E7480" font-size="11">0.1s 轮询 · 异步预测</text>
+          <rect x="410" y="24" width="150" height="56" rx="8" fill="#FFFFFF" stroke="#D9DCE2"/>
+          <text x="485" y="47" text-anchor="middle" fill="#191B23" font-weight="700">快照存储</text>
+          <text x="485" y="66" text-anchor="middle" fill="#6E7480" font-size="11">原始帧完整保留</text>
+          <rect x="602" y="24" width="150" height="56" rx="8" fill="#FFFFFF" stroke="#D9DCE2"/>
+          <text x="677" y="47" text-anchor="middle" fill="#191B23" font-weight="700">数据分层</text>
+          <text x="677" y="66" text-anchor="middle" fill="#6E7480" font-size="11">合格 / 隔离</text>
+          <rect x="794" y="24" width="150" height="56" rx="8" fill="#FFFFFF" stroke="#D9DCE2"/>
+          <text x="869" y="47" text-anchor="middle" fill="#191B23" font-weight="700">统一特征</text>
+          <text x="869" y="66" text-anchor="middle" fill="#6E7480" font-size="11">因果特征 · 无泄漏</text>
+          <rect x="986" y="24" width="126" height="56" rx="8" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.45)"/>
+          <text x="1049" y="47" text-anchor="middle" fill="#FFFFFF" font-weight="700">胜率模型</text>
+          <text x="1049" y="66" text-anchor="middle" fill="#6E7480" font-size="11">分阶段 · 校准 · 护栏</text>
+
+          <rect x="200" y="112" width="216" height="56" rx="8" fill="#FFFFFF" stroke="#D9DCE2"/>
+          <text x="308" y="135" text-anchor="middle" fill="#191B23" font-weight="700">榜单与图鉴</text>
+          <text x="308" y="154" text-anchor="middle" fill="#6E7480" font-size="11">战队 · 选手 · 英雄 · 积分</text>
+          <rect x="452" y="112" width="196" height="56" rx="8" fill="#FFFFFF" stroke="#D9DCE2"/>
+          <text x="550" y="135" text-anchor="middle" fill="#191B23" font-weight="700">逐局复盘</text>
+          <text x="550" y="154" text-anchor="middle" fill="#6E7480" font-size="11">曲线 · 阶段 · BP · 归因</text>
+          <rect x="684" y="112" width="196" height="56" rx="8" fill="#FFFFFF" stroke="#D9DCE2"/>
+          <text x="782" y="135" text-anchor="middle" fill="#191B23" font-weight="700">工具与质检</text>
+          <text x="782" y="154" text-anchor="middle" fill="#6E7480" font-size="11">胜负模拟 · 数据健康</text>
+          <rect x="916" y="112" width="196" height="56" rx="8" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.45)"/>
+          <text x="1014" y="135" text-anchor="middle" fill="#FFFFFF" font-weight="700">本站</text>
+          <text x="1014" y="154" text-anchor="middle" fill="#6E7480" font-size="11">一键同步最新数据</text>
+
+          <g stroke="#2C4568" stroke-width="1.4" marker-end="url(#arw)" fill="none">
+            <path d="M158,52 L198,52"/><path d="M368,52 L408,52"/><path d="M560,52 L600,52"/>
+            <path d="M752,52 L792,52"/><path d="M944,52 L984,52"/>
+            <path d="M1049,80 L1049,96 L308,96 L308,110"/>
+            <path d="M416,168 L452,140"/><path d="M648,140 L682,140"/><path d="M880,140 L914,140"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="stack-strip" id="stackStrip"></div>
+  </section>
+
+  <section class="block" id="model">
+    <div class="block-head">
+      <h2><i></i>数据质量与模型口径</h2>
+      <span class="block-note mono">胜率曲线与模拟均来自分阶段模型，评估口径公开</span>
+    </div>
+    <div class="model-grid">
+      <div class="panel">
+        <div class="panel-title">模型评估 <em class="mono">用最新比赛检验的预测误差（越低越好）</em></div>
+        <table class="tbl holdout-tbl">
+          <thead><tr><th>阶段</th><th class="num">旧口径</th><th class="num">新口径</th><th>变化</th><th>对比</th></tr></thead>
+          <tbody id="holdoutBody"></tbody>
+        </table>
+        <p class="panel-foot mono" id="modelFoot">—</p>
+        <p class="panel-foot mono" id="modelFoot2">—</p>
+      </div>
+      <div class="panel">
+        <div class="panel-title">为什么可信</div>
+        <ul class="rules">
+          <li><b>用最新比赛当考卷。</b>只拿最近的比赛检验模型，不挑容易的数据，模拟真实的「预测下一场」。</li>
+          <li><b>考卷和练习册分开。</b>训练 / 校准 / 考试三段按时间切开：校准器（把概率掰正的那层）只看校准段，
+            考试段只用来报数字，谁都碰不到。早期版本是「同一批 8 局既调校准器又当考卷」，那批数字已作废重算。</li>
+          <li><b>同一批考卷比高低。</b>换了口径之后，把新模型放回旧考卷复算，与旧口径同量级
+            （具体数值见下方脚注）——说明数字变化来自考卷变宽，不是模型退步。</li>
+          <li><b>翻盘局单独看。</b>考试段里翻盘局单独看，early 阶段明显更差；差距不藏，
+            <a href="predict.html" style="color:var(--gold)">逐局结果与数字在预测统计页公开 →</a></li>
+          <li><b>异常数据隔离。</b>快照不完整的对局不参与训练与榜单。</li>
+          <li><b>数字护栏。</b>当曲线与场上经济明显不符时，模型把数字拉回中间，避免误导性的极端胜率。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>实时与预测</h2>
+      <span class="block-note mono">比赛日全自动 · 过程与口径公开</span>
+    </div>
+    <div class="model-grid">
+      <div class="panel">
+        <div class="panel-title">实时数据怎么来</div>
+        <ul class="rules">
+          <li><b>固定采集粒度。</b>比赛期间以 1 秒轮询官方数据，仅在新数据推进时落盘——口径固定，不随场次变化。</li>
+          <li><b>中断自愈。</b>采集进程由守护器托管：异常 30 秒内自动拉起，按已采集进度续采，防止丢帧。</li>
+          <li><b>30 秒级同步。</b>正在进行的比赛逐帧推算胜率，实时区（比分 / 胜率曲线 / 金差 / 未来 3–5 分钟趋势外推）每 30 秒刷新。</li>
+          <li><b>局结束即归档。</b>每局打完自动归档完整预测曲线与全部指标，无需人工操作。</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="panel-title">预测的口径与公开</div>
+        <ul class="rules">
+          <li><b>预测档案。</b>每一局的直播预测 vs 实际结果逐条公开、可回看：
+            <a href="predict.html" style="color:var(--gold)">预测与准确率 →</a></li>
+          <li><b>分阶段回测。</b>各阶段误差与准确率见上表；后期双方经济咬死时最难判断，不粉饰。</li>
+          <li><b>「趋势外推」是什么。</b>未来 3–5 分钟的胜率与金差预测，按当前走势线性推演并收敛处理，不是另一套模型，仅供参考。</li>
+          <li><b>非官方预测。</b>所有胜率与预测均为模型估算，与官方无关。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>产品更新记录</h2>
+      <span class="block-note mono">从演示到产品</span>
+    </div>
+    <div class="road" id="roadList"></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>术语速查</h2>
+      <span class="block-note mono">看不懂的词都在这</span>
+    </div>
+    <div class="panel">
+      <ul class="rules">
+        <li><b>单局 / 大场。</b>「局」= 一场比赛中的一小局；「大场」= 完整的一场 BO 比赛（如 3:0）。</li>
+        <li><b>强度档位 S / A / B / C。</b>按英雄胜率分档，S 最强。</li>
+        <li><b>协同度（英雄组合）。</b>这组英雄一起打时的胜率，比它们各自单独出场时的平均胜率高出多少（百分点）。</li>
+        <li><b>样本不足。</b>对局数太少（如少于 8 局）时结论不可靠，页面会明确提示而不给结论色。</li>
+        <li><b>预测误差（Brier）。</b>模型给出的概率与实际结果的平均偏差，越低越好——数字本身不必读懂，看趋势即可。</li>
+        <li><b>「估算」。</b>模型推算的数字（胜率曲线、预测、模拟）与官方原始数据分开标注。</li>
+        <li><b>禁用 / 选用（ban / pick）。</b>整站约定：红色 = 禁用，金色 = 选用。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><i></i>开发者资源</h2>
+      <span class="block-note mono">源码与开发文档公开</span>
+    </div>
+    <div class="panel">
+      <ul class="rules">
+        <li><b>源码仓库。</b><a style="color:var(--gold)" href="https://github.com/hccccc01333/kpl-insight" target="_blank" rel="noopener">github.com/hccccc01333/kpl-insight ↗</a>
+          —— 数据采集、处理、建模与回测工具。</li>
+        <li><b>开发文档。</b><a style="color:var(--gold)" href="https://github.com/hccccc01333/kpl-insight/tree/main/docs" target="_blank" rel="noopener">docs ↗</a>
+          —— 安装、数据约定、模型说明与开发架构。</li>
+        <li><b>术语与口径。</b><a style="color:var(--gold)" href="https://github.com/hccccc01333/kpl-insight/tree/main/docs" target="_blank" rel="noopener">术语表 ↗</a></li>
+        <li><b>许可。</b>项目源码公开，限非商业使用；具体条款见 <a href="https://github.com/hccccc01333/kpl-insight/blob/main/LICENSE" target="_blank" rel="noopener">仓库许可证</a>。赛事数据及素材的权利归各自权利人所有。</li>
+      </ul>
+      <div class="chips" id="techChips" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/site_totals.js?v=85"></script>
+<script src="assets/details.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/replay/index.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+  $("#kvClock").textContent = D.generatedAt;
+  var T = (window.KPL_TOTALS && KPL_TOTALS.battles)
+    ? { matches: KPL_TOTALS.matches, battles: KPL_TOTALS.battles }
+    : ((window.KPL_SEASONS && KPL_SEASONS.scopes && KPL_SEASONS.scopes.all)
+      ? KPL_SEASONS.scopes.all.totals : { matches: D.stats.matches, battles: D.stats.battles });
+  $("#kvRange").textContent = "2019–2026 全历史 · " + ((window.KPL_TOTALS && KPL_TOTALS.leagues) || 33) +
+    " 个赛事（联赛 / 世冠 / 挑战者杯 / 年度总决赛）· 已收录 " +
+    K.fmtInt(T.matches) + " 场比赛 / " + K.fmtInt(T.battles) + " 局";
+
+  // 覆盖数字同一来源：replay/index.js 里的 p 标记 + 全历史总局数，不在文案里手写。
+  var RPI = window.KPL_REPLAY_INDEX || {}, covN = 0;
+  Object.keys(RPI).forEach(function (mid) {
+    var e = RPI[mid] || {};
+    (e.p || []).forEach(function (v) { if (v) covN++; });
+  });
+  if ($("#covProb")) $("#covProb").textContent = K.fmtInt(covN);
+  if ($("#covTotal")) $("#covTotal").textContent = K.fmtInt(T.battles);
+  if ($("#covPct")) $("#covPct").textContent = T.battles ? (covN / T.battles * 100).toFixed(1) + "%" : "—";
+
+  var stack = [
+    { k: "覆盖赛事", v: (window.KPL_TOTALS && KPL_TOTALS.leagues) || 33, s: "2019–2026 八个年度" },
+    { k: "收录比赛", v: T.matches, s: "大场 · 比分已核对" },
+    { k: "收录对局", v: T.battles, s: "逐局 BP / 选手 / 出装" },
+    { k: "局内快照", v: D.stats.snapshotDirs, s: "场次原始帧（实时链路）" }
+  ];
+  $("#stackStrip").innerHTML = stack.map(function (c) {
+    return '<div class="stack-cell"><div class="k">' + K.esc(c.k) + '</div><div class="v" data-count="' + c.v +
+      '" data-dec="0">0</div><div class="s">' + K.esc(c.s) + "</div></div>";
+  }).join("");
+
+  $("#holdoutBody").innerHTML = D.model.compare.map(function (c) {
+    var isAll = c.phase === "all", d = c.new - c.old;
+    var oldW = Math.min(100, c.old * 340), newW = Math.min(100, c.new * 340);
+    return '<tr class="' + (isAll ? "all-row" : "") + '">' +
+      "<td>" + K.esc(isAll ? "全部" : c.phase) + "</td>" +
+      '<td class="num" style="color:var(--muted)">' + c.old.toFixed(3) + "</td>" +
+      '<td class="num best">' + c.new.toFixed(3) + "</td>" +
+      '<td class="delta">' + (d <= 0 ? "↓" : "↑") + " " + Math.abs(d).toFixed(3) + "</td>" +
+      '<td><span class="cmp" title="' + c.old.toFixed(3) + " → " + c.new.toFixed(3) + '">' +
+      '<i class="old" style="width:' + oldW.toFixed(1) + '%"></i><i class="new" style="width:' + newW.toFixed(1) + '%"></i></span></td></tr>';
+  }).join("");
+  $("#modelFoot").textContent = "预测误差（越低越好）· 模型训练于 " + String(D.model.trainedAt).slice(0, 10);
+  (function () {
+    var ss = D.model.sameSample || {}, n = D.model.holdoutN || 0;
+    $("#modelFoot2").textContent =
+      "旧口径：最近 8 局，且这 8 局同时被用来拟合校准器（样本内校准）。" +
+      "新口径：最近 " + n + " 局，训练 / 校准 / 考试三段隔离。" +
+      (ss.old ? "同一样本对照（把新模型放回旧 8 局复算）：" + ss.old.toFixed(3) + " → " + ss.new.toFixed(3) + "。" : "");
+  })();
+
+  var ROAD = [
+    ["2026-05", "初版上线：赛程爬取 + 赛后 / 赛前基线建模"],
+    ["2026-05", "赛中快照采集与实时胜率 · 首个可视化面板"],
+    ["2026-06", "实时特征增强、校准与集成迭代"],
+    ["2026-07", "数据分层、因果特征、分阶段模型（误差大幅下降）"],
+    ["2026-07", "金差护栏与拐点分析、逐局战报"],
+    ["2026-08", "前端改版为模块化数据看板（赛程 / 战队 / 选手 / 英雄）"],
+    ["2026-10", "数据批量回补 + 模型重训（当口径下误差 0.199 → 0.143）"],
+    ["2026-10", "接入年度总决赛；对外产品站上线"],
+    ["2026-10", "全历史接入：2019–2026 全部 33 个赛事、11,000+ 局"],
+    ["2026-10", "实时链路：1 秒采集 + 30 秒实时页 + 全自动归档闭环"],
+    ["2026-10", "BP 八维分析、英雄组合协同算法、模型预测公开统计页"],
+    ["2026-10", "评估口径重构：训练 / 校准 / 考试三段硬隔离，作废旧口径指标并重算"]
+  ];
+  $("#roadList").innerHTML = ROAD.map(function (r, i) {
+    return '<div class="rd reveal' + (i >= 6 ? " v12" : "") + '"><div class="h"><span class="v">' +
+      K.esc(r[0]) + '</span></div><div class="tx">' + K.esc(r[1]) + "</div></div>";
+  }).join("");
+
+  $("#techChips").innerHTML = ["Python", "pandas", "scikit-learn", "Plotly", "Streamlit", "Three.js"]
+    .map(function (t) { return "<span>" + K.esc(t) + "</span>"; }).join("");
+  K.refresh();
+})();
+</script>
+</body>
+</html>

@@ -4,6 +4,7 @@ import runpy
 import sys
 
 COMMANDS = {
+    "web": ("kpl_insight.web", "启动项目自带前端（默认入口，无需模型）"),
     "demo": ("kpl_insight.demo", "用合成数据离线验证解析、特征和资源事件"),
     "schedule": ("kpl_insight.collection.schedule", "构建官方赛程索引"),
     "backfill": ("kpl_insight.collection.backfill", "按赛程回补终局快照"),
@@ -29,6 +30,9 @@ def main():
     parser.add_argument("command", nargs="?", choices=list(COMMANDS),
                         help="\n".join(f"{name}: {description}" for name, (_, description) in COMMANDS.items()))
     argv = sys.argv[1:]
+    if not argv:
+        from kpl_insight.web import main as web_main
+        return web_main()
     if not argv or argv[0] not in COMMANDS:
         parser.parse_args(argv)
         parser.print_help()

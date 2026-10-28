@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>更新日志 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2317181E'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' font-weight='bold' fill='%23F02F55' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="更新日志 · 峡谷有数">
+<meta property="og:description" content="峡谷有数的产品更新记录：新功能、数据口径调整与体验改进。">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="updates.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">CHANGELOG · 更新日志</div>
+    <h1>更新日志</h1>
+    <p>这个站点在持续更新。这里按时间记录新增的功能、数据口径调整和体验改进，方便你知道每次打开有什么变化。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:34px">
+  <div id="updateList"></div>
+
+  <div class="panel" style="margin-top:8px">
+    <div class="panel-title">关于更新</div>
+    <div class="block-note">
+      1. 更新按发布时间倒序排列；<br>
+      2. 功能与数据口径以各页面内的说明为准；<br>
+      3. 首页出现更新提示时，点击进入本页即视为已读，同一版本不会重复提示。
+    </div>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/updates.js?v=20261027e"></script>
+<script src="assets/data.js?v=85"></script>
+<script src="assets/schedule_all.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var K = KPL;
+  K.init();
+
+  var U = window.KPL_UPDATES || [];
+  var box = document.getElementById("updateList");
+  if (!U.length) {
+    box.innerHTML = '<div class="empty-tip">暂无更新记录</div>';
+    return;
+  }
+
+  function dateCN(d) {
+    var p = String(d || "").split("-");
+    return p.length === 3 ? p[0] + " 年 " + Number(p[1]) + " 月 " + Number(p[2]) + " 日" : d;
+  }
+
+  box.innerHTML = U.map(function (u, i) {
+    return '<section class="up-item' + (i === 0 ? " latest" : "") + '">' +
+      '<div class="up-head">' +
+        '<span class="up-v">' + K.esc(u.version) + "</span>" +
+        '<span class="up-date mono">' + K.esc(dateCN(u.date)) + "</span>" +
+        (i === 0 ? '<span class="up-now">最新</span>' : "") +
+      "</div>" +
+      '<h2 class="up-title">' + K.esc(u.title) + "</h2>" +
+      '<p class="up-sum">' + K.esc(u.summary || "") + "</p>" +
+      '<ul class="up-list">' + (u.items || []).map(function (it) {
+        return "<li>" + K.esc(it) + "</li>";
+      }).join("") + "</ul></section>";
+  }).join("");
+
+  // 打开更新页即视为已读最新版本，首页提示条不再重复出现
+  try { localStorage.setItem("kpl_update_seen", U[0].version); } catch (e) {}
+})();
+</script>
+</body>
+</html>

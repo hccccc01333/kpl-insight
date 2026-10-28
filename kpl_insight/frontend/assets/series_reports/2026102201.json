@@ -1,0 +1,1051 @@
+{
+  "schema_version": "1.0",
+  "generator": {
+    "name": "kpl-insight-series",
+    "version": "0.2.0"
+  },
+  "generated_at": "2026-10-25T19:38:30",
+  "series": {
+    "match_id": "2026102201",
+    "date": "2026-10-22",
+    "league_id": "20260004",
+    "league_name": "2026年KPL年度总决赛",
+    "stage": "突围赛",
+    "bo": 7,
+    "team1": "杭州LGD.NBW",
+    "team2": "南通Hero久竞",
+    "score1": 4,
+    "score2": 0
+  },
+  "headline": "杭州LGD.NBW 以 4:0 赢下系列赛；4 局中 4 局有分钟级数据。 G1 是唯一一局早期领先方与最终胜方不一致。",
+  "data_quality": {
+    "status": "ok",
+    "games": 4,
+    "games_with_minute_data": 4,
+    "games_with_bp": 4,
+    "warnings": []
+  },
+  "conclusion": {
+    "facts": [
+      {
+        "text": "杭州LGD.NBW 4:0 南通Hero久竞，共 4 局，BO7。",
+        "evidence": [
+          {
+            "type": "official_schedule",
+            "match_id": "2026102201"
+          }
+        ]
+      },
+      {
+        "text": "4/4 局有分钟级快照，4/4 局有 BP 记录。",
+        "evidence": [
+          {
+            "type": "game_details",
+            "battle_id": "1054884368_15_1792663236"
+          },
+          {
+            "type": "game_details",
+            "battle_id": "1054884368_16_1792665537"
+          },
+          {
+            "type": "game_details",
+            "battle_id": "1054884368_17_1792667477"
+          },
+          {
+            "type": "game_details",
+            "battle_id": "1054884368_18_1792669266"
+          }
+        ]
+      },
+      {
+        "text": "G1：8 分钟前后领先的是 南通Hero久竞，最终胜方是 杭州LGD.NBW。",
+        "evidence": [
+          {
+            "type": "frame",
+            "battle_id": "1054884368_15_1792663236",
+            "minute": 8,
+            "field": "gold_diff"
+          }
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "text": "杭州LGD.NBW 在 3/4 局的 8 分钟金差为正。",
+        "level": "statistical_inference",
+        "evidence": [
+          {
+            "type": "frame",
+            "battle_id": "1054884368_15_1792663236",
+            "minute": 8,
+            "field": "gold_diff"
+          },
+          {
+            "type": "frame",
+            "battle_id": "1054884368_16_1792665537",
+            "minute": 8,
+            "field": "gold_diff"
+          },
+          {
+            "type": "frame",
+            "battle_id": "1054884368_17_1792667477",
+            "minute": 8,
+            "field": "gold_diff"
+          },
+          {
+            "type": "frame",
+            "battle_id": "1054884368_18_1792669266",
+            "minute": 8,
+            "field": "gold_diff"
+          }
+        ]
+      },
+      {
+        "text": "资源累计（4 局有效末帧求和）：杭州LGD.NBW 暴君/黑暗暴君/主宰/风暴龙王 = 3/4/4/0；南通Hero久竞 = 5/3/3/0。",
+        "level": "descriptive_inference",
+        "evidence": [
+          {
+            "type": "frame",
+            "battle_id": "1054884368_15_1792663236",
+            "field": "objectives"
+          },
+          {
+            "type": "frame",
+            "battle_id": "1054884368_16_1792665537",
+            "field": "objectives"
+          },
+          {
+            "type": "frame",
+            "battle_id": "1054884368_17_1792667477",
+            "field": "objectives"
+          },
+          {
+            "type": "frame",
+            "battle_id": "1054884368_18_1792669266",
+            "field": "objectives"
+          }
+        ]
+      }
+    ],
+    "hypotheses": [
+      {
+        "text": "G1 的早期领先没有转化为胜利；当前报告只能确认金差/资源/事件同段变化，不能证明具体战术或指挥原因。",
+        "level": "unverified_hypothesis",
+        "evidence": [
+          {
+            "type": "frame",
+            "battle_id": "1054884368_15_1792663236",
+            "note": "候选窗口见该局 windows"
+          }
+        ]
+      },
+      {
+        "text": "BP 中存在跨局重复选用的英雄；这只说明选禁序列重合，不能据此判断教练意图或胜负原因。",
+        "level": "unverified_hypothesis",
+        "evidence": [
+          {
+            "type": "bp",
+            "match_id": "2026102201"
+          }
+        ]
+      }
+    ]
+  },
+  "games": [
+    {
+      "seq": 1,
+      "battle_id": "1054884368_15_1792663236",
+      "team1": "南通Hero久竞",
+      "team2": "杭州LGD.NBW",
+      "winner": "杭州LGD.NBW",
+      "winner_side": 2,
+      "duration": 19.0,
+      "kills": {
+        "team1": 6,
+        "team2": 10
+      },
+      "gold": {
+        "team1": 57079,
+        "team2": 58672
+      },
+      "early_leader": "南通Hero久竞",
+      "comeback": true,
+      "checkpoints": {
+        "5": {
+          "actual_minute": 5.6,
+          "gold_diff_series_team1": 1377.0,
+          "gold_diff_winner": 1377.0
+        },
+        "8": {
+          "actual_minute": 8.9,
+          "gold_diff_series_team1": -523.0,
+          "gold_diff_winner": -523.0
+        },
+        "10": {
+          "actual_minute": 10.6,
+          "gold_diff_series_team1": -1611.0,
+          "gold_diff_winner": -1611.0
+        },
+        "15": {
+          "actual_minute": 15.6,
+          "gold_diff_series_team1": -2284.0,
+          "gold_diff_winner": -2284.0
+        }
+      },
+      "final": {
+        "kills": {
+          "team1": 6,
+          "team2": 10
+        },
+        "gold": {
+          "team1": 57079,
+          "team2": 58672
+        },
+        "towers_last_valid": {
+          "team1": 9,
+          "team2": 6
+        },
+        "objectives_last_valid": {
+          "team1": {
+            "暴君": 2,
+            "黑暗暴君": 3,
+            "主宰": 1,
+            "风暴龙王": 0
+          },
+          "team2": {
+            "暴君": 0,
+            "黑暗暴君": 0,
+            "主宰": 1,
+            "风暴龙王": 0
+          }
+        },
+        "gold_diff_series_team1": 1593.0,
+        "last_valid_minute": 18.6,
+        "is_full_game": true,
+        "quarantined_frames": 0
+      },
+      "coverage": {
+        "frames": 18,
+        "frames_total": 18,
+        "quarantined_frames": 0,
+        "bp_actions": 20,
+        "players": 10,
+        "has_minute_data": true,
+        "has_bp": true
+      },
+      "windows": {
+        "model_last_valid_prob_for_winner": 0.658,
+        "model_last_valid_agrees_with_winner": true,
+        "last_valid_minute": 18.6,
+        "quarantined_frames": 0,
+        "candidates": [
+          {
+            "start_minute": 1.6,
+            "end_minute": 7.6,
+            "kind": "model_probability",
+            "favored_team": "杭州LGD.NBW",
+            "from_value": 0.333,
+            "to_value": 0.756,
+            "delta": 0.423,
+            "unit": "probability",
+            "events": [
+              "推塔 · 南通Hero久竞",
+              "推塔 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": false
+          },
+          {
+            "start_minute": 7.6,
+            "end_minute": 9.6,
+            "kind": "model_probability",
+            "favored_team": "南通Hero久竞",
+            "from_value": 0.244,
+            "to_value": 0.98,
+            "delta": 0.736,
+            "unit": "probability",
+            "events": [
+              "推塔 · 南通Hero久竞",
+              "黑暗暴君 · 南通Hero久竞"
+            ],
+            "evidence_level": "estimate",
+            "key": false
+          },
+          {
+            "start_minute": 9.6,
+            "end_minute": 18.6,
+            "kind": "model_probability",
+            "favored_team": "杭州LGD.NBW",
+            "from_value": 0.02,
+            "to_value": 0.658,
+            "delta": 0.638,
+            "unit": "probability",
+            "events": [
+              "推塔 · 南通Hero久竞",
+              "黑暗暴君 · 南通Hero久竞",
+              "主宰 · 南通Hero久竞",
+              "推塔 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": true
+          }
+        ],
+        "note": "窗口是同类数据上的候选变化段，不是因果结论；没有直播胜率时只使用金差代理。"
+      }
+    },
+    {
+      "seq": 2,
+      "battle_id": "1054884368_16_1792665537",
+      "team1": "杭州LGD.NBW",
+      "team2": "南通Hero久竞",
+      "winner": "杭州LGD.NBW",
+      "winner_side": 1,
+      "duration": 16.0,
+      "kills": {
+        "team1": 13,
+        "team2": 4
+      },
+      "gold": {
+        "team1": 53823,
+        "team2": 45601
+      },
+      "early_leader": "杭州LGD.NBW",
+      "comeback": false,
+      "checkpoints": {
+        "5": {
+          "actual_minute": 5.8,
+          "gold_diff_series_team1": 183.0,
+          "gold_diff_winner": 183.0
+        },
+        "8": {
+          "actual_minute": 8.8,
+          "gold_diff_series_team1": 1822.0,
+          "gold_diff_winner": 1822.0
+        },
+        "10": {
+          "actual_minute": 10.8,
+          "gold_diff_series_team1": 2688.0,
+          "gold_diff_winner": 2688.0
+        },
+        "15": {
+          "actual_minute": 15.1,
+          "gold_diff_series_team1": 6577.0,
+          "gold_diff_winner": 6577.0
+        }
+      },
+      "final": {
+        "kills": {
+          "team1": 13,
+          "team2": 4
+        },
+        "gold": {
+          "team1": 53823,
+          "team2": 45601
+        },
+        "towers_last_valid": {
+          "team1": 10,
+          "team2": 1
+        },
+        "objectives_last_valid": {
+          "team1": {
+            "暴君": 0,
+            "黑暗暴君": 2,
+            "主宰": 1,
+            "风暴龙王": 0
+          },
+          "team2": {
+            "暴君": 2,
+            "黑暗暴君": 0,
+            "主宰": 0,
+            "风暴龙王": 0
+          }
+        },
+        "gold_diff_series_team1": 8222.0,
+        "last_valid_minute": 15.1,
+        "is_full_game": true,
+        "quarantined_frames": 0
+      },
+      "coverage": {
+        "frames": 15,
+        "frames_total": 15,
+        "quarantined_frames": 0,
+        "bp_actions": 20,
+        "players": 10,
+        "has_minute_data": true,
+        "has_bp": true
+      },
+      "windows": {
+        "model_last_valid_prob_for_winner": 0.833,
+        "model_last_valid_agrees_with_winner": true,
+        "last_valid_minute": 15.1,
+        "quarantined_frames": 0,
+        "candidates": [
+          {
+            "start_minute": 5.8,
+            "end_minute": 7.8,
+            "kind": "model_probability",
+            "favored_team": "杭州LGD.NBW",
+            "from_value": 0.686,
+            "to_value": 0.98,
+            "delta": 0.294,
+            "unit": "probability",
+            "events": [
+              "推塔 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": true
+          },
+          {
+            "start_minute": 7.8,
+            "end_minute": 8.8,
+            "kind": "model_probability",
+            "favored_team": "南通Hero久竞",
+            "from_value": 0.02,
+            "to_value": 0.2,
+            "delta": 0.18,
+            "unit": "probability",
+            "events": [
+              "推塔 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": false
+          },
+          {
+            "start_minute": 8.8,
+            "end_minute": 9.9,
+            "kind": "model_probability",
+            "favored_team": "杭州LGD.NBW",
+            "from_value": 0.8,
+            "to_value": 0.841,
+            "delta": 0.041,
+            "unit": "probability",
+            "events": [
+              "推塔 · 杭州LGD.NBW",
+              "推塔 · 南通Hero久竞",
+              "黑暗暴君 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": false
+          }
+        ],
+        "note": "窗口是同类数据上的候选变化段，不是因果结论；没有直播胜率时只使用金差代理。"
+      }
+    },
+    {
+      "seq": 3,
+      "battle_id": "1054884368_17_1792667477",
+      "team1": "杭州LGD.NBW",
+      "team2": "南通Hero久竞",
+      "winner": "杭州LGD.NBW",
+      "winner_side": 1,
+      "duration": 12.0,
+      "kills": {
+        "team1": 14,
+        "team2": 1
+      },
+      "gold": {
+        "team1": 44347,
+        "team2": 31247
+      },
+      "early_leader": "杭州LGD.NBW",
+      "comeback": false,
+      "checkpoints": {
+        "5": {
+          "actual_minute": 5.9,
+          "gold_diff_series_team1": 2737.0,
+          "gold_diff_winner": 2737.0
+        },
+        "8": {
+          "actual_minute": 8.9,
+          "gold_diff_series_team1": 5256.0,
+          "gold_diff_winner": 5256.0
+        },
+        "10": {
+          "actual_minute": 10.9,
+          "gold_diff_series_team1": 9191.0,
+          "gold_diff_winner": 9191.0
+        },
+        "15": {
+          "actual_minute": 11.3,
+          "gold_diff_series_team1": null,
+          "gold_diff_winner": null,
+          "note": "最近帧距离目标超过 2 分钟，不补造检查点"
+        }
+      },
+      "final": {
+        "kills": {
+          "team1": 14,
+          "team2": 1
+        },
+        "gold": {
+          "team1": 44347,
+          "team2": 31247
+        },
+        "towers_last_valid": {
+          "team1": 6,
+          "team2": 1
+        },
+        "objectives_last_valid": {
+          "team1": {
+            "暴君": 2,
+            "黑暗暴君": 1,
+            "主宰": 1,
+            "风暴龙王": 0
+          },
+          "team2": {
+            "暴君": 0,
+            "黑暗暴君": 0,
+            "主宰": 1,
+            "风暴龙王": 0
+          }
+        },
+        "gold_diff_series_team1": 13100.0,
+        "last_valid_minute": 11.3,
+        "is_full_game": true,
+        "quarantined_frames": 0
+      },
+      "coverage": {
+        "frames": 11,
+        "frames_total": 11,
+        "quarantined_frames": 0,
+        "bp_actions": 20,
+        "players": 10,
+        "has_minute_data": true,
+        "has_bp": true
+      },
+      "windows": {
+        "model_last_valid_prob_for_winner": 0.98,
+        "model_last_valid_agrees_with_winner": true,
+        "last_valid_minute": 11.3,
+        "quarantined_frames": 0,
+        "candidates": [
+          {
+            "start_minute": 3.9,
+            "end_minute": 4.9,
+            "kind": "model_probability",
+            "favored_team": "杭州LGD.NBW",
+            "from_value": 0.686,
+            "to_value": 0.98,
+            "delta": 0.294,
+            "unit": "probability",
+            "events": [
+              "推塔 · 杭州LGD.NBW",
+              "推塔 · 南通Hero久竞",
+              "主宰 · 南通Hero久竞"
+            ],
+            "evidence_level": "estimate",
+            "key": true
+          },
+          {
+            "start_minute": 7.9,
+            "end_minute": 8.9,
+            "kind": "model_probability",
+            "favored_team": "南通Hero久竞",
+            "from_value": 0.02,
+            "to_value": 0.106,
+            "delta": 0.086,
+            "unit": "probability",
+            "events": [
+              "推塔 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": false
+          },
+          {
+            "start_minute": 8.9,
+            "end_minute": 11.3,
+            "kind": "model_probability",
+            "favored_team": "杭州LGD.NBW",
+            "from_value": 0.894,
+            "to_value": 0.98,
+            "delta": 0.086,
+            "unit": "probability",
+            "events": [
+              "推塔 · 杭州LGD.NBW",
+              "黑暗暴君 · 杭州LGD.NBW",
+              "主宰 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": false
+          }
+        ],
+        "note": "窗口是同类数据上的候选变化段，不是因果结论；没有直播胜率时只使用金差代理。"
+      }
+    },
+    {
+      "seq": 4,
+      "battle_id": "1054884368_18_1792669266",
+      "team1": "南通Hero久竞",
+      "team2": "杭州LGD.NBW",
+      "winner": "杭州LGD.NBW",
+      "winner_side": 2,
+      "duration": 14.0,
+      "kills": {
+        "team1": 3,
+        "team2": 11
+      },
+      "gold": {
+        "team1": 40526,
+        "team2": 49351
+      },
+      "early_leader": "杭州LGD.NBW",
+      "comeback": false,
+      "checkpoints": {
+        "5": {
+          "actual_minute": 5.8,
+          "gold_diff_series_team1": 992.0,
+          "gold_diff_winner": 992.0
+        },
+        "8": {
+          "actual_minute": 8.8,
+          "gold_diff_series_team1": 264.0,
+          "gold_diff_winner": 264.0
+        },
+        "10": {
+          "actual_minute": 10.8,
+          "gold_diff_series_team1": 1187.0,
+          "gold_diff_winner": 1187.0
+        },
+        "15": {
+          "actual_minute": 13.8,
+          "gold_diff_series_team1": 7183.0,
+          "gold_diff_winner": 7183.0
+        }
+      },
+      "final": {
+        "kills": {
+          "team1": 3,
+          "team2": 11
+        },
+        "gold": {
+          "team1": 40526,
+          "team2": 49351
+        },
+        "towers_last_valid": {
+          "team1": 3,
+          "team2": 9
+        },
+        "objectives_last_valid": {
+          "team1": {
+            "暴君": 1,
+            "黑暗暴君": 0,
+            "主宰": 1,
+            "风暴龙王": 0
+          },
+          "team2": {
+            "暴君": 1,
+            "黑暗暴君": 1,
+            "主宰": 1,
+            "风暴龙王": 0
+          }
+        },
+        "gold_diff_series_team1": 8825.0,
+        "last_valid_minute": 13.8,
+        "is_full_game": true,
+        "quarantined_frames": 0
+      },
+      "coverage": {
+        "frames": 13,
+        "frames_total": 13,
+        "quarantined_frames": 0,
+        "bp_actions": 20,
+        "players": 10,
+        "has_minute_data": true,
+        "has_bp": true
+      },
+      "windows": {
+        "model_last_valid_prob_for_winner": 0.837,
+        "model_last_valid_agrees_with_winner": true,
+        "last_valid_minute": 13.8,
+        "quarantined_frames": 0,
+        "candidates": [
+          {
+            "start_minute": 1.8,
+            "end_minute": 10.8,
+            "kind": "model_probability",
+            "favored_team": "杭州LGD.NBW",
+            "from_value": 0.444,
+            "to_value": 0.98,
+            "delta": 0.536,
+            "unit": "probability",
+            "events": [
+              "推塔 · 杭州LGD.NBW",
+              "推塔 · 南通Hero久竞",
+              "主宰 · 南通Hero久竞",
+              "黑暗暴君 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": true
+          },
+          {
+            "start_minute": 10.8,
+            "end_minute": 11.8,
+            "kind": "model_probability",
+            "favored_team": "南通Hero久竞",
+            "from_value": 0.02,
+            "to_value": 0.188,
+            "delta": 0.168,
+            "unit": "probability",
+            "events": [
+              "推塔 · 杭州LGD.NBW",
+              "黑暗暴君 · 杭州LGD.NBW",
+              "主宰 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": false
+          },
+          {
+            "start_minute": 12.8,
+            "end_minute": 13.8,
+            "kind": "model_probability",
+            "favored_team": "杭州LGD.NBW",
+            "from_value": 0.813,
+            "to_value": 0.837,
+            "delta": 0.024,
+            "unit": "probability",
+            "events": [
+              "推塔 · 杭州LGD.NBW",
+              "主宰 · 杭州LGD.NBW"
+            ],
+            "evidence_level": "estimate",
+            "key": false
+          }
+        ],
+        "note": "窗口是同类数据上的候选变化段，不是因果结论；没有直播胜率时只使用金差代理。"
+      }
+    }
+  ],
+  "series_comparison": {
+    "winner": "杭州LGD.NBW",
+    "comeback_games": [
+      1
+    ],
+    "early_8min_positive_for_series_team1": [
+      {
+        "seq": 1,
+        "gold_diff": -523.0,
+        "positive": false
+      },
+      {
+        "seq": 2,
+        "gold_diff": 1822.0,
+        "positive": true
+      },
+      {
+        "seq": 3,
+        "gold_diff": 5256.0,
+        "positive": true
+      },
+      {
+        "seq": 4,
+        "gold_diff": 264.0,
+        "positive": true
+      }
+    ],
+    "durations": {
+      "min": 12.0,
+      "max": 19.0,
+      "avg": 15.2
+    },
+    "objective_totals": {
+      "杭州LGD.NBW": {
+        "暴君": 3,
+        "黑暗暴君": 4,
+        "主宰": 4,
+        "风暴龙王": 0
+      },
+      "南通Hero久竞": {
+        "暴君": 5,
+        "黑暗暴君": 3,
+        "主宰": 3,
+        "风暴龙王": 0
+      }
+    },
+    "objective_games": 4,
+    "side_sequence": [
+      {
+        "seq": 1,
+        "team1_side": 2,
+        "team2_side": 1,
+        "winner_side": 2
+      },
+      {
+        "seq": 2,
+        "team1_side": 1,
+        "team2_side": 2,
+        "winner_side": 1
+      },
+      {
+        "seq": 3,
+        "team1_side": 1,
+        "team2_side": 2,
+        "winner_side": 1
+      },
+      {
+        "seq": 4,
+        "team1_side": 2,
+        "team2_side": 1,
+        "winner_side": 2
+      }
+    ]
+  },
+  "bp": {
+    "per_game": [
+      {
+        "seq": 1,
+        "team1": "南通Hero久竞",
+        "team2": "杭州LGD.NBW",
+        "picks1": [
+          "海月",
+          "少司缘",
+          "戈娅",
+          "赵云",
+          "蒙恬"
+        ],
+        "picks2": [
+          "夏洛特",
+          "张飞",
+          "莱西奥",
+          "武则天",
+          "橘右京"
+        ],
+        "bans1": [
+          "元流之子(辅助)",
+          "敖隐",
+          "阿古朵",
+          "元流之子(坦克)",
+          "沈梦溪"
+        ],
+        "bans2": [
+          "鲁班大师",
+          "盾山",
+          "关羽",
+          "曹操",
+          "司空震"
+        ]
+      },
+      {
+        "seq": 2,
+        "team1": "杭州LGD.NBW",
+        "team2": "南通Hero久竞",
+        "picks1": [
+          "盾山",
+          "马超",
+          "艾琳",
+          "项羽",
+          "嬴政"
+        ],
+        "picks2": [
+          "沈梦溪",
+          "苏烈",
+          "哪吒",
+          "百里守约",
+          "钟无艳"
+        ],
+        "bans1": [
+          "钟馗",
+          "元流之子(辅助)",
+          "莱西奥",
+          "敖隐",
+          "后羿"
+        ],
+        "bans2": [
+          "海月",
+          "鲁班大师",
+          "不知火舞",
+          "大司命",
+          "裴擒虎"
+        ]
+      },
+      {
+        "seq": 3,
+        "team1": "杭州LGD.NBW",
+        "team2": "南通Hero久竞",
+        "picks1": [
+          "敖隐",
+          "少司缘",
+          "曹操",
+          "姜子牙",
+          "杨戬"
+        ],
+        "picks2": [
+          "苍",
+          "张飞",
+          "司空震",
+          "不知火舞",
+          "夏侯惇"
+        ],
+        "bans1": [
+          "盾山",
+          "鲁班大师",
+          "武则天",
+          "女娲",
+          "安琪拉"
+        ],
+        "bans2": [
+          "赵云",
+          "海月",
+          "镜",
+          "哪吒",
+          "大司命"
+        ]
+      },
+      {
+        "seq": 4,
+        "team1": "南通Hero久竞",
+        "team2": "杭州LGD.NBW",
+        "picks1": [
+          "鲁班大师",
+          "镜",
+          "狂铁",
+          "艾琳",
+          "安琪拉"
+        ],
+        "picks2": [
+          "狄仁杰",
+          "元流之子(辅助)",
+          "不知火舞",
+          "夏侯惇",
+          "司空震"
+        ],
+        "bans1": [
+          "海月",
+          "赵云",
+          "猪八戒",
+          "裴擒虎",
+          "云缨"
+        ],
+        "bans2": [
+          "关羽",
+          "敖隐",
+          "黄忠",
+          "海诺",
+          "蚩奼"
+        ]
+      }
+    ],
+    "picks_by_team": {
+      "杭州LGD.NBW": [
+        "夏洛特",
+        "张飞",
+        "莱西奥",
+        "武则天",
+        "橘右京",
+        "盾山",
+        "马超",
+        "艾琳",
+        "项羽",
+        "嬴政",
+        "敖隐",
+        "少司缘",
+        "曹操",
+        "姜子牙",
+        "杨戬",
+        "狄仁杰",
+        "元流之子(辅助)",
+        "不知火舞",
+        "夏侯惇",
+        "司空震"
+      ],
+      "南通Hero久竞": [
+        "海月",
+        "少司缘",
+        "戈娅",
+        "赵云",
+        "蒙恬",
+        "沈梦溪",
+        "苏烈",
+        "哪吒",
+        "百里守约",
+        "钟无艳",
+        "苍",
+        "张飞",
+        "司空震",
+        "不知火舞",
+        "夏侯惇",
+        "鲁班大师",
+        "镜",
+        "狂铁",
+        "艾琳",
+        "安琪拉"
+      ]
+    },
+    "bans_by_team": {
+      "杭州LGD.NBW": [
+        "鲁班大师",
+        "盾山",
+        "关羽",
+        "曹操",
+        "司空震",
+        "钟馗",
+        "元流之子(辅助)",
+        "莱西奥",
+        "敖隐",
+        "后羿",
+        "盾山",
+        "鲁班大师",
+        "武则天",
+        "女娲",
+        "安琪拉",
+        "关羽",
+        "敖隐",
+        "黄忠",
+        "海诺",
+        "蚩奼"
+      ],
+      "南通Hero久竞": [
+        "元流之子(辅助)",
+        "敖隐",
+        "阿古朵",
+        "元流之子(坦克)",
+        "沈梦溪",
+        "海月",
+        "鲁班大师",
+        "不知火舞",
+        "大司命",
+        "裴擒虎",
+        "赵云",
+        "海月",
+        "镜",
+        "哪吒",
+        "大司命",
+        "海月",
+        "赵云",
+        "猪八戒",
+        "裴擒虎",
+        "云缨"
+      ]
+    },
+    "common_picks": [
+      {
+        "hero": "不知火舞",
+        "games": 2
+      },
+      {
+        "hero": "司空震",
+        "games": 2
+      },
+      {
+        "hero": "夏侯惇",
+        "games": 2
+      },
+      {
+        "hero": "少司缘",
+        "games": 2
+      },
+      {
+        "hero": "张飞",
+        "games": 2
+      },
+      {
+        "hero": "艾琳",
+        "games": 2
+      }
+    ]
+  },
+  "limits": [
+    "胜率/窗口是模型或金差代理的候选变化段，不是因果结论。",
+    "资源/金差/击杀/推塔来自逐帧快照；缺失时不补造。",
+    "未使用教练语音、训练赛、选手伤停等外部信息，不能判断指挥责任。"
+  ]
+}

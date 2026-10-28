@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="v55">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数据查询 · 峡谷有数</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css?v=85">
+<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/v55.css?v=87">
+<style>
+.q-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.q-head .seg{margin-left:0}
+.q-table{width:100%;border-collapse:collapse;font-size:13px}
+.q-table th,.q-table td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.q-table th:first-child,.q-table td:first-child,.q-table th.left,.q-table td.left{text-align:left}
+.q-table thead th{font-size:11.5px;color:var(--muted);font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card)}
+.q-table thead th:hover{color:var(--gold)}
+.q-table thead th.sorted{color:var(--gold)}
+.q-table tbody tr:hover{background:var(--inset)}
+.q-table .cell{display:flex;align-items:center;gap:8px}
+.q-table .cell img{width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none}
+.q-table .rk{font-family:var(--mono);color:var(--muted)}
+.q-table .best{color:var(--gold);font-weight:800}
+.q-wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 10px;overflow-x:auto;max-height:70vh}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="峡谷有数">
+<meta property="og:title" content="数据查询 · 峡谷有数">
+<meta property="og:description" content="KPL 赛事数据产品：赛程比分、战队/选手/英雄数据、BP 分析、逐局复盘与实时胜率预测。2019–2026 全历史。">
+<meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/arena.css?v=1">
+<link rel="stylesheet" href="assets/arena-world.css?v=20261026">
+<script src="assets/arena-world.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/card-motion.css?v=1">
+<script src="assets/card-motion.js?v=1" type="module"></script>
+</head>
+<body data-page="query.html">
+<header id="siteHeader" class="topbar"></header>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="ph-kicker mono">QUERY · 数据查询</div>
+    <h1>数据查询中心</h1>
+    <p>把全部指标摊在表里：选数据范围 → 切类型 → 搜名字 → 点列头排序。战队、选手、英雄的自由榜单，随时导出。</p>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:24px">
+  <div class="scopebar" id="scopeBar"></div>
+  <div class="filterbar">
+    <div class="seg" id="typeTabs" style="margin-left:0">
+      <button data-m="team" class="on">战队</button>
+      <button data-m="player">选手</button>
+      <button data-m="hero">英雄</button>
+    </div>
+    <label class="fld grow"><span>搜索</span>
+      <input class="search" id="qSearch" placeholder="输入名称过滤，如：狼队 / 清清 / 戈娅">
+    </label>
+    <label class="fld" id="posWrap" style="display:none"><span>位置</span>
+      <select id="qPos"><option value="">全部位置</option></select>
+    </label>
+    <label class="fld"><span>最少局数</span>
+      <select id="qMin">
+        <option value="0">不限</option>
+        <option value="10">≥10 局</option>
+        <option value="30" selected>≥30 局</option>
+        <option value="50">≥50 局</option>
+        <option value="100">≥100 局</option>
+      </select>
+    </label>
+    <span class="block-note mono" id="qNote"></span>
+    <a class="btn ghost sm" href="find.html">智能找局 →</a>
+    <button class="btn ghost sm" id="qExport" type="button">导出 CSV</button>
+  </div>
+  <div class="q-wrap">
+    <table class="q-table"><thead id="qHead"></thead><tbody id="qBody"></tbody></table>
+  </div>
+</main>
+
+<footer id="siteFooter" class="footer"></footer>
+
+<script src="assets/data.js?v=85"></script>
+<script src="assets/seasons.js?v=85"></script>
+<script src="assets/common.js?v=20261027e"></script>
+<script>
+(function () {
+  "use strict";
+  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  K.init();
+
+  var mode = "team", sortKey = null, sortDir = -1, curScope = "all";
+
+  var COLS = {
+    team: [
+      { k: "team", label: "战队", left: true },
+      { k: "matches", label: "大场" },
+      { k: "mWin", label: "大场胜" },
+      { k: "games", label: "局数" },
+      { k: "wins", label: "局胜" },
+      { k: "wr", label: "单局胜率", fmt: function (v) { return K.pct(v, 1); } },
+      { k: "goldDiff", label: "场均金差", fmt: function (v) { return K.signed(v); } },
+      { k: "killDiff", label: "场均击杀差", fmt: function (v) { return (v > 0 ? "+" : "") + v; } },
+    ],
+    player: [
+      { k: "name", label: "选手", left: true },
+      { k: "team", label: "战队", left: true, fmt: function (v, r) { return v; } },
+      { k: "pos", label: "位置" },
+      { k: "games", label: "局数" },
+      { k: "wr", label: "胜率", fmt: function (v) { return K.pct(v, 1); } },
+      { k: "kda", label: "KDA" },
+      { k: "mvp", label: "MVP" },
+      { k: "mvpRate", label: "MVP 率", fmt: function (v) { return (v * 100).toFixed(1) + "%"; },
+        val: function (r) { return r.mvp / Math.max(1, r.games); } },
+      { k: "part", label: "参团率", fmt: function (v) { return v.toFixed(1) + "%"; } },
+      { k: "dmg", label: "输出占比", fmt: function (v) { return v.toFixed(1) + "%"; } },
+    ],
+    hero: [
+      { k: "name", label: "英雄", left: true },
+      { k: "tier", label: "档位" },
+      { k: "games", label: "出场" },
+      { k: "wr", label: "胜率", fmt: function (v) { return K.pct(v, 1); } },
+      { k: "bans", label: "禁用数" },
+      { k: "banRate", label: "禁用率", fmt: function (v) { return (v * 100).toFixed(1) + "%"; },
+        val: function (r, d) { return r.bans / Math.max(1, d.totals.battles); } },
+      { k: "kda", label: "KDA" },
+      { k: "dmg", label: "输出占比", fmt: function (v) { return v.toFixed(1) + "%"; } },
+      { k: "bh", label: "承伤占比", fmt: function (v) { return v.toFixed(1) + "%"; } },
+      { k: "gold", label: "场均经济", fmt: function (v) { return K.fmtInt(v); } },
+    ],
+  };
+
+  function dataOf() {
+    var d = K.scopeOf(curScope);
+    if (mode === "team") return (d.teams || []).slice();
+    if (mode === "player") return (d.players || []).filter(function (p) { return p.games >= 8; }).slice();
+    return (d.heroes || []).slice();
+  }
+
+  function valOf(r, col, d) {
+    return col.val ? col.val(r, d) : r[col.k];
+  }
+
+  function iconOf(r) {
+    if (mode === "team") return r.icon || "";
+    if (mode === "player") return r.icon || "";
+    return r.icon || "";
+  }
+
+  function renderHead() {
+    $("#qHead").innerHTML = "<tr><th style='text-align:left'>#</th>" + COLS[mode].map(function (c) {
+      var cls = (c.left ? "left " : "") + (sortKey === c.k ? "sorted" : "");
+      return '<th class="' + cls.trim() + '" data-k="' + c.k + '">' + c.label +
+        (sortKey === c.k ? (sortDir < 0 ? " ↓" : " ↑") : "") + "</th>";
+    }).join("") + "</tr>";
+    $("#qHead").querySelectorAll("th[data-k]").forEach(function (th) {
+      th.addEventListener("click", function () {
+        var k = th.getAttribute("data-k");
+        if (sortKey === k) sortDir = -sortDir;
+        else { sortKey = k; sortDir = -1; }
+        render();
+      });
+    });
+  }
+
+  /* 当前视图（范围 + 搜索 + 位置筛选 + 排序）——表格和导出共用同一份，避免"看到的和导出的不一致" */
+  function currentView() {
+    var d = K.scopeOf(curScope);
+    var minG = parseInt(($("#qMin") || {}).value || "0", 10) || 0;
+    var q = $("#qSearch").value.trim().toLowerCase();
+    var rows = dataOf().filter(function (r) {
+      if (mode === "player" && $("#qPos").value && r.pos !== $("#qPos").value) return false;
+      if (q) {
+        var hay = mode === "team" ? r.team : (mode === "hero" ? r.name : r.name + " " + r.team);
+        if (String(hay).toLowerCase().indexOf(q) < 0) return false;
+      }
+      if (minG > 0 && (Number(r.games) || 0) < minG) return false;
+      return true;
+    });
+    var key = sortKey || (mode === "player" ? "kda" : mode === "hero" ? "games" : "wr");
+    var col = COLS[mode].filter(function (c) { return c.k === key; })[0] || COLS[mode][1];
+    rows.sort(function (a, b) {
+      var va = valOf(a, col, d), vb = valOf(b, col, d);
+      if (typeof va === "string") return sortDir * String(va).localeCompare(String(vb), "zh");
+      return sortDir * ((va || 0) - (vb || 0));
+    });
+    return { d: d, rows: rows, col: col };
+  }
+
+  function render() {
+    var view = currentView();
+    var d = view.d, rows = view.rows;
+    $("#qNote").textContent = rows.length + " 行 · " + K.scopeName(curScope);
+    renderHead();
+    /* 各列最佳值（用于金色高亮，仅数值列） */
+    var bests = {};
+    COLS[mode].forEach(function (c) {
+      if (c.label === "位置" || c.label === "档位" || c.label === "战队") return;
+      var vals = rows.map(function (r) { return valOf(r, c, d); }).filter(function (v) { return typeof v === "number"; });
+      if (vals.length) bests[c.k] = Math.max.apply(null, vals);
+    });
+    $("#qBody").innerHTML = rows.slice(0, 200).map(function (r, i) {
+      var name = mode === "team" ? r.team : r.name;
+      // 战队列直接进详情页（team.html 的 id 就是队名）；原来跳到 teams.html 榜单，等于没跳
+      var href = mode === "team" ? "team.html?id=" + encodeURIComponent(r.team) :
+        (mode === "hero" ? "hero.html?id=" + encodeURIComponent(r.name) : "player.html?id=" + encodeURIComponent(r.name));
+      var ic = iconOf(r);
+      return "<tr>" +
+        '<td class="rk">' + (i + 1) + "</td>" +
+        COLS[mode].map(function (c, ci) {
+          var v = valOf(r, c, d);
+          var txt = c.fmt ? c.fmt(v, r) : String(v == null ? "—" : v);
+          if (ci === 0) {
+            return '<td class="left"><a class="cell" href="' + href + '">' +
+              (ic ? '<img src="' + K.esc(ic) + '" alt="" loading="lazy">' : "") + "<span>" + K.esc(name) + "</span></a></td>";
+          }
+          var best = (bests[c.k] != null && typeof v === "number" && v === bests[c.k] && rows.length > 1);
+          return '<td class="' + (c.left ? "left " : "") + (best ? "best" : "") + '">' + K.esc(txt) + "</td>";
+        }).join("") + "</tr>";
+    }).join("") || '<tr><td colspan="12" style="color:var(--muted);text-align:center;padding:26px">没有匹配的行</td></tr>';
+  }
+
+  function fillPos() {
+    if (mode !== "player") { $("#posWrap").style.display = "none"; return; }
+    $("#posWrap").style.display = "";
+    var d = K.scopeOf(curScope);
+    var set = {};
+    (d.players || []).forEach(function (p) { if (p.pos) set[p.pos] = 1; });
+    var order = ["对抗路", "打野", "中路", "发育路", "游走"];
+    var cur = $("#qPos").value;
+    $("#qPos").innerHTML = '<option value="">全部位置</option>' +
+      Object.keys(set).sort(function (a, b) {
+        var ia = order.indexOf(a), ib = order.indexOf(b);
+        return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+      }).map(function (p) { return "<option>" + K.esc(p) + "</option>"; }).join("");
+    $("#qPos").value = cur;
+  }
+
+  $("#typeTabs").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    Array.prototype.forEach.call(this.children, function (x) { x.classList.toggle("on", x === b); });
+    mode = b.getAttribute("data-m");
+    sortKey = null; sortDir = -1;
+    fillPos();
+    render();
+  });
+  $("#qSearch").addEventListener("input", render);
+  $("#qPos").addEventListener("change", render);
+  $("#qMin").addEventListener("change", function () { sortKey = null; sortDir = -1; render(); });
+  $("#qExport").addEventListener("click", function () {
+    // 导出 = 当前视图（同一范围/搜索/位置筛选/排序），并带上排名与筛选条件说明
+    var view = currentView();
+    var d = view.d, rows2 = view.rows, col = view.col;
+    var conds = [];
+    var q = $("#qSearch").value.trim();
+    if (q) conds.push("搜索=" + q);
+    if (mode === "player" && $("#qPos").value) conds.push("位置=" + $("#qPos").value);
+    var scopeTxt = K.scopeName(curScope);
+    var head = ["排名"].concat(COLS[mode].map(function (c) { return c.label; }))
+      .concat(["数据范围", "排序", "筛选条件"]);
+    var rows = [head];
+    rows2.forEach(function (r, i) {
+      rows.push([i + 1].concat(COLS[mode].map(function (c) {
+        var v = valOf(r, c, d);
+        return c.fmt ? c.fmt(v, r) : (v == null ? "" : v);
+      })).concat([scopeTxt, col.label + (sortDir < 0 ? " ↓" : " ↑"), conds.join(" · ") || "无"]));
+    });
+    if (!rows2.length) {
+      $("#qNote").textContent = "当前筛选没有可导出的行";
+      return;
+    }
+    K.exportCSV("数据查询_" + mode + "_" + scopeTxt + ".csv", rows);
+  });
+
+  curScope = K.scopeBar("#scopeBar", function (id) { curScope = id; fillPos(); render(); });
+  fillPos();
+  render();
+})();
+</script>
+</body>
+</html>
