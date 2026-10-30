@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 上手指南与数据口径
+    url: https://github.com/hccccc01333/kpl-insight/blob/main/docs/getting-started.md
+    about: 安装、采集、训练、预测和导出步骤先看这里。
+  - name: 安全漏洞
+    url: https://github.com/hccccc01333/kpl-insight/blob/main/SECURITY.md
+    about: 请按安全说明私密报告，不要在公开 Issue 中贴出利用细节。

@@ -3,59 +3,59 @@
   "files": [
     {
       "path": "404.html",
-      "sha256": "62c5aaa2dd94b00d000401857629d6778e63a78d1c809c8dcfc77421d18559fd"
+      "sha256": "d9635d72a11785240eebc41ad73e2e2647f2d46d3b750813f4b6a05630e8ca56"
     },
     {
       "path": "about.html",
-      "sha256": "ff7a1f1a01817b8e61969e402e95b58f992580af6348b13064f979878e3b954c"
+      "sha256": "289e2b572aff6f966ea8372c1cb7c7f7e2fd444340bf785bef4bc82e844f03b5"
     },
     {
       "path": "bp-studio.html",
-      "sha256": "1bec6c925210c15f23ba3cef058444f5e4c7e1c1566fb537616b2a32eccb9f12"
+      "sha256": "7df5101013fc406a72b5d900958a45293fb8c6d710e58d05f146d3b991bf40e2"
     },
     {
       "path": "bp.html",
-      "sha256": "ecebcb4514e80e697e581777a1b2c1df4ff3361b2ab6818ed6afd36861e909f3"
+      "sha256": "410e5722016545def5220d399e020a7e9960927515798a7d841e78d8347c8227"
     },
     {
       "path": "bracket-forecast.html",
-      "sha256": "de0945e1a19c83b1803bf8557ef37e4c89e61d3565ac865822c63bc909f3902c"
+      "sha256": "685d222bfaa33b3d90f8c10524921d4328938642e44bf1bc42f5d8d19be54991"
     },
     {
       "path": "bracket.html",
-      "sha256": "1ccb4cd26db4e36e868fbecf423f99cf8e425952f67a61df5e25941ad13cc5ab"
+      "sha256": "d0c55265d47ea582bb5d5a43f50ec9afd1088cd0243fe3cbf15f55b893a5b2ba"
     },
     {
       "path": "coach.html",
-      "sha256": "f25f18f5149432cd4beb1c67cbdf1b79c54cd0ef7f5644e068d700beaa761eed"
+      "sha256": "9d53af96e00d0b0c3cea072e910a48a6c3d349d3cc90d71e0a09ef5daa19d41a"
     },
     {
       "path": "combos.html",
-      "sha256": "3ac1cf7d7c6d73586fe8e12f6fe58d02263be697690a91f3b2e6c73b852290ed"
+      "sha256": "f33d4b52466deda8cba5696f59fe331e231cc9187ce52f58a543dfd83506a6b5"
     },
     {
       "path": "comeback.html",
-      "sha256": "f7470d0e0b2b7416867bb798ce2d35ab6837bd8ab2008096f01eb2d76333a73f"
+      "sha256": "682c488bc4c9feb7dda7c069ccc917ca0d03e4e47cccd5e8ee30c13cb967d768"
     },
     {
       "path": "compare-lane.html",
-      "sha256": "74487e2a93cee91aeec9cdf1ae1a8815b86cd018d54a51c606139c45c7a1b4bd"
+      "sha256": "a07b9bc7732e851650a06dfc50cea906caa54ac9dd7b4f59e8710788cc1d3691"
     },
     {
       "path": "compare-player.html",
-      "sha256": "b5b72dc85335688f70c3bc4bf055e2a66a6afe4edd5f27f43d68829650fb5209"
+      "sha256": "26ff3f9d6d20d04ceab587f05338b670e8e5f3f831644f464d5802c8f7ade7e9"
     },
     {
       "path": "compare-team.html",
-      "sha256": "18372348fe4b7bd1001c3d57d1ee446889535f139e48e9e17f9e169aff00309d"
+      "sha256": "412127c43b31dd35efa4a7316e741775aede83e56d123352b611ab743afceb4b"
     },
     {
       "path": "compare.html",
-      "sha256": "9a821786387987b8334be5d71abc97f6226cda0e0a58355b258d146d8fb8671d"
+      "sha256": "8a33f706cd1975d622531876a09880c2cc0c2ee9e6161531bd0183d5350e581e"
     },
     {
       "path": "find.html",
-      "sha256": "351bfa3490975b88b96f25a2fd56c9a5430f4d3c255d4d23ac6fd5ff526df944"
+      "sha256": "c6ba6cdc818e3c93c7e1c3e3ddb9048b69b72681f55ddf70390d2d54ea69ea97"
     },
     {
       "path": "forecast.html",
@@ -63,95 +63,95 @@
     },
     {
       "path": "game.html",
-      "sha256": "8ad96a22f5b0414a3c63fc1a8f1efe962239a90501823a9f452bd39b9b605831"
+      "sha256": "c42e976ceb529890f1e865943b80a14c96fb2a0976e396d6fb5acc810239b039"
     },
     {
       "path": "h2h.html",
-      "sha256": "ea8a6c2587d5184aa0273954910f641149ba27dcc5ac8b4cde501c0e69122aa4"
+      "sha256": "c1b8100613ff0824e95ce7cd21a28fe34dca759e60ebeb6cd2fcf0f95b350263"
     },
     {
       "path": "hero-performance.html",
-      "sha256": "7fb0be1c627ccc30560d499f9289a7b8780c13000bbb0306324219537a88e4e1"
+      "sha256": "20a88e9efc1f5cfe31b534c79ed6ab62e715251fb420a56bc42a9440169564e9"
     },
     {
       "path": "hero.html",
-      "sha256": "2e3f1790fc8d915d05ee83819796b93a37a4ff222ff4479c5e27d5f6fad6e97a"
+      "sha256": "426967b781eb7f260ca5d74d92860b3293e0c2635d5e7a1e02400c2f71004ba4"
     },
     {
       "path": "heroes.html",
-      "sha256": "36c6d04512b1aedac7753c80785a728b077d19e16953075f6d9a9f4e91fdfa9b"
+      "sha256": "79a89607ab9297d0f40b7ad18b64a898a906552992cc2c81f169f9138bc5aa8e"
     },
     {
       "path": "honors.html",
-      "sha256": "ce50e096620cfb330a59b757cc1ed9d0d0d5113f0ff13ea854a67a536a032797"
+      "sha256": "0a9574daa213e3b498cc3f8e4b93bccb402444e63275ba8eb375d9edaabae9d3"
     },
     {
       "path": "index.html",
-      "sha256": "6aa63845fd45866f92ce904ea5ac5c6566c9e5a06c35084aca4e675b45144ffe"
+      "sha256": "46ea268821649300695584e7a206355c73706959f374b71e5d7746f7e06a84d8"
     },
     {
       "path": "match.html",
-      "sha256": "f6c8789963068c17c0d6583f00d02bfe126bc10f1b0f872582ff15aca97f0a13"
+      "sha256": "8e22c8adacc7db9d92bf48254270778a63c1b7238c2a6d0c102d0fa91dd7bf6d"
     },
     {
       "path": "picks.html",
-      "sha256": "f0937215300549b29fa324e496dab49ec45bd3a154009d312a50c0b3d61978d4"
+      "sha256": "33989eef2be3cd92fc281d28b874db86702e3fc6b067fa652773a2132c9364c6"
     },
     {
       "path": "player.html",
-      "sha256": "18356894c89a2893da3061d59d9c9e1426e648a6307c6a88e0cd3579a8859b1c"
+      "sha256": "8b68cbfb5dc9570e6131e08b8708f16167030a5ba7afb06c886a35be9a9828b3"
     },
     {
       "path": "players.html",
-      "sha256": "5dd7ae1ed4d045831a46cc184fff84f43a9c2eaa8bc9a39d80203ce0b7eaaaf5"
+      "sha256": "4882c3942f64f84b9e30b3d0aa4d1c04e4352707cba920af8492fc49a46fde68"
     },
     {
       "path": "predict.html",
-      "sha256": "f725ea65936dbe079d11e153c93d52261970b24000d59fd3cabbb1b8abdcb939"
+      "sha256": "bb2b6b8561893465d02bf3f73c1ee318409d3773a128701a9ef00f4e5cccc61f"
     },
     {
       "path": "query.html",
-      "sha256": "616a4c1cad3158f6efab240e22003e864f9e67dc95328784a278389803b0ffc6"
+      "sha256": "6c43ec5945ffff976eb03358d7a532235219f0ce3311093a7d0b0827c91812bc"
     },
     {
       "path": "records.html",
-      "sha256": "d605950c56e8218f6ed4254a5a42707abca5ce729c7e52f72de72896596fc5ee"
+      "sha256": "a8f1e4753fb873265cc69114a55a8158d6abca110970c749a978178f048fd5c6"
     },
     {
       "path": "sandbox.html",
-      "sha256": "8aa8606cab357f430c02c9ab9d6fa91c6054bcf69ee9bce0d21a6d7779a36c9b"
+      "sha256": "5f15e2cf99fee5c50bee7eea7ae524c1283a34dab10f5fab7ccaa61db4c1494d"
     },
     {
       "path": "schedule.html",
-      "sha256": "90973fcfd3bdf4b318bce5ffc089adf2d5b4a1befc88d98459b17346e75c595d"
+      "sha256": "7009179f6142c30039e7d164de4c015bb93716098ea5e4dee1f58f750d4c81fc"
     },
     {
       "path": "series.html",
-      "sha256": "ef70765f6f336f85e6314788059e2027b1340b41811ebc9f748ad76369472d2c"
+      "sha256": "6abce113d710bda536de9b3e3d49d582f976a168f85fa76b5b821ca4ce7e9de4"
     },
     {
       "path": "simulator.html",
-      "sha256": "f09f4c76ca8104e89e03af42978aefb05a1df4051dd192afdbbd34be8ad306a9"
+      "sha256": "81d1ef3ed67e392e5d4a5e5360790fa45b5c4af16338308b5ac50b4af67353eb"
     },
     {
       "path": "stage.html",
-      "sha256": "67ab6cc171c3a1c45995175ea5edf7eb20ab4a096e973f26ee1af48fe15b2037"
+      "sha256": "e1fd9237b093d5a183575321d9ad97bb37b6e52a80e9df8bb7591cc22356cb7c"
     },
     {
       "path": "team-bp.html",
-      "sha256": "5ab524cc94263fcda964da6dce824a9413dfab9f3865b3e358377049353a8c36"
+      "sha256": "1a44f32e2e81496ebaec1cafe6fdf3740400b06a0210a53dddf3000ce54448f3"
     },
     {
       "path": "team.html",
-      "sha256": "85462c3528188ff5281427f8bcd6b59ed6e9b443d9c1a9de7fb3a7a2ac0a625e"
+      "sha256": "f404109696cac4c37a20b64b7ee71e6d6bea40dcba3425a004b333b66689c510"
     },
     {
       "path": "teams.html",
-      "sha256": "6c1894bedd47df991a9a341577abd8e7f0d432579f33c607b55053e2cf80802f"
+      "sha256": "b94a6c4d29d83fc1497e5184eab840127217d80ff6216604b085a8c556839424"
     },
     {
       "path": "updates.html",
-      "sha256": "da3b9d6625460b76bcf00e8fe705fcd704f67d3ef9bac62d766d7dc49ec259ed"
+      "sha256": "f01c260a707a3668971f83acea45abae4ccf0445d0d63e37f6ae5be010a95274"
     },
     {
       "path": "assets/arena-3d.js",
@@ -167,7 +167,7 @@
     },
     {
       "path": "assets/arena-world.js",
-      "sha256": "eead354ae35d1dbf76bde4e7383e43d3027936d9529162dff715db07849d1a50"
+      "sha256": "09e507b1a05d1eaa658f9aa75f2246687074e9b8fda860476fbdff7a90d21dde"
     },
     {
       "path": "assets/arena.css",
@@ -207,11 +207,11 @@
     },
     {
       "path": "assets/coach_app.js",
-      "sha256": "50ffbcbda7c7a6a17d51d8d2287b76814e0b0d5b7ec710b47ea1eb32288d9fb1"
+      "sha256": "b727cebd39a1e8456034c0de23e292a0d782589d61bfe3d551a98d4a670d55e9"
     },
     {
       "path": "assets/coach_data.js",
-      "sha256": "3fcf5f346487f28237e53bea3402c3d364c9dca2901622edd96f602061145557"
+      "sha256": "580502553411484efbb42ffaeba2dd01b70909561039f21fce78a3309e182ac4"
     },
     {
       "path": "assets/comeback.js",
@@ -219,7 +219,7 @@
     },
     {
       "path": "assets/common.js",
-      "sha256": "584fb3364fc039edcd74b8baccffdd8c0d6fcd70ac1b978813de7139dca25cfe"
+      "sha256": "6e87da6427db0c110c5471c1ada8439f1767fddbc74cb6e71773583d46f3c4ce"
     },
     {
       "path": "assets/compare.js",
@@ -227,19 +227,19 @@
     },
     {
       "path": "assets/coverage.js",
-      "sha256": "9728037b28cf321dd0cd3170094d5f7214277606efa5b611c7378f042a0408b4"
+      "sha256": "667feb09537081dcfdfe69db40504e264f718010adea49c462c1037043fa6a8a"
     },
     {
       "path": "assets/data.js",
-      "sha256": "cef60aad69d8df2a6c528e9f72763fc16c20a94c062da2154150047087256dff"
+      "sha256": "3985a6b032f23cb8a241d635747c243d96e183b15d6d296b31f18b2e6ff1251c"
     },
     {
       "path": "assets/deep.js",
-      "sha256": "242477aa976bb90d7b20bceb461331ef97e46a90bd3fbd49f1cdde9b0b739f34"
+      "sha256": "bae42f0f34fec6ed8eb0e0390728acdb3e2320653e4feabf037f1416704c11c8"
     },
     {
       "path": "assets/details.js",
-      "sha256": "125507b63e8af837146c0cc20f559ff7f5ea7131cbece36870b4f72011fd7af3"
+      "sha256": "0520e0b073c22d1b9f1e4634a6fc2dac6b99678afae0f169ad7e5d09c4d0153c"
     },
     {
       "path": "assets/equip_icons.js",
@@ -383,11 +383,15 @@
     },
     {
       "path": "assets/games/20260004.json",
-      "sha256": "ce7c9d246f3c8e1ff9666d1e77665b20dd37d7768fa8f9dd737a7c26601750ae"
+      "sha256": "cb2ba8689e9c8c23f1c6b8220f710735346e283682d2117f1946e3f46540df4d"
     },
     {
       "path": "assets/games/index.js",
-      "sha256": "5e9e3e8bac8d244bda5865da18e933c02cd88b4722db8d538e226ba8db56cb35"
+      "sha256": "c90d7e582cb39f42cf46491d45e26ff45eb0c0d52485942a6efe1a69b0d8f3a9"
+    },
+    {
+      "path": "assets/h2h_early.js",
+      "sha256": "a1405d7ab8d95aed46f9ad5e3a60e27217ce3bfd6eec268a1ef12e5461a68f14"
     },
     {
       "path": "assets/hero_growth.js",
@@ -467,15 +471,19 @@
     },
     {
       "path": "assets/honors.js",
-      "sha256": "26a450623335445e3914d45a11ecc5772ec9749b2998d475581d790e8d6f1638"
+      "sha256": "4e1aa9c14516cfbf66e44218a4c31c00534c4c9b1cc69a462f926783d7c145e1"
+    },
+    {
+      "path": "assets/light.css",
+      "sha256": "78b560940a9682a71350ec1d85d1d9b16a52bb2fa68141fa69932112ebc784e7"
     },
     {
       "path": "assets/lineups.js",
-      "sha256": "30fc45572b58b6c677fdf511312f6c724d2335edce735acd1e86b4fecb6cedaf"
+      "sha256": "e2e66ea3ffaf467608ad6df7d47371b07dcc3ac199b33be9a88a093f557d1498"
     },
     {
       "path": "assets/live.js",
-      "sha256": "e77aec3a828b56e03163a98da9a212b9a2faa748d82956e164c59c9eb02b52ad"
+      "sha256": "bfefe67758d55795bf8c8658334b72510377bb36fbb9cb3bae10f13b1061ab50"
     },
     {
       "path": "assets/live_hist/2026052301.js",
@@ -738,32 +746,44 @@
       "sha256": "ee8b99ee143f4f04070620e0463baa05ea9be4c8f1376d68ad2d0d9d996c3d74"
     },
     {
+      "path": "assets/live_hist/2026102801.js",
+      "sha256": "6da1ae422b221995b77a987988792fd64c203ef75e79580962feb1b972b0fcb0"
+    },
+    {
+      "path": "assets/live_hist/2026102901.js",
+      "sha256": "450420dd085aac46103964da8177f8ebd7470da4bed8d7be9441a811bcd62c62"
+    },
+    {
+      "path": "assets/live_hist/2026103001.js",
+      "sha256": "2c1c462449aac4d8b516f75c57360044a87bb857f05c5bfe083f5a949c6c7a22"
+    },
+    {
       "path": "assets/pages.css",
-      "sha256": "07a61f222333446745756321a4e9f4401841ceb97202e0a6d17a381c76ade55a"
+      "sha256": "ec819a4fe3c4e6c9cb9d86d7851aac3fa44a5be763e64e8e14c1814fd1d7098e"
     },
     {
       "path": "assets/picks.js",
-      "sha256": "57d091d49f45467c0f2d75963b3a60b6840c51ddf7c5f10bfa1dfb6bc46f2451"
+      "sha256": "a27d4e6a7096a573e89d0376e78951f5195447e8d4f798a21a7bd602b84e3992"
     },
     {
       "path": "assets/player_deep.js",
-      "sha256": "0d2c03e70b9820a3b557571aa2efb594a2134bd2024d3cf0109c6b2ee6514790"
+      "sha256": "dd2963158597e0b6951d645f21787933518333f94cb2124757ac5a185d5af11b"
     },
     {
       "path": "assets/players_detail.js",
-      "sha256": "3722b48daea59310c51b620d207c2b22f95f2c2b0394a6d6073ae0c947b8b74a"
+      "sha256": "035cc680a80e7e3a4508f4622073f36cbc04a9aa479489c132f4ce538006ce8e"
     },
     {
       "path": "assets/power.js",
-      "sha256": "9dc8c3b18476b7d83c0113959c38c44f6b08b271b5059ed354951c1a5f9bb71b"
+      "sha256": "5bad2189d7af29b7748a375be73da68ce8bba1546de7428e4f5be414829c6897"
     },
     {
       "path": "assets/predict.js",
-      "sha256": "9f3897a988df8b60e34e36bc6a2723c6fc29a9ab64cd3eafa916e80ae4256549"
+      "sha256": "0b46926b6a90119c823ee8a5fe41f12d4e0032cfeb9b26cd4d72abd32bedd6f5"
     },
     {
       "path": "assets/prematch_calib.js",
-      "sha256": "e09649ea022fa14365c30d5a35004496e716ca9a7752c9c48b7c536c90926c35"
+      "sha256": "38e1733fdd2f8f40652cd5f6d5c6e429f0c662b5c138ea1753636fafe5721788"
     },
     {
       "path": "assets/pro_hero.js",
@@ -779,7 +799,7 @@
     },
     {
       "path": "assets/records.js",
-      "sha256": "978c11c07d1b16aba983a16b8359374395388d63a5775cbe6e8b433473b246d3"
+      "sha256": "de5c531e2d960e9a103f889f7f20871fb6ae1eacc214f7a4287aef9af7076205"
     },
     {
       "path": "assets/replay/2026052301.json",
@@ -1042,8 +1062,16 @@
       "sha256": "d54a37e31b0cd42fd42dd393039c008585c695adec7f416224e0742eeaa3e93c"
     },
     {
+      "path": "assets/replay/2026102901.json",
+      "sha256": "74563bf92bf3fe742fe50fd7d614ab7755a2c24657c25bef9dcae8dbd50bb758"
+    },
+    {
+      "path": "assets/replay/2026103001.json",
+      "sha256": "c88dcb92d6c23ff51c6158f1fa51bba4530c8e8c223a4f287c39ae9b7c76f64b"
+    },
+    {
       "path": "assets/replay/index.js",
-      "sha256": "d30cd05862cf2c8a1294451eaeb3320852135ef667be091bc25e878f827ba983"
+      "sha256": "7e6da7ba0205ca6849e295309ad904870cacd81e40f12a26118f9496060fd327"
     },
     {
       "path": "assets/replay.js",
@@ -1055,7 +1083,7 @@
     },
     {
       "path": "assets/sandbox.js",
-      "sha256": "da43d7ba5e88201896d0075acf2aa4bed4c6b9657b433f9c29187a4f2aa25007"
+      "sha256": "248aaff0ae6aab15df53397c190e2ac5fdb6ad4198b8e0cbc3d7baffb12118ba"
     },
     {
       "path": "assets/sandbox_app.js",
@@ -1063,15 +1091,15 @@
     },
     {
       "path": "assets/schedule_all.js",
-      "sha256": "6c5555223148ae4bd4fea2d0f33936c7281a02ec79a4c0eec90f2283c9cdf621"
+      "sha256": "540be295d722eb026853c44744d8a3c734c50147a2409590db9647ee7f070b50"
     },
     {
       "path": "assets/search.js",
-      "sha256": "af927c9d213c185a39050c2450405aed862f46aced275e6b0a963572700f9ca9"
+      "sha256": "a342250d05120b7ddc83a100ded921e8b17cf8eefd452bbe2c22672692421c9c"
     },
     {
       "path": "assets/seasons.js",
-      "sha256": "7bf2a8b6d7c9757fcd1bbe1aa4cd855d99ea988f369bb752cfb225dbecf35d28"
+      "sha256": "a966a0f5a2ca4bd1d85d0ab18ba7fcf1fdd9214e64edcf3279a2cda5960631f4"
     },
     {
       "path": "assets/series_report.js",
@@ -1155,7 +1183,7 @@
     },
     {
       "path": "assets/site_totals.js",
-      "sha256": "2b43f373c8e62ad5e7e7bdf5142b55ee1ef69847cc42b3b113637ff5ceaad2df"
+      "sha256": "7341b75e06c1f37b0d8151ef967ca9a991666ae76299c3b347994462b6740ca5"
     },
     {
       "path": "assets/style.css",
@@ -1203,11 +1231,19 @@
     },
     {
       "path": "assets/team_data.js",
-      "sha256": "33e25b180b9b3446cc07d8bb2aa886b73d0cbaf5e80f263a88e10ab25f70162b"
+      "sha256": "bf0a050c460593a1ce921cf7ca89653852c304961e9a1bbee201a1499c65c992"
+    },
+    {
+      "path": "assets/theme.css",
+      "sha256": "de99845c4e9eb83be8ac86c32190a16f8a36ff12781023f9bed2ee9610beab89"
+    },
+    {
+      "path": "assets/theme.js",
+      "sha256": "ec1c04f4edfb3717f02bfa99715004cd969671402953186ec21f98f73277f6b0"
     },
     {
       "path": "assets/updates.js",
-      "sha256": "a12373ab5e8de5dc4d61a285a9dd487772570cdf6eaea499699ecb63e5b9b552"
+      "sha256": "7a19e81e8fc00a903d48f1fbbf9085eb2e1831f03f4a97565d9dc24e4e513482"
     },
     {
       "path": "assets/v55.css",

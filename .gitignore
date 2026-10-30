@@ -8,6 +8,10 @@
 !/LICENSE
 !/NOTICE
 !/README.md
+!/CHANGELOG.md
+!/CODE_OF_CONDUCT.md
+!/ROADMAP.md
+!/SECURITY.md
 !/pyproject.toml
 !/requirements.txt
 !/.github/
@@ -17,8 +21,13 @@
 !/.github/workflows/
 /.github/workflows/*
 !/.github/ISSUE_TEMPLATE/bug_report.md
+!/.github/ISSUE_TEMPLATE/config.yml
+!/.github/ISSUE_TEMPLATE/data_correction.yml
+!/.github/ISSUE_TEMPLATE/feature_request.yml
 !/.github/pull_request_template.md
 !/.github/workflows/ci.yml
+!/.github/dependabot.yml
+!/.github/workflows/codeql.yml
 !/apps/
 /apps/*
 !/apps/dashboard.py
@@ -74,9 +83,11 @@
 !/docs/images/team-20261027.jpg
 !/docs/images/team-bp-20261027.jpg
 !/docs/licensing.md
+!/docs/publishing.md
 !/tools/
 /tools/*
 !/tools/check_public_files.py
+!/tools/check_links.py
 !/tools/hooks/
 /tools/hooks/*
 !/tools/hooks/pre-commit
@@ -170,6 +181,7 @@
 !/kpl_insight/frontend/assets/games/20260003.json
 !/kpl_insight/frontend/assets/games/20260004.json
 !/kpl_insight/frontend/assets/games/index.js
+!/kpl_insight/frontend/assets/h2h_early.js
 !/kpl_insight/frontend/assets/hero_growth.js
 !/kpl_insight/frontend/assets/hero_perf/index.js
 !/kpl_insight/frontend/assets/hero_perf/shard_0.js
@@ -190,6 +202,7 @@
 !/kpl_insight/frontend/assets/hero_perf/shard_9.js
 !/kpl_insight/frontend/assets/hero_perf_app.js
 !/kpl_insight/frontend/assets/honors.js
+!/kpl_insight/frontend/assets/light.css
 !/kpl_insight/frontend/assets/lineups.js
 !/kpl_insight/frontend/assets/live.js
 !/kpl_insight/frontend/assets/live_hist/2026052301.js
@@ -257,6 +270,9 @@
 !/kpl_insight/frontend/assets/live_hist/2026102001.js
 !/kpl_insight/frontend/assets/live_hist/2026102101.js
 !/kpl_insight/frontend/assets/live_hist/2026102201.js
+!/kpl_insight/frontend/assets/live_hist/2026102801.js
+!/kpl_insight/frontend/assets/live_hist/2026102901.js
+!/kpl_insight/frontend/assets/live_hist/2026103001.js
 !/kpl_insight/frontend/assets/pages.css
 !/kpl_insight/frontend/assets/picks.js
 !/kpl_insight/frontend/assets/player_deep.js
@@ -334,6 +350,8 @@
 !/kpl_insight/frontend/assets/replay/2026102001.json
 !/kpl_insight/frontend/assets/replay/2026102101.json
 !/kpl_insight/frontend/assets/replay/2026102201.json
+!/kpl_insight/frontend/assets/replay/2026102901.json
+!/kpl_insight/frontend/assets/replay/2026103001.json
 !/kpl_insight/frontend/assets/replay/index.js
 !/kpl_insight/frontend/assets/sandbox.css
 !/kpl_insight/frontend/assets/sandbox.js
@@ -374,6 +392,8 @@
 !/kpl_insight/frontend/assets/team_bp/shard_7.js
 !/kpl_insight/frontend/assets/team_bp_app.js
 !/kpl_insight/frontend/assets/team_data.js
+!/kpl_insight/frontend/assets/theme.css
+!/kpl_insight/frontend/assets/theme.js
 !/kpl_insight/frontend/assets/updates.js
 !/kpl_insight/frontend/assets/v55.css
 !/kpl_insight/frontend/assets/vendor/InterVariable.woff2

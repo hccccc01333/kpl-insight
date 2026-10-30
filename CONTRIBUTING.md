@@ -2,19 +2,22 @@
 
 欢迎讨论赛事数据、字段定义、采集稳定性、模型校准和使用体验。先通过 Issue 描述具体问题；PR 尽量一次解决一个问题。
 
+提交 PR 前先开 Issue 说明场景；较大的改动先确认方向。合并前会运行 CI，默认使用 squash merge，贡献者通过提交、PR 链接或 `Co-authored-by` 保留署名。完整流程和发布检查见 [发布与贡献流程](docs/publishing.md)。
+
 ## 复现与检查
 
 使用 Python 3.14，在虚拟环境中安装 `python -m pip install -e .` 后执行：
 
 ```bash
 python tools/check_public_files.py
+python tools/check_links.py
 python -m compileall -q kpl_insight apps tests
 python -m unittest discover -s tests -v
 python tests/check_monitor_rolling.py
 python -m kpl_insight demo
 ```
 
-改变采集字段、时间顺序、特征或训练切分时，添加能发现行为错误的离线回归测试。真实数据评估须报告数据范围与模型指纹；合成样本不能替代性能验证。
+CI 会在 Ubuntu 和 Windows 上运行离线检查；Windows 任务重点覆盖 `start.py`、内置前端和本地运行时。改变采集字段、时间顺序、特征或训练切分时，添加能发现行为错误的离线回归测试。真实数据评估须报告数据范围与模型指纹；合成样本不能替代性能验证。
 
 ## 提交内容
 

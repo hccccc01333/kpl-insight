@@ -1,5 +1,7 @@
 /* Full-viewport world: flowing 3D lanes, surface light, streaming particles and scroll camera. */
 const root = document.documentElement;
+// Light pages use static surfaces and do not initialize the dark WebGL scene.
+if (!root.classList.contains('light-site')) {
 root.classList.add('world-site');
 const backdrop = document.createElement('div');
 backdrop.className = 'world-backdrop';
@@ -163,4 +165,6 @@ function build(T){
   canvas.addEventListener('webglcontextrestored',()=>{root.dataset.worldRenderer='webgl';backdrop.classList.remove('world-fallback');resize();request();});
   root.dataset.worldRenderer='webgl';root.dataset.worldParticles=String(n);
   resize();request();
+}
+
 }

@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="v55">
+<html lang="zh-CN" class="v55 light-site">
 <head>
+<script src="assets/theme.js?v=20261030b"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>峡谷有数 · KPL Insight · KPL 数据分析与比赛复盘项目</title>
-<meta name="description" content="峡谷有数 KPL Insight：源码公开的 KPL 数据分析项目，提供赛事查询、选手对比、英雄 BP 与比赛复盘。体验 3D 数据界面，前往 GitHub 查看源码、参与贡献。">
+<meta name="description" content="峡谷有数：源码公开的 KPL 赛事数据分析与复盘工具。先在线体验，再自行部署、修改和扩展，做出适合自己的 KPL 数据工具，限非商业使用。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=85">
-<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/pages.css?v=20261027f">
 <link rel="stylesheet" href="assets/v55.css?v=87">
 <style>
 /* 我的 KPL：仅在存在收藏时出现，无收藏整块隐藏（不留空壳） */
@@ -23,18 +24,25 @@
 .myk-line b.w{color:var(--teal)}
 .myk-line b.l{color:var(--red)}
 .myk-line span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 采集健康条：仅在数据异常时出现，正常时不占位、不弹窗 */
+#kplDataBanner{position:sticky;top:0;z-index:9999;display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:13px;line-height:1.5;color:#fff;background:#b42318;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+#kplDataBanner.kdb-amber{background:#b54708}
+#kplDataBanner b{font-weight:700;flex:none}
+#kplDataBanner .kdb-age{opacity:.82;font-size:12px;flex:none}
 </style>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="峡谷有数">
 <meta property="og:title" content="峡谷有数 · KPL Insight · KPL 数据分析与比赛复盘项目">
-<meta property="og:description" content="源码公开的 KPL 数据分析与比赛复盘项目。赛事查询、选手对比、英雄 BP，欢迎体验与参与贡献。">
+<meta property="og:description" content="先体验，再自己部署和修改，做出适合自己的 KPL 数据工具。源码公开，限非商业使用。">
 <meta property="og:image" content="https://hccccc01333.github.io/KPLdata-site/assets/shots/insight-current.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="assets/arena.css?v=2">
 <link rel="stylesheet" href="assets/arena-world.css?v=20261026">
-<script src="assets/arena-world.js?v=1" type="module"></script>
+<script src="assets/arena-world.js?v=20261030a" type="module"></script>
 <link rel="stylesheet" href="assets/card-motion.css?v=1">
 <script src="assets/card-motion.js?v=1" type="module"></script>
+<link rel="stylesheet" href="assets/light.css?v=20261030a">
+<link rel="stylesheet" href="assets/theme.css?v=20261030b">
 </head>
 <body data-page="index.html">
 <header id="siteHeader" class="topbar"></header>
@@ -44,14 +52,14 @@
   <div class="world-copy">
     <p class="world-eyebrow">KPL INSIGHT &nbsp; / &nbsp; DATA MEETS THE GAME</p>
     <h1 class="world-title" id="worldTitle">胜负之间，<span>看见每一道轨迹。</span></h1>
-    <p class="world-deck">从第一手 BP，到最后一座水晶。<br>用数据读懂赛场，也让每一个想法有源码可循。</p>
+    <p class="world-deck">从这套源码出发，做出自己的 KPL 数据工具。<br>先体验，再自行部署、修改和扩展，限非商业使用。</p>
     <div class="world-actions">
       <a class="world-link" href="schedule.html">查看赛程 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
       <a class="world-link secondary" href="https://github.com/hccccc01333/kpl-insight" target="_blank" rel="noopener">GitHub · Star <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
     </div>
   </div>
   <div class="world-hero-bottom">
-    <div class="world-identity"><b>THE GAME IS ALIVE.</b>峡谷有数 · 源码公开的独立赛事数据项目</div>
+    <div class="world-identity"><b>THE GAME IS ALIVE.</b>峡谷有数 · 可自行部署与扩展的 KPL 数据工具</div>
     <a class="world-scroll" href="#arenaData">向下探索 <i aria-hidden="true"></i></a>
     <div class="world-scenes" aria-label="探索赛事内容">
       <button type="button" data-target="#focusBlock"><b>01 / COMPETE</b>赛场焦点</button>
@@ -64,13 +72,39 @@
 <span>KPL <em>✦</em> EVERY GAME TELLS A STORY</span><span>读懂赛场 <em>✦</em> 看见胜负</span><span>THE DRAFT <em>✦</em> THE TURNING POINT</span><span>每一次交锋 <em>✦</em> 都有迹可循</span><span>KPL <em>✦</em> EVERY GAME TELLS A STORY</span><span>读懂赛场 <em>✦</em> 看见胜负</span><span>THE DRAFT <em>✦</em> THE TURNING POINT</span><span>每一次交锋 <em>✦</em> 都有迹可循</span><span>KPL <em>✦</em> EVERY GAME TELLS A STORY</span><span>读懂赛场 <em>✦</em> 看见胜负</span><span>THE DRAFT <em>✦</em> THE TURNING POINT</span><span>每一次交锋 <em>✦</em> 都有迹可循</span><span>KPL <em>✦</em> EVERY GAME TELLS A STORY</span><span>读懂赛场 <em>✦</em> 看见胜负</span><span>THE DRAFT <em>✦</em> THE TURNING POINT</span><span>每一次交锋 <em>✦</em> 都有迹可循</span>
 </div></div>
 
-<main class="wrap world-data" id="arenaData">
-  <div class="arena-data-intro"><b>01 &nbsp; / &nbsp; THE COMPETITION</b><span>聚焦赛场 · 赛程、赛果与关键时刻</span></div>
+<section class="home-hero" aria-labelledby="homeTitle">
+  <div>
+    <p class="home-eyebrow">峡谷有数 · KPL INSIGHT</p>
+    <h1 id="homeTitle">看比赛，也看懂比赛。<br><span>让每一次胜负有迹可循。</span></h1>
+    <p class="home-description">从赛程赛果到选手表现，从阵容选择到关键转折。把分散的赛事数据放在一起，找到你想看的比赛，读懂你关心的赛场。</p>
+    <div class="home-actions">
+      <a class="world-link" href="#featureGuide">探索全部功能 <span aria-hidden="true">↓</span></a>
+      <a class="world-link secondary" href="schedule.html">查看赛程 <span aria-hidden="true">↗</span></a>
+    </div>
+    <p class="home-caption">历史数据查询 · 比赛复盘 · 阵容与胜率分析</p>
+  </div>
+  <aside class="home-map" aria-label="推荐使用路径">
+    <div class="home-map-head"><b>从一场比赛开始</b><span>YOUR GAME PLAN</span></div>
+    <a class="home-step" href="schedule.html"><span>01</span><div><strong>找到想看的比赛</strong><p>按赛事和赛段浏览对阵、时间与赛果</p></div><i aria-hidden="true">↗</i></a>
+    <a class="home-step" href="picks.html"><span>02</span><div><strong>回到决定胜负的时刻</strong><p>从精选对局进入经济与资源时间轴</p></div><i aria-hidden="true">↗</i></a>
+    <a class="home-step" href="simulator.html"><span>03</span><div><strong>试一试你的赛前判断</strong><p>选择战队与赛制，查看模型胜率估计</p></div><i aria-hidden="true">↗</i></a>
+  </aside>
+</section>
 
-  <section class="project-strip" aria-label="参与峡谷有数项目">
-    <div><span class="project-label mono">BUILD WITH THE COMMUNITY</span><h2>从看比赛，到一起做项目。</h2><p>KPL 数据采集、分析与复盘工具，源码公开，限非商业使用。觉得有用，欢迎 Star；有想法，欢迎提 Issue 或贡献 PR。</p></div>
-    <div class="project-actions"><a class="world-link" href="https://github.com/hccccc01333/kpl-insight" target="_blank" rel="noopener">查看源码 · Star ↗</a><a href="https://github.com/hccccc01333/kpl-insight/issues" target="_blank" rel="noopener">反馈与交流 ↗</a></div>
+<main class="wrap world-data" id="arenaData">
+  <section class="feature-guide" id="featureGuide" aria-labelledby="guideTitle">
+    <div class="guide-heading"><div><p class="guide-kicker">EXPLORE THE TOOLKIT</p><h2 id="guideTitle">你想从哪里开始？</h2></div><p>六个入口，把问题交给数据。</p></div>
+    <div class="feature-grid"><a class="feature-card" href="schedule.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z M8 3v6 M16 3v6 M4 11h16 M8 15h2 M14 15h2"/></svg></span><h3>赛程与赛果</h3><p>今天谁和谁打？按赛事、赛段与比赛日查看对阵、赛制和比分，从赛程进入比赛详情。</p><span class="feature-cta">查看赛事日历 <span aria-hidden="true">↗</span></span></a><a class="feature-card" href="picks.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4v16h16 M7 15l4-5 4 3 5-7"/></svg></span><h3>比赛复盘</h3><p>转折发生在哪一分钟？查看有分钟级数据对局的经济、资源与历史胜率变化，定位关键时刻。</p><span class="feature-cta">探索精选对局 <span aria-hidden="true">↗</span></span></a><a class="feature-card" href="compare-player.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6 M16 11a3 3 0 1 0 0-6 M2 20v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3 M17 13a4 4 0 0 1 4 4v3"/></svg></span><h3>战队与选手</h3><p>谁的表现更稳定？查询战队战绩、选手数据与排名，再用对比工具观察不同队伍和选手的差异。</p><span class="feature-cta">打开数据对比 <span aria-hidden="true">↗</span></span></a><a class="feature-card" href="team-bp.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-8 9-8 9s-8-4-8-9V7z M9 12l2 2 4-4"/></svg></span><h3>英雄与 BP 分析</h3><p>什么英雄值得关注？查看英雄出场、禁用和胜率，结合战队 BP 习惯研究阵容选择。</p><span class="feature-cta">研究战队 BP <span aria-hidden="true">↗</span></span></a><a class="feature-card" href="simulator.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18V6 M4 18h16 M8 15V11 M13 15V7 M18 15v-5"/></svg></span><h3>胜率与赛制模拟</h3><p>换一种对阵会怎样？选择两支战队和 BO 赛制，估计单局、大场胜率与局分分布。</p><span class="feature-cta">试试胜负模拟器 <span aria-hidden="true">↗</span></span></a><a class="feature-card" href="h2h.html"><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h15l-3-3 M20 17H5l3 3 M7 7v7 M17 10v7"/></svg></span><h3>交手与赛季对比</h3><p>老对手再相遇，有什么变化？回看两队历年交锋，也可以在赛段对比中观察战绩与英雄环境的变化。</p><span class="feature-cta">查询历史交手 <span aria-hidden="true">↗</span></span></a></div>
+    <p class="feature-note">数据说明：站内主要提供归档数据与已有历史预测，具体覆盖范围以各页标注为准。模拟结果为模型估计；实时采集与预测需在本地配置程序、数据和有效模型。</p>
   </section>
+  <div class="guide-heading home-data-heading"><div><p class="guide-kicker">MATCH CENTER</p><h2>接下来，聚焦赛场。</h2></div><p>当前赛事、近期赛果与值得回看的对局</p></div>
+
+
+
+
+
+
+
 
   <div id="releaseBar" class="release-bar" style="display:none"></div>
 
@@ -203,6 +237,10 @@
     </div>
   </section>
 
+  <section class="project-strip" aria-label="参与峡谷有数项目">
+    <div><span class="project-label mono">BUILD WITH THE COMMUNITY</span><h2>基于已有源码，做出自己的工具。</h2><p>在线体验赛程查询、选手与英雄表现、BP 和比赛复盘，再下载或 Fork 源码，按自己的需求部署、修改和扩展。可以独立维护自己的非商业版本，也欢迎分享改进。网站主要展示归档数据与已有历史预测；实时采集与预测需本地配置程序、数据和有效模型。具体使用、修改与分发条件以仓库许可为准。</p></div>
+    <div class="project-actions"><a class="world-link" href="https://github.com/hccccc01333/kpl-insight" target="_blank" rel="noopener">查看源码 · Star ↗</a><a href="https://github.com/hccccc01333/kpl-insight/issues" target="_blank" rel="noopener">反馈与交流 ↗</a></div>
+  </section>
 </main>
 
 <footer id="siteFooter" class="footer"></footer>
@@ -213,8 +251,8 @@
 <script src="assets/schedule_all.js?v=85"></script>
 <script src="assets/coverage.js?v=85"></script>
 <script src="assets/replay/index.js?v=85"></script>
-<script src="assets/updates.js?v=20261027e"></script>
-<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/updates.js?v=20261027f"></script>
+<script src="assets/common.js?v=20261027f"></script>
 <script src="assets/share.js?v=85"></script>
 <script>
 (function () {
@@ -246,12 +284,37 @@
   })();
 
   /* ---------- 实时比分与状态覆盖（live.js，每 30 秒） ---------- */
+  function renderDataBanner(h) {
+    var el = document.getElementById("kplDataBanner");
+    if (!h || h.status === "ok" || h.status === "idle") {
+      if (el) el.remove();
+      return;
+    }
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "kplDataBanner";
+      el.setAttribute("role", "status");
+      document.body.insertBefore(el, document.body.firstChild);
+    }
+    el.className = h.status === "offline" ? "" : "kdb-amber";
+    var esc = function (s) {
+      return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+      });
+    };
+    var age = (typeof h.snapshotAgeSec === "number") ? Math.round(h.snapshotAgeSec) : null;
+    el.innerHTML = "<b>" + (h.status === "offline" ? "采集中断" : "数据延迟") + "</b>" +
+      "<span>" + esc(h.message || "实时数据暂时不可用") + "</span>" +
+      (age !== null ? '<span class="kdb-age">· 最近快照 ' + age + " 秒前</span>" : "");
+  }
+
   function applyTodayLive() {
     var sc = document.createElement("script");
     sc.src = "assets/live.js?ts=" + Date.now();
     sc.onload = function () {
       sc.remove();
       var L = window.KPL_LIVE || {};
+      renderDataBanner(L.health);
       (L.today || []).forEach(function (t) {
         /* 最新战报列表的比分覆盖 */
         var rr = document.querySelector('#recentList [data-mid="' + t.matchId + '"] .score');

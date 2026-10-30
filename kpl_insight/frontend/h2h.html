@@ -1,45 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="v55">
+<html lang="zh-CN" class="v55 light-site">
 <head>
+<script src="assets/theme.js?v=20261030b"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>交手记录 · 峡谷有数</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230A111C'/%3E%3Crect x='3' y='3' width='26' height='26' rx='4' fill='none' stroke='%23F6C021' stroke-width='2'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='16' font-weight='bold' fill='%23F6C021' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=85">
-<link rel="stylesheet" href="assets/pages.css?v=20261027e">
+<link rel="stylesheet" href="assets/pages.css?v=20261027f">
 <link rel="stylesheet" href="assets/v55.css?v=87">
-<style>
-.h2h-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:14px;align-items:start}
-@media(max-width:1000px){.h2h-grid{grid-template-columns:1fr}}
-.h2h-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
-.h2h-tuning{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.h2h-vs{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin:16px 0 6px}
-.h2h-vs .t{display:flex;align-items:center;gap:11px;font-size:18px;font-weight:800}
-.h2h-vs .t.r{flex-direction:row-reverse;text-align:right}
-.h2h-vs img{width:46px;height:46px;object-fit:contain}
-.h2h-vs .mid{font-family:var(--mono);font-size:26px;font-weight:800;color:var(--gold)}
-.h2h-bar{display:flex;height:26px;border-radius:8px;overflow:hidden;border:1px solid var(--line2);margin:14px 0 6px}
-.h2h-bar .a{background:linear-gradient(90deg,var(--gold),var(--gold-d));display:flex;align-items:center;justify-content:flex-end;padding-right:9px;font-size:12px;font-weight:800;color:#151006;min-width:34px}
-.h2h-bar .b{background:var(--blue-d);display:flex;align-items:center;padding-left:9px;font-size:12px;font-weight:800;color:#fff;min-width:34px}
-.h2h-kv{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--ink2)}
-.h2h-kv b{font-family:var(--mono);color:var(--ink)}
-.h2h-row2{display:grid;grid-template-columns:96px 1fr auto auto;gap:12px;align-items:center;padding:10px 8px;
-          border-bottom:1px solid var(--line)}
-.h2h-row2:last-child{border-bottom:none}
-.h2h-row2:hover{background:var(--inset)}
-.h2h-row2 .d{font-family:var(--mono);font-size:12px;color:var(--muted)}
-.h2h-row2 .meta{font-size:12.5px;color:var(--muted)}
-.h2h-row2 .score{font-family:var(--mono);font-size:15px;font-weight:800}
-.h2h-row2 .score .w{color:var(--gold)}
-.h2h-row2 .go{font-size:13px;font-weight:700;color:var(--gold)}
-.h2h-row2 .go:hover{text-decoration:underline}
-.h2h-years{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
-.h2h-years button{font-family:inherit;font-size:12.5px;padding:5px 11px;border-radius:7px;border:1px solid var(--line2);
-                  background:var(--card2);color:var(--ink2);cursor:pointer}
-.h2h-years button.on{background:var(--gold);color:#151006;font-weight:700;border-color:var(--gold)}
-.h2h-trend{margin-top:8px}
-.h2h-trend svg{width:100%;height:auto;display:block}
-</style>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="峡谷有数">
 <meta property="og:title" content="交手记录 · 峡谷有数">
@@ -48,9 +17,166 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="assets/arena.css?v=1">
 <link rel="stylesheet" href="assets/arena-world.css?v=20261026">
-<script src="assets/arena-world.js?v=1" type="module"></script>
+<script src="assets/arena-world.js?v=20261030a" type="module"></script>
 <link rel="stylesheet" href="assets/card-motion.css?v=1">
 <script src="assets/card-motion.js?v=1" type="module"></script>
+<style>
+:root{--h2h-a:#E8ECF5;--h2h-b:#6EAFFF}
+.page-hero p b{white-space:nowrap}
+.h2h-filter{align-items:flex-end}
+.h2h-filter .fld{min-width:150px}
+.h2h-filter .fld select{min-width:150px;max-width:100%}
+.h2h-swap{display:inline-grid;place-items:center;width:38px;height:38px;flex:none;margin-bottom:1px;
+          border:1px solid var(--line2);border-radius:7px;background:var(--card2);color:var(--ink2);cursor:pointer}
+.h2h-swap:hover{color:var(--ink);border-color:var(--ink2);background:var(--inset)}
+.h2h-swap:focus-visible{outline:2px solid var(--h2h-b);outline-offset:2px}
+.h2h-swap svg{width:17px;height:17px}
+.h2h-filter-spacer{flex:1 1 auto}
+.h2h-filter .btn[disabled]{opacity:.38;cursor:not-allowed}
+.h2h-score{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px 14px;margin-bottom:18px}
+.h2h-score-top{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:20px;align-items:center}
+.h2h-team{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0}
+.h2h-team.b{align-items:flex-end;text-align:right}
+.h2h-logo{position:relative;width:58px;height:58px;flex:none;display:grid;place-items:center;overflow:hidden;
+          border:1px solid var(--line2);border-radius:50%;background:var(--card2)}
+.h2h-logo img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;padding:6px;background:var(--card2)}
+.h2h-logo-fb{position:absolute;inset:0;display:grid;place-items:center;
+             font-family:var(--mono);font-size:20px;font-weight:800;color:var(--ink2)}
+.h2h-tname{font-size:19px;font-weight:800;line-height:1.25;color:var(--ink);max-width:100%;overflow-wrap:anywhere}
+.h2h-tsub{font-size:11.5px;color:var(--muted);letter-spacing:.02em}
+.h2h-mid{text-align:center;min-width:218px}
+.h2h-big{display:flex;align-items:baseline;justify-content:center;gap:10px;font-size:48px;font-weight:800;line-height:1;letter-spacing:.01em}
+.h2h-big b{color:var(--ink)}
+.h2h-big span{color:var(--h2h-b)}
+.h2h-big i{font-style:normal;font-size:29px;font-weight:500;color:var(--muted);transform:translateY(-4px)}
+.h2h-big-vs{font-family:var(--mono);font-size:34px;font-weight:800;color:var(--muted);line-height:1.1;letter-spacing:.08em}
+.h2h-midcap{margin-top:8px;font-size:11.5px;color:var(--muted)}
+.h2h-formline{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:11px;flex-wrap:wrap}
+.h2h-formlab{font-size:11px;color:var(--muted);margin-right:3px}
+.h2h-bar{display:flex;gap:3px;height:30px;margin-top:20px;border-radius:7px;overflow:hidden;background:var(--inset)}
+.h2h-bar-a{display:flex;align-items:center;justify-content:flex-end;padding-right:10px;overflow:hidden;
+           background:linear-gradient(90deg,#F3F6FC,#C9D2E3)}
+.h2h-bar-b{display:flex;align-items:center;padding-left:10px;overflow:hidden;
+           background:linear-gradient(90deg,#4E86C9,#6EAFFF)}
+.h2h-bar-a i,.h2h-bar-b i{font-style:normal;font-family:var(--mono);font-size:12px;font-weight:800;
+                          color:#0B0D12;white-space:nowrap}
+.h2h-barleg{display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-size:11.5px;color:var(--muted)}
+.h2h-barleg span{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;
+                 text-overflow:ellipsis;white-space:nowrap}
+.h2h-dot{width:8px;height:8px;border-radius:2px;flex:none}
+.h2h-dot.ta{background:linear-gradient(90deg,#E8ECF5,#C9D2E3)}
+.h2h-dot.tb{background:#6EAFFF}
+.h2h-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));margin-top:20px;border-top:1px solid var(--line)}
+.h2h-kpi{min-width:0;padding:14px 16px 4px 0;border-right:1px solid var(--line)}
+.h2h-kpi:last-child{border-right:none}
+.h2h-kpi .k{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h2h-kpi .v{font-family:var(--mono);font-size:25px;font-weight:800;line-height:1.2;color:var(--ink);
+            margin-top:3px;white-space:nowrap}
+.h2h-kpi .v small{font-size:11.5px;font-weight:600;color:var(--muted);margin-left:3px}
+.h2h-kpi .v.date{font-size:18px;letter-spacing:-.02em;padding-top:5px}
+.h2h-kpi .s{margin-top:2px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h2h-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.55fr);gap:14px;align-items:start}
+.h2h-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0}
+.h2h-panel .panel-title{flex-wrap:wrap;margin-bottom:10px}
+.h2h-panel .panel-title em{margin-left:auto;text-align:right}
+.h2h-empty{display:flex;flex-direction:column;align-items:center;gap:12px;padding:26px 8px;
+           text-align:center;font-size:13px;color:var(--muted)}
+.h2h-empty-title{font-size:14.5px;font-weight:700;color:var(--ink2)}
+.h2h-trendcap{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:6px 0 2px;
+              font-size:11.5px;color:var(--muted)}
+.h2h-trendcap b{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);
+                font-weight:700;color:var(--ink2)}
+.h2h-trendcap b::before{content:"";width:14px;height:2px;border-radius:1px;background:var(--h2h-b)}
+.h2h-trendcap span{text-align:right}
+.h2h-chart{margin-top:4px}
+.h2h-chart svg{display:block;width:100%;height:auto}
+.h2h-chart-note{padding:18px 4px 8px;font-size:12px;color:var(--muted)}
+.h2h-ytable{margin-top:16px;border-top:1px solid var(--line)}
+.h2h-yhead,.h2h-yrow{display:grid;grid-template-columns:46px 52px minmax(0,1fr) 52px;gap:10px;align-items:center}
+.h2h-yhead{padding:9px 8px 5px;font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+.h2h-yhead span:last-child{text-align:right}
+.h2h-yrow{width:100%;padding:8px;border:none;border-top:1px solid var(--line);border-radius:0;
+          background:none;font-family:inherit;font-size:12px;color:var(--ink2);text-align:left;cursor:pointer}
+.h2h-yrow:hover{background:var(--inset)}
+.h2h-yrow.on{background:rgba(110,175,255,.10);box-shadow:inset 2px 0 0 var(--h2h-b)}
+.h2h-yrow:focus-visible{outline:2px solid var(--h2h-b);outline-offset:-2px}
+.h2h-yrow .y{font-family:var(--mono);font-weight:700;color:var(--ink)}
+.h2h-yrow .n{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.h2h-yrow .bar{display:block;height:6px;border-radius:3px;background:var(--inset);overflow:hidden}
+.h2h-yrow .bar i{display:block;height:100%;border-radius:3px;background:var(--h2h-b)}
+.h2h-yrow .rec{font-family:var(--mono);font-size:11.5px;text-align:right;color:var(--ink2)}
+.h2h-group{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+           padding:14px 8px 6px;border-bottom:1px solid var(--line)}
+.h2h-group:first-child{padding-top:4px}
+.h2h-group b{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--ink)}
+.h2h-group span{margin-left:7px;font-size:11.5px;color:var(--muted)}
+.h2h-group em{font-style:normal;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.h2h-rec{display:grid;grid-template-columns:92px minmax(0,1fr) auto 62px;gap:12px;align-items:center;
+         padding:10px 8px;border-bottom:1px solid var(--line);color:inherit;text-decoration:none;
+         transition:background .12s}
+.h2h-rec:last-child{border-bottom:none}
+.h2h-rec:hover{background:var(--card2)}
+.h2h-rec:focus-visible{outline:2px solid var(--h2h-b);outline-offset:-2px}
+.h2h-rec .d{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.h2h-rec .meta{display:flex;align-items:center;gap:7px;min-width:0;font-size:12.5px;color:var(--ink2)}
+.h2h-rec .meta b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h2h-rec .meta em{font-style:normal;color:var(--muted);white-space:nowrap}
+.h2h-rec .meta .bo{flex:none;padding:1px 5px;border:1px solid var(--line2);border-radius:4px;
+                   font-style:normal;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.h2h-rec .score{display:flex;align-items:baseline;gap:5px;font-family:var(--mono);font-size:15px;
+                font-weight:800;color:var(--ink2);white-space:nowrap}
+.h2h-rec .score i{font-style:normal;font-weight:400;color:var(--muted)}
+.h2h-rec .score .w{color:var(--ink)}
+.h2h-rec .go{font-size:12px;font-weight:700;color:var(--muted);text-align:right;white-space:nowrap}
+.h2h-rec .go i{display:inline-block;font-style:normal;transition:transform .12s}
+.h2h-rec:hover .go{color:var(--ink2)}
+.h2h-rec:hover .go i{transform:translateX(2px)}
+.h2h-more{display:flex;align-items:center;justify-content:center;width:100%;margin-top:14px;padding:10px;
+          border:1px dashed var(--line2);border-radius:8px;background:none;color:var(--ink2);
+          font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.h2h-more:hover{border-color:var(--ink2);color:var(--ink);background:var(--inset)}
+.h2h-more[hidden]{display:none!important}
+@media(max-width:1000px){
+  .h2h-grid{grid-template-columns:minmax(0,1fr)}
+  .h2h-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .h2h-kpi{padding-top:12px;border-top:1px solid var(--line)}
+  .h2h-kpi:nth-child(3n){border-right:none}
+}
+@media(max-width:720px){
+  .h2h-score{padding:18px 16px 12px}
+  .h2h-score-top{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"a b" "m m";gap:14px 12px}
+  .h2h-team.a{grid-area:a}
+  .h2h-team.b{grid-area:b}
+  .h2h-mid{grid-area:m;min-width:0;margin-top:2px;padding-top:12px;border-top:1px solid var(--line)}
+  .h2h-big{font-size:38px}
+  .h2h-big-vs{font-size:28px}
+  .h2h-logo{width:46px;height:46px}
+  .h2h-tname{font-size:16px}
+  .h2h-bar{height:26px;margin-top:14px}
+  .h2h-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .h2h-kpi:nth-child(3n){border-right:1px solid var(--line)}
+  .h2h-kpi:nth-child(2n){border-right:none}
+  .h2h-filter .fld{flex:1 1 118px;min-width:0}
+  .h2h-filter .fld select{min-width:0;width:100%;font-size:12.5px;padding:9px 8px}
+  .h2h-swap{width:34px;height:34px}
+  .h2h-filter-spacer{display:none}
+  .h2h-rec{grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"d s g" "m m m";
+           gap:4px 10px;padding:11px 6px}
+  .h2h-rec .d{grid-area:d}
+  .h2h-rec .score{grid-area:s;justify-self:end;margin-left:auto}
+  .h2h-rec .go{grid-area:g;justify-self:end}
+  .h2h-rec .meta{grid-area:m}
+  .h2h-panel{padding:16px 14px}
+  .h2h-panel .panel-title em{margin-left:0;flex-basis:100%;text-align:left}
+}
+@media(max-width:560px){
+  .h2h-kpi{padding-right:12px}
+  .h2h-yhead,.h2h-yrow{grid-template-columns:42px 46px minmax(0,1fr) 44px;gap:8px}
+  .h2h-trendcap span{display:none}
+}
+</style>
+<link rel="stylesheet" href="assets/light.css?v=20261030a">
+<link rel="stylesheet" href="assets/theme.css?v=20261030b">
 </head>
 <body data-page="h2h.html">
 <header id="siteHeader" class="topbar"></header>
@@ -59,27 +185,49 @@
   <div class="wrap">
     <div class="ph-kicker mono">HEAD TO HEAD · 交手记录</div>
     <h1>战队交手记录</h1>
-    <p>任意两支战队的历史交锋全记录：大场胜负、局分对比、逐年走势与每一次对局详情（2019–2026）。</p>
+    <p>任意两支战队的历史交锋全记录：大场比分、局分、逐年胜率与每一次对局详情（2016–2026）。
+      支持按<b>年份 / 赛段</b>筛选，点击走势图里的年份可快速下钻。
+      2016–2018 为外部史料，标「史料」的记录可跳转原始赛果。</p>
   </div>
 </header>
 
 <main class="wrap" style="margin-top:26px">
-  <div class="filterbar">
-    <label class="fld"><span>战队 A</span><select id="selA"></select></label>
-    <label class="fld"><span>战队 B</span><select id="selB"></select></label>
-    <label class="fld"><span>年份范围</span><select id="fYear">
-      <option value="">全部年份</option>
-    </select></label>
-    <span class="block-note mono" id="countNote"></span>
+  <div class="filterbar h2h-filter">
+    <label class="fld"><span>战队 A</span><select id="selA" aria-label="战队 A"></select></label>
+    <button class="h2h-swap" id="swapBtn" type="button" title="交换战队 A / B" aria-label="交换战队 A 和 B">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 8h13M14 5l3 3-3 3M20 16H7M10 13l-3 3 3 3"/>
+      </svg>
+    </button>
+    <label class="fld"><span>战队 B</span><select id="selB" aria-label="战队 B"></select></label>
+    <label class="fld"><span>年份</span><select id="fYear" aria-label="年份"></select></label>
+    <label class="fld"><span>赛段</span>
+      <select id="fStage" aria-label="赛段">
+        <option value="">全部赛段</option>
+        <option value="regular">常规赛</option>
+        <option value="playoff">季后赛 / 淘汰赛</option>
+        <option value="final">总决赛</option>
+        <option value="other">其他赛段</option>
+      </select>
+    </label>
+    <span class="h2h-filter-spacer"></span>
+    <span class="block-note mono" id="countNote" aria-live="polite"></span>
+    <button class="btn ghost sm" id="resetBtn" type="button">清空筛选</button>
     <button class="btn ghost sm" id="expBtn" type="button">导出 CSV</button>
   </div>
 
+  <section class="h2h-score" id="scoreboard" aria-label="交手总览"></section>
+
   <div class="h2h-grid">
-    <div class="h2h-panel" id="summary"></div>
-    <div class="h2h-panel">
-      <div class="panel-title" style="margin-bottom:6px">历次交锋 <em class="mono">点击进入比赛详情</em></div>
+    <section class="h2h-panel h2h-side" aria-labelledby="trendTitle">
+      <div class="panel-title" id="trendTitle">逐年走势 <em class="mono">点击年份可筛选下方交锋</em></div>
+      <div id="trend"></div>
+    </section>
+    <section class="h2h-panel h2h-main" id="recordsPanel" aria-labelledby="recTitle">
+      <div class="panel-title" id="recTitle">历次交锋 <em class="mono" id="recNote">比分按 A : B 排列</em></div>
       <div id="records"></div>
-    </div>
+      <button class="h2h-more" id="moreBtn" type="button" aria-expanded="false" hidden>展开全部</button>
+    </section>
   </div>
 </main>
 
@@ -88,160 +236,527 @@
 <script src="assets/data.js?v=85"></script>
 <script src="assets/seasons.js?v=85"></script>
 <script src="assets/schedule_all.js?v=85"></script>
-<script src="assets/common.js?v=20261027e"></script>
+<script src="assets/h2h_early.js?v=20261029"></script>
+<script src="assets/common.js?v=20261027f"></script>
 <script>
 (function () {
   "use strict";
-  var D = KPL.data, K = KPL, $ = function (s) { return document.querySelector(s); };
+  var K = KPL, $ = function (s) { return document.querySelector(s); };
   K.init();
 
-  var ALL = window.KPL_SCHEDULE_ALL || [];
-  var S = window.KPL_SEASONS;
-  var teams = (S.scopes.all.teams || []).slice()
-    .sort(function (a, b) { return a.team.localeCompare(b.team, "zh"); });
+  /* 2019 起为站内全量赛程；2016–2018 走外部审核补集（无逐局详情，带原始来源链接） */
+  var RAW = (window.KPL_SCHEDULE_ALL || []).concat(window.KPL_H2H_EARLY || []);
+  var SEASONS = window.KPL_SEASONS || { scopes: { all: { teams: [] } } };
+  var STAGE_NAME = { regular: "常规赛", playoff: "季后赛 / 淘汰赛", final: "总决赛", other: "其他赛段" };
+  var STAGE_KEYS = ["regular", "playoff", "final", "other"];
+  var PAGE_SIZE = 10;
 
-  var q = new URLSearchParams(location.search);
-  var wantA = q.get("a") || "重庆狼队";
-  var wantB = q.get("b") || "北京WB";
-
-  function teamIcon(name) {
-    var t = teams.filter(function (x) { return x.team === name; })[0];
-    return t ? t.icon : "";
+  function stageText(s) {
+    var t = String(K.stageLabel(s == null ? "" : s) || "").trim();
+    return /^[a-z]+$/i.test(t) ? "" : t;
+  }
+  function stageGroup(s) {
+    var t = stageText(s);
+    if (/总决赛/.test(t)) return "final";
+    if (/季后赛|淘汰赛/.test(t)) return "playoff";
+    if (/常规赛/.test(t)) return "regular";
+    return "other";
   }
 
-  var opts = teams.map(function (t) { return "<option>" + K.esc(t.team) + "</option>"; }).join("");
-  $("#selA").innerHTML = opts;
-  $("#selB").innerHTML = opts;
-  $("#selA").value = wantA;
-  $("#selB").value = wantB;
-  var years = {};
-  ALL.forEach(function (r) { years[r.year] = 1; });
-  $("#fYear").innerHTML = '<option value="">全部年份</option>' +
-    Object.keys(years).sort().reverse().map(function (y) { return "<option>" + y + " 年</option>"; }).join("");
+  /* 只统计已结束的比赛，避免把待赛场次的 0:0 算进历史交锋 */
+  var ALL = RAW.filter(function (r) {
+    return r && r.done && r.team1 && r.team2 && r.team1 !== "待定" && r.team2 !== "待定";
+  });
 
-  function meetings(a, b, year) {
+  /* 队名 / 队徽：赛季名单 + 赛程里出现过的队伍合并，避免老队伍漏选 */
+  var TEAM = {};
+  var seasonTeams = (SEASONS.scopes && SEASONS.scopes.all && SEASONS.scopes.all.teams) || [];
+  seasonTeams.forEach(function (t) {
+    if (!t || !t.team || t.team === "待定") return;
+    TEAM[t.team] = { team: t.team, icon: t.icon || "" };
+  });
+  ALL.forEach(function (r) {
+    [[r.team1, r.icon1], [r.team2, r.icon2]].forEach(function (x) {
+      if (!x[0] || x[0] === "待定") return;
+      if (!TEAM[x[0]]) TEAM[x[0]] = { team: x[0], icon: x[1] || "" };
+      else if (!TEAM[x[0]].icon && x[1]) TEAM[x[0]].icon = x[1];
+    });
+  });
+  var teams = Object.keys(TEAM).map(function (k) { return TEAM[k]; })
+    .sort(function (x, y) { return x.team.localeCompare(y.team, "zh"); });
+  var NAMES = teams.map(function (t) { return t.team; });
+  function hasTeam(n) { return !!n && NAMES.indexOf(n) >= 0; }
+
+  var DEFAULT_A = hasTeam("重庆狼队") ? "重庆狼队" : (NAMES[0] || "");
+  var DEFAULT_B = hasTeam("北京WB") ? "北京WB" : (NAMES[1] || NAMES[0] || "");
+  if (DEFAULT_B === DEFAULT_A) {
+    for (var di = 0; di < NAMES.length; di++) if (NAMES[di] !== DEFAULT_A) { DEFAULT_B = NAMES[di]; break; }
+  }
+
+  var YEAR_SET = {};
+  ALL.forEach(function (r) { if (r.year) YEAR_SET[String(r.year)] = 1; });
+  var YEARS = Object.keys(YEAR_SET).sort().reverse();
+
+  var q = new URLSearchParams(location.search);
+  var qYear = q.get("year") || "", qStage = q.get("stage") || "";
+  var state = {
+    a: hasTeam(q.get("a")) ? q.get("a") : DEFAULT_A,
+    b: hasTeam(q.get("b")) ? q.get("b") : DEFAULT_B,
+    year: YEAR_SET[qYear] ? qYear : "",
+    stage: STAGE_KEYS.indexOf(qStage) >= 0 ? qStage : "",
+    showAll: false
+  };
+  var lastChartW = 0, resizeTimer = 0;
+  if (state.a === state.b && NAMES.length > 1) {
+    state.b = NAMES.filter(function (n) { return n !== state.a; })[0];
+  }
+
+  var selA = $("#selA"), selB = $("#selB"), selYear = $("#fYear"), selStage = $("#fStage");
+  var optsHTML = teams.map(function (t) {
+    return '<option value="' + K.esc(t.team) + '">' + K.esc(t.team) + "</option>";
+  }).join("");
+  selA.innerHTML = optsHTML;
+  selB.innerHTML = optsHTML;
+  selYear.innerHTML = '<option value="">全部年份</option>' + YEARS.map(function (y) {
+    return '<option value="' + y + '">' + y + " 年</option>";
+  }).join("");
+  selA.value = state.a;
+  selB.value = state.b;
+  selYear.value = state.year;
+  selStage.value = state.stage;
+
+  /* 首字兜底常驻下层：图片未加载 / 加载失败时不会出现空白灰圈 */
+  function teamLogo(name, side) {
+    var t = TEAM[name] || {};
+    var fb = '<span class="h2h-logo-fb" aria-hidden="true">' +
+      K.esc(String(name || "?").slice(0, 1)) + "</span>";
+    var img = t.icon
+      ? '<img src="' + K.esc(t.icon) + '" alt="" onerror="this.remove()">'
+      : "";
+    return '<span class="h2h-logo ' + side + '">' + fb + img + "</span>";
+  }
+
+  /* 同一对阵下按时间倒序，年份筛选前保留全量，供走势图使用 */
+  function pairMeetings(a, b, stage) {
     return ALL.filter(function (r) {
-      if (year && String(r.year) !== year) return false;
-      return (r.team1 === a && r.team2 === b) || (r.team1 === b && r.team2 === a);
-    }).slice().reverse();
+      if (!((r.team1 === a && r.team2 === b) || (r.team1 === b && r.team2 === a))) return false;
+      if (stage && stageGroup(r.stage) !== stage) return false;
+      return true;
+    }).sort(function (x, y) {
+      var kx = String(x.date || "") + String(x.time || "") + String(x.matchId || "");
+      var ky = String(y.date || "") + String(y.time || "") + String(y.matchId || "");
+      return ky.localeCompare(kx);
+    });
+  }
+  function scoreOf(r, a) {
+    var aIs1 = r.team1 === a;
+    return {
+      sa: Number(aIs1 ? r.score1 : r.score2) || 0,
+      sb: Number(aIs1 ? r.score2 : r.score1) || 0,
+      aIs1: aIs1
+    };
+  }
+  function resultOf(r, a) {
+    var s = scoreOf(r, a);
+    s.winA = s.sa > s.sb;
+    s.winB = s.sb > s.sa;
+    s.winner = s.winA ? a : s.winB ? (s.aIs1 ? r.team2 : r.team1) : "";
+    return s;
+  }
+
+  function statsOf(ms, a, b) {
+    var st = { aWin: 0, bWin: 0, aGames: 0, bGames: 0, total: ms.length, yMap: {} };
+    ms.forEach(function (r) {
+      var s = resultOf(r, a);
+      st.aGames += s.sa;
+      st.bGames += s.sb;
+      if (s.winA) st.aWin++; else if (s.winB) st.bWin++;
+      var y = String(r.year || "");
+      var g = st.yMap[y] || (st.yMap[y] = { n: 0, aw: 0, bw: 0 });
+      g.n++;
+      if (s.winA) g.aw++; else if (s.winB) g.bw++;
+    });
+    st.pctA = (st.aWin + st.bWin) ? st.aWin / (st.aWin + st.bWin) * 100 : 0;
+    return st;
+  }
+
+  function bestStreak(ms, a, b) {
+    var asc = ms.slice().sort(function (x, y) {
+      return (String(x.date) + String(x.time || "")).localeCompare(String(y.date) + String(y.time || ""));
+    });
+    var best = { len: 0, team: "", end: "" }, runA = 0, runB = 0;
+    asc.forEach(function (r) {
+      var s = resultOf(r, a);
+      if (s.winA) {
+        runA++; runB = 0;
+        if (runA > best.len) best = { len: runA, team: a, end: r.date };
+      } else if (s.winB) {
+        runB++; runA = 0;
+        if (runB > best.len) best = { len: runB, team: b, end: r.date };
+      } else { runA = 0; runB = 0; }
+    });
+    return best;
+  }
+
+  function maxDiff(ms, a) {
+    var best = { diff: -1, r: null, sa: 0, sb: 0 };
+    ms.forEach(function (r) {
+      var s = resultOf(r, a), d = Math.abs(s.sa - s.sb);
+      if (d > best.diff) best = { diff: d, r: r, sa: s.sa, sb: s.sb };
+    });
+    return best;
+  }
+
+  function yearTable(st, year) {
+    var keys = Object.keys(st.yMap).sort().reverse();
+    if (!keys.length) return "";
+    var head = '<div class="h2h-yhead"><span>年份</span><span>交锋</span><span>A 胜率</span><span>胜–负</span></div>';
+    var rows = keys.map(function (y) {
+      var row = st.yMap[y], wr = row.n ? row.aw / row.n * 100 : 0;
+      return '<button type="button" class="h2h-yrow' + (year === y ? " on" : "") + '" data-year="' + y +
+        '" aria-pressed="' + (year === y ? "true" : "false") + '" title="筛选 ' + y + " 年（" + row.n + " 场交锋）\">" +
+        '<span class="y mono">' + y + "</span>" +
+        '<span class="n mono">' + row.n + " 场</span>" +
+        '<span class="bar"><i style="width:' + wr.toFixed(1) + '%"></i></span>' +
+        '<span class="rec mono">' + row.aw + "–" + row.bw + "</span></button>";
+    }).join("");
+    return '<div class="h2h-ytable">' + head + rows + "</div>";
+  }
+
+  function chartWidth() {
+    var el = document.getElementById("trend");
+    var w = el ? el.clientWidth : 0;
+    return w > 0 ? Math.round(w) : 640;
+  }
+
+  function trendHTML(allMs, a, b, year, stage, chartW) {
+    if (!allMs.length) {
+      return '<div class="h2h-empty">暂无可展示的交锋走势</div>';
+    }
+    var st = statsOf(allMs, a, b);
+    var keys = Object.keys(st.yMap).sort();
+    var cap = '<div class="h2h-trendcap"><b>' + K.esc(a) + " 大场胜率</b><span>" +
+      (stage ? STAGE_NAME[stage] : "全部赛段") + " · 全部年份" +
+      (year ? "（已选 " + year + " 年）" : "") + "</span></div>";
+    var chart;
+    if (keys.length < 2) {
+      chart = '<div class="h2h-chart-note">目前仅在 ' + K.esc(keys[0] || "") + " 年有交锋，暂不绘制多年走势。</div>";
+    } else {
+      var CP = K.chartPalette();
+      var W = chartW || 640;
+      var H = Math.max(220, Math.min(280, Math.round(W * 0.5)));
+      var PL = 42, PR = 14, PT = 24, PB = 30;
+      var X = function (i) { return PL + i * (W - PL - PR) / (keys.length - 1); };
+      var Y = function (p) { return PT + (1 - p) * (H - PT - PB); };
+      var pts = keys.map(function (y, i) {
+        var row = st.yMap[y];
+        return { y: y, row: row, wr: row.n ? row.aw / row.n : 0, x: X(i), yy: Y(row.n ? row.aw / row.n : 0) };
+      });
+      /* 年份越多单点越密，字号跟着收，避免 2016–2026 挤在一起 */
+      var step = (W - PL - PR) / Math.max(1, keys.length - 1);
+      var pctFont = Math.max(9, Math.min(12, step * 0.42)).toFixed(1);
+      var yFont = Math.max(9, Math.min(11.5, step * 0.38)).toFixed(1);
+      var s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' +
+        K.esc(a + " 对 " + b + " 的逐年大场胜率") + '">';
+      s += '<defs><linearGradient id="h2hTrendFill" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="' + CP.area + '" stop-opacity=".30"/>' +
+        '<stop offset="1" stop-color="' + CP.area + '" stop-opacity="0"/>' +
+        "</linearGradient></defs>";
+      [0, 0.25, 0.5, 0.75, 1].forEach(function (g) {
+        var gy = Y(g);
+        s += '<line x1="' + PL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - PR) + '" y2="' + gy.toFixed(1) +
+          '" stroke="' + CP.grid + '" stroke-dasharray="' + (g === 0 || g === 1 ? "0" : g === 0.5 ? "5 5" : "2 6") + '"/>';
+        s += '<text x="' + (PL - 7) + '" y="' + (gy + 3.5).toFixed(1) + '" text-anchor="end" font-size="11" fill="' +
+          CP.label + '" font-family="Inter,monospace">' + Math.round(g * 100) + "%</text>";
+      });
+      var lineD = pts.map(function (p, i) {
+        return (i ? "L" : "M") + p.x.toFixed(1) + " " + p.yy.toFixed(1);
+      }).join(" ");
+      var areaD = "M" + pts[0].x.toFixed(1) + " " + Y(0).toFixed(1) + " " +
+        pts.map(function (p) { return "L" + p.x.toFixed(1) + " " + p.yy.toFixed(1); }).join(" ") +
+        " L" + pts[pts.length - 1].x.toFixed(1) + " " + Y(0).toFixed(1) + " Z";
+      s += '<path d="' + areaD + '" fill="url(#h2hTrendFill)"/>';
+      s += '<path d="' + lineD + '" fill="none" stroke="' + CP.line +
+        '" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+      pts.forEach(function (p) {
+        s += '<g class="h2h-pt"><title>' + K.esc(p.y + " 年：" + p.row.n + " 次交锋，" + a + " " +
+          p.row.aw + " 胜 " + p.row.bw + " 负，胜率 " + Math.round(p.wr * 100) + "%") + "</title>";
+        if (year === p.y) {
+          s += '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.yy.toFixed(1) + '" r="7" fill="none" stroke="' +
+            CP.mark + '" stroke-width="2"/>';
+        }
+        s += '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.yy.toFixed(1) + '" r="4" fill="' + CP.line +
+          '" stroke="' + CP.dot + '" stroke-width="1.5"/>';
+        s += '<text x="' + p.x.toFixed(1) + '" y="' + (p.yy - 10).toFixed(1) + '" text-anchor="middle" font-size="' + pctFont + '" fill="' +
+          CP.onLine + '" font-family="Inter,monospace">' + Math.round(p.wr * 100) + "%</text>";
+        s += '<text x="' + p.x.toFixed(1) + '" y="' + (H - 10) + '" text-anchor="middle" font-size="' + yFont + '" fill="' +
+          CP.label + '" font-family="Inter,monospace">' + p.y + "</text></g>";
+      });
+      s += "</svg>";
+      chart = '<div class="h2h-chart">' + s + "</div>";
+    }
+    return cap + chart + yearTable(st, year);
+  }
+
+  function kpiHTML(label, value, unit, sub, extraCls) {
+    return '<div class="h2h-kpi"><div class="k">' + label + '</div><div class="v' +
+      (extraCls ? " " + extraCls : "") + '">' + value +
+      (unit ? "<small>" + unit + "</small>" : "") + '</div><div class="s">' + sub + "</div></div>";
+  }
+
+  function scoreboardHTML(valid, a, b, ms, allMs) {
+    if (!valid) {
+      return '<div class="h2h-empty"><div class="h2h-empty-title">请选择两支不同的战队</div>' +
+        "<div>左右两侧选择了同一支队伍，无法比较。</div></div>";
+    }
+    var st = statsOf(ms, a, b);
+    var has = ms.length > 0;
+    var mid;
+    if (has) {
+      var chips = ms.slice(0, 5).reverse().map(function (r) {
+        var s = resultOf(r, a);
+        return '<span class="form-chip ' + (s.winA ? "w" : "l") + '" title="' +
+          K.esc(r.date + " " + (r.leagueName || "") + " " + a + " " + s.sa + ":" + s.sb + " " + b) + '">' +
+          (s.winA ? "胜" : "负") + "</span>";
+      }).join("");
+      mid = '<div class="h2h-big mono"><b>' + st.aWin + '</b><i>:</i><span>' + st.bWin + "</span></div>" +
+        '<div class="h2h-midcap mono">' + ms.length + " 次交锋 · 大场比分</div>" +
+        '<div class="h2h-formline"><span class="h2h-formlab">近 ' + Math.min(5, ms.length) + " 次</span>" + chips + "</div>";
+    } else {
+      mid = '<div class="h2h-big-vs mono">VS</div><div class="h2h-midcap mono">暂无交锋</div>';
+    }
+    var head = '<div class="h2h-score-top">' +
+      '<div class="h2h-team a">' + teamLogo(a, "a") +
+        '<div class="h2h-tname">' + K.esc(a) + "</div>" +
+        '<div class="h2h-tsub mono">A 方' + (has ? " · " + st.aWin + " 胜" : "") + "</div></div>" +
+      '<div class="h2h-mid">' + mid + "</div>" +
+      '<div class="h2h-team b">' + teamLogo(b, "b") +
+        '<div class="h2h-tname">' + K.esc(b) + "</div>" +
+        '<div class="h2h-tsub mono">B 方' + (has ? " · " + st.bWin + " 胜" : "") + "</div></div></div>";
+    if (!has) {
+      var resetTip = (state.year || state.stage)
+        ? '<button type="button" class="btn ghost sm" data-reset>清空年份 / 赛段</button>'
+        : "";
+      return head + '<div class="h2h-empty"><div class="h2h-empty-title">' +
+        (allMs.length ? "当前筛选下没有交锋记录" : "两队历史上还没有交手记录") + "</div>" +
+        (allMs.length ? "<div>试着放宽年份或赛段条件。</div>" : "") + resetTip + "</div>";
+    }
+
+    var bar = '<div class="h2h-bar" role="img" aria-label="' +
+      K.esc(a + " " + st.aWin + " 胜，" + b + " " + st.bWin + " 胜") + '">' +
+      '<span class="h2h-bar-a" style="width:' + st.pctA.toFixed(2) + '%"><i>' + st.aWin + " 胜</i></span>" +
+      '<span class="h2h-bar-b" style="width:' + (100 - st.pctA).toFixed(2) + '%"><i>' + st.bWin + " 胜</i></span></div>" +
+      '<div class="h2h-barleg mono"><span><i class="h2h-dot ta"></i>' + K.esc(a) + " " +
+        st.pctA.toFixed(1) + "%</span><span><i class=\"h2h-dot tb\"></i>" + K.esc(b) + " " +
+        (100 - st.pctA).toFixed(1) + "%</span></div>";
+
+    var streak = bestStreak(ms, a, b);
+    var md = maxDiff(ms, a);
+    var last = ms[0], ls = resultOf(last, a);
+    var kpis = '<div class="h2h-kpis">' +
+      kpiHTML("大场交锋", ms.length, "次", st.aWin + " 胜 · " + st.bWin + " 负") +
+      kpiHTML("局分", st.aGames + " : " + st.bGames, "", "A 方小局比分") +
+      kpiHTML("A 方胜率", st.pctA.toFixed(1), "%", st.aWin + " / " + (st.aWin + st.bWin) + " 场") +
+      kpiHTML("最近一次", K.esc(last.date), "", ls.sa + " : " + ls.sb + " · " +
+        (ls.winA ? "A 胜" : ls.winB ? "B 胜" : "平"), "date") +
+      kpiHTML("最长连胜", streak.len || "—", streak.len ? "连胜" : "",
+        streak.len ? K.esc(streak.team + " · " + streak.end) : "暂无连胜") +
+      kpiHTML("最大分差", md.diff > 0 ? md.diff : "—", md.diff > 0 ? "局" : "",
+        md.r ? K.esc(md.r.date + " · " + md.sa + ":" + md.sb) : "暂无") +
+      "</div>";
+
+    return head + bar + kpis;
+  }
+
+  function recordHTML(r, a) {
+    var s = resultOf(r, a);
+    var stage = stageText(r.stage);
+    var bo = r.bo ? "BO" + r.bo : "";
+    var label = r.date + " " + (r.leagueName || "") + (stage ? " " + stage : "") +
+      "，" + a + " " + s.sa + " 比 " + s.sb;
+    /* 站内详情缺失时（2016–2018 史料）改跳原始赛果页，避免点进空详情 */
+    var href = r.hasDetail
+      ? "match.html?id=" + encodeURIComponent(r.matchId)
+      : String(r.url || "");
+    var go = r.hasDetail ? "复盘" : (href ? "史料" : "—");
+    var arrow = r.hasDetail || !href ? "→" : "↗";
+    var open = href
+      ? '<a class="h2h-rec" href="' + K.esc(href) + '"' +
+        (r.hasDetail ? "" : ' target="_blank" rel="noopener"') +
+        ' aria-label="' + K.esc(label) + '">'
+      : '<div class="h2h-rec" aria-label="' + K.esc(label) + '">';
+    var close = href ? "</a>" : "</div>";
+    return open +
+      '<span class="d mono">' + K.esc(r.date) + "</span>" +
+      '<span class="meta"><b>' + K.esc(r.leagueName || "KPL") + "</b>" +
+        (stage ? "<em>" + K.esc(stage) + "</em>" : "") +
+        (bo ? '<i class="bo mono">' + bo + "</i>" : "") + "</span>" +
+      '<span class="score mono"><b class="' + (s.winA ? "w" : "") + '">' + s.sa + '</b><i>:</i><span class="' +
+        (s.winB ? "w" : "") + '">' + s.sb + "</span></span>" +
+      '<span class="go">' + go + " <i>" + arrow + "</i></span>" + close;
+  }
+
+  function recordsHTML(ms, a, st, showAll) {
+    if (!ms.length) {
+      var resetTip = (state.year || state.stage)
+        ? '<button type="button" class="btn ghost sm" data-reset>清空年份 / 赛段</button>'
+        : "";
+      return '<div class="h2h-empty"><div class="h2h-empty-title">没有符合条件的交锋</div>' +
+        "<div>试试清空年份或赛段筛选。</div>" + resetTip + "</div>";
+    }
+    var shown = showAll ? ms : ms.slice(0, PAGE_SIZE);
+    var html = "", lastY = "";
+    shown.forEach(function (r) {
+      var y = String(r.year || "");
+      if (y !== lastY) {
+        if (lastY) html += "</div>";
+        var g = st.yMap[y] || { n: 0, aw: 0, bw: 0 };
+        html += '<div class="h2h-group"><div><b>' + y + "</b><span>" + g.n + " 场</span></div>" +
+          '<em class="mono">' + g.aw + " 胜 · " + g.bw + " 负</em></div><div class=\"h2h-glist\">";
+        lastY = y;
+      }
+      html += recordHTML(r, a);
+    });
+    if (lastY) html += "</div>";
+    return html;
   }
 
   function render() {
-    var a = $("#selA").value, b = $("#selB").value, year = $("#fYear").value;
-    if (a === b) {
-      $("#summary").innerHTML = '<div class="empty-tip">请选择两支不同的战队</div>';
-      $("#records").innerHTML = "";
-      $("#countNote").textContent = "";
-      return;
-    }
-    var ms = meetings(a, b, year);
-    if (!ms.length) {
-      $("#summary").innerHTML = '<div class="h2h-vs"><div class="t">' +
-        (teamIcon(a) ? '<img src="' + K.esc(teamIcon(a)) + '" alt="">' : "") + K.esc(a) + "</div>" +
-        '<div class="mid">VS</div><div class="t r">' + K.esc(b) +
-        (teamIcon(b) ? '<img src="' + K.esc(teamIcon(b)) + '" alt="">' : "") + "</div></div>" +
-        '<div class="empty-tip">该范围内两队没有交手记录</div>';
-      $("#records").innerHTML = "";
-      $("#countNote").textContent = "0 次交锋";
-      return;
-    }
-    /* 统计 */
-    var aWin = 0, bWin = 0, aGames = 0, bGames = 0;
-    var yearRows = {};
-    ms.forEach(function (r) {
-      var aIs1 = r.team1 === a;
-      var sa = aIs1 ? r.score1 : r.score2;
-      var sb = aIs1 ? r.score2 : r.score1;
-      aGames += sa; bGames += sb;
-      if (sa > sb) aWin++; else if (sb > sa) bWin++;
-      var y = r.year;
-      if (!yearRows[y]) yearRows[y] = [0, 0, 0];
-      yearRows[y][0]++;
-      if (sa > sb) yearRows[y][1]++;
-      else if (sb > sa) yearRows[y][2]++;
-    });
-    var total = aWin + bWin || 1;
-    var pctA = aWin / total * 100;
+    var a = state.a, b = state.b;
+    var valid = !!a && !!b && a !== b;
+    var allMs = valid ? pairMeetings(a, b, state.stage) : [];
+    var ms = (valid && state.year)
+      ? allMs.filter(function (r) { return String(r.year) === state.year; })
+      : allMs;
+    var st = statsOf(ms, a, b);
 
-    /* 逐年走势折线（A 的大场胜率） */
-    var yKeys = Object.keys(yearRows).sort();
-    var trendHTML = "";
-    if (yKeys.length >= 2) {
-      var T = 640, TH = 170, PL = 40, PR = 16, PT = 22, PB = 30;
-      var CP = K.chartPalette();
-      var n = yKeys.length;
-      var X = function (i) { return PL + (n === 1 ? 0 : i * (T - PL - PR) / (n - 1)); };
-      var Y = function (p) { return PT + (1 - p) * (TH - PT - PB); };
-      var s = '<svg viewBox="0 0 ' + T + " " + TH + '" aria-label="逐年交手走势">';
-      [0.25, 0.5, 0.75].forEach(function (g) {
-        s += '<line x1="' + PL + '" y1="' + Y(g).toFixed(1) + '" x2="' + (T - PR) + '" y2="' + Y(g).toFixed(1) +
-          '" stroke=' + CP.grid + ' stroke-dasharray="4 6"/>';
-      });
-      s += '<text x="' + (PL - 7) + '" y="' + (Y(0.5) + 4) + '" text-anchor="end" font-size="10" fill=' + CP.label + ' font-family="Inter,monospace">50%</text>';
-      var pts = yKeys.map(function (y, i) {
-        var row = yearRows[y];
-        var wr = row[0] ? row[1] / row[0] : 0;
-        return X(i).toFixed(1) + "," + Y(wr).toFixed(1);
-      }).join(" ");
-      s += '<polyline points="' + pts + '" fill="none" stroke=' + CP.line + ' stroke-width="2.2"/>';
-      yKeys.forEach(function (y, i) {
-        var row = yearRows[y];
-        var wr = row[0] ? row[1] / row[0] : 0;
-        s += '<circle cx="' + X(i).toFixed(1) + '" cy="' + Y(wr).toFixed(1) + '" r="3.5" fill=' + CP.line + ' />' +
-          '<text x="' + X(i).toFixed(1) + '" y="' + (TH - 10) + '" text-anchor="middle" font-size="10.5" fill=' + CP.label + ' font-family="Inter,monospace">' + y + "</text>" +
-          '<text x="' + X(i).toFixed(1) + '" y="' + (Y(wr) - 9).toFixed(1) + '" text-anchor="middle" font-size="10" fill=' + CP.onLine + ' font-family="Inter,monospace">' + Math.round(wr * 100) + "%</text>";
-      });
-      s += "</svg>";
-      trendHTML = '<div class="block-note mono" style="margin-top:12px">' + K.esc(a) + " 的大场胜率逐年走势</div>" +
-        '<div class="h2h-trend">' + s + "</div>";
+    $("#countNote").textContent = valid
+      ? ms.length + " 次交锋" + (state.year ? " · " + state.year + " 年" : "")
+      : "请选择两支不同战队";
+    $("#expBtn").disabled = !valid || !ms.length;
+    $("#recNote").textContent = (valid && ms.length)
+      ? "比分按 A : B 排列 · 共 " + ms.length + " 场 · " +
+        (ms.some(function (r) { return !r.hasDetail && r.url; }) ? "含 2016–2018 史料" : "点击进入复盘")
+      : "比分按 A : B 排列";
+    $("#scoreboard").innerHTML = scoreboardHTML(valid, a, b, ms, allMs);
+    $("#trend").innerHTML = valid
+      ? trendHTML(allMs, a, b, state.year, state.stage, chartWidth())
+      : '<div class="h2h-empty">先选择两支不同的战队</div>';
+    $("#records").innerHTML = valid
+      ? recordsHTML(ms, a, st, state.showAll)
+      : '<div class="h2h-empty">先选择两支不同的战队</div>';
+
+    var more = $("#moreBtn");
+    if (valid && ms.length > PAGE_SIZE) {
+      more.hidden = false;
+      more.textContent = state.showAll ? "收起，仅看最近 " + PAGE_SIZE + " 场" : "展开全部 " + ms.length + " 场";
+      more.setAttribute("aria-expanded", state.showAll ? "true" : "false");
+    } else {
+      more.hidden = true;
     }
-
-    $("#summary").innerHTML =
-      '<div class="h2h-vs">' +
-      '<div class="t">' + (teamIcon(a) ? '<img src="' + K.esc(teamIcon(a)) + '" alt="">' : "") + K.esc(a) + "</div>" +
-      '<div class="mid">' + aWin + " : " + bWin + "</div>" +
-      '<div class="t r">' + K.esc(b) + (teamIcon(b) ? '<img src="' + K.esc(teamIcon(b)) + '" alt="">' : "") + "</div></div>" +
-      '<div class="h2h-bar"><span class="a" style="width:' + pctA.toFixed(1) + '%">' + aWin + " 胜</span>" +
-      '<span class="b" style="width:' + (100 - pctA).toFixed(1) + '%">' + bWin + " 胜</span></div>" +
-      '<div class="h2h-kv"><span>大场交锋 <b>' + ms.length + "</b> 次</span>" +
-      "<span>局分 <b>" + aGames + " : " + bGames + "</b></span>" +
-      "<span>最近一次 <b>" + K.esc(ms[0].date) + "</b></span></div>" + trendHTML;
-
-    $("#countNote").textContent = "共 " + ms.length + " 次交锋" + (year ? "（" + year + " 年）" : "");
-    $("#records").innerHTML = ms.map(function (r) {
-      var aIs1 = r.team1 === a;
-      var sa = aIs1 ? r.score1 : r.score2;
-      var sb = aIs1 ? r.score2 : r.score1;
-      var hasDetail = r.hasDetail;
-      var href = "match.html?id=" + encodeURIComponent(r.matchId);
-      return '<div class="h2h-row2">' +
-        '<span class="d">' + K.esc(r.date) + "</span>" +
-        '<span class="meta">' + K.esc(r.leagueName) + (r.stage ? " · " + K.esc(r.stage) : "") + "</span>" +
-        '<span class="score"><span class="' + (sa > sb ? "w" : "") + '">' + sa + "</span> : <span class=\"" +
-        (sb > sa ? "w" : "") + '">' + sb + "</span></span>" +
-        '<a class="go" href="' + href + '">' + (hasDetail ? "复盘 →" : "详情 →") + "</a></div>";
-    }).join("");
+    lastChartW = chartWidth();
   }
 
+  /* 容器宽度变化时按新宽度重绘走势图，避免字号被 viewBox 压缩 */
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      if (Math.abs(chartWidth() - lastChartW) > 12) render();
+    }, 180);
+  });
+
+  function writeURL() {
+    var p = new URLSearchParams();
+    p.set("a", state.a);
+    p.set("b", state.b);
+    if (state.year) p.set("year", state.year);
+    if (state.stage) p.set("stage", state.stage);
+    history.replaceState(null, "", "h2h.html?" + p.toString());
+  }
+  function commit() {
+    writeURL();
+    render();
+  }
+  function resetFilters() {
+    state.year = "";
+    state.stage = "";
+    state.showAll = false;
+    selYear.value = "";
+    selStage.value = "";
+    commit();
+  }
+
+  selA.addEventListener("change", function () {
+    state.a = selA.value;
+    state.showAll = false;
+    commit();
+  });
+  selB.addEventListener("change", function () {
+    state.b = selB.value;
+    state.showAll = false;
+    commit();
+  });
+  selYear.addEventListener("change", function () {
+    state.year = selYear.value;
+    state.showAll = false;
+    commit();
+  });
+  selStage.addEventListener("change", function () {
+    state.stage = selStage.value;
+    state.showAll = false;
+    commit();
+  });
+  $("#swapBtn").addEventListener("click", function () {
+    var t = state.a;
+    state.a = state.b;
+    state.b = t;
+    selA.value = state.a;
+    selB.value = state.b;
+    state.showAll = false;
+    commit();
+  });
+  $("#resetBtn").addEventListener("click", resetFilters);
+  $("#moreBtn").addEventListener("click", function () {
+    state.showAll = !state.showAll;
+    render();
+  });
+
+  /* 年份明细点击 -> 筛选 / 取消筛选；移动端顺手把交锋列表带到视野内 */
+  $("#trend").addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest(".h2h-yrow") : null;
+    if (!btn) return;
+    var y = btn.getAttribute("data-year");
+    state.year = state.year === y ? "" : y;
+    state.showAll = false;
+    selYear.value = state.year;
+    commit();
+    if (window.innerWidth <= 1000) {
+      document.getElementById("recordsPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  /* 空状态里的“清空筛选”按钮 */
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest ? e.target.closest("[data-reset]") : null;
+    if (t) resetFilters();
+  });
+
   $("#expBtn").addEventListener("click", function () {
-    var a = $("#selA").value, b = $("#selB").value, year = $("#fYear").value;
-    var ms = meetings(a, b, year);
-    var rows = [["日期", "联赛", "赛段", "对阵", "比分", "胜方", "比赛ID"]];
+    if (this.disabled) return;
+    var a = state.a, b = state.b;
+    var allMs = pairMeetings(a, b, state.stage);
+    var ms = state.year
+      ? allMs.filter(function (r) { return String(r.year) === state.year; })
+      : allMs;
+    var rows = [["日期", "联赛", "赛段", "战队 A", "战队 B", "A 局分", "B 局分", "胜方", "比赛ID"]];
     ms.forEach(function (r) {
-      var aIs1 = r.team1 === a;
-      var sa = aIs1 ? r.score1 : r.score2;
-      var sb = aIs1 ? r.score2 : r.score1;
-      rows.push([r.date, r.leagueName, r.stage, a + " vs " + b, sa + ":" + sb, sa > sb ? a : b, r.matchId]);
+      var s = resultOf(r, a);
+      rows.push([r.date, r.leagueName, stageText(r.stage), a, b, s.sa, s.sb, s.winner || "平", r.matchId]);
     });
-    K.exportCSV("交手_" + a + "_vs_" + b + ".csv", rows);
+    K.exportCSV("交手_" + a + "_vs_" + b + (state.year ? "_" + state.year : "") +
+      (state.stage ? "_" + state.stage : "") + ".csv", rows);
   });
-  ["selA", "selB", "fYear"].forEach(function (id) {
-    $("#" + id).addEventListener("change", function () {
-      var url = "h2h.html?a=" + encodeURIComponent($("#selA").value) + "&b=" + encodeURIComponent($("#selB").value);
-      history.replaceState(null, "", url);
-      render();
-    });
-  });
+
   render();
 })();
 </script>

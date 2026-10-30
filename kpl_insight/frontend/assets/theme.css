@@ -1,0 +1,19 @@
+/* Both homepages share the same data and functional links. */
+html.light-site :is(.world-hero,.world-ribbon) { display:none; }
+html.dark-site .home-hero { display:none; }
+.theme-switch { flex:none; display:inline-flex; align-items:center; justify-content:center; min-height:36px; padding:7px 12px; border:1px solid var(--line2); border-radius:9px; background:var(--card); color:var(--ink2); font:500 12px var(--sans); cursor:pointer; white-space:nowrap; }
+.theme-switch:hover { border-color:var(--blue); color:var(--blue); }
+.theme-switch:focus-visible { outline:2px solid var(--blue); outline-offset:4px; }
+html.dark-site .feature-card { background:rgba(10,17,43,.84); border-color:var(--line); }
+html.dark-site .feature-card:hover { background:rgba(29,41,79,.94); border-color:#66d5ff; }
+html.dark-site .feature-icon { background:#1d304e; color:#9bcfff; }
+html.dark-site .feature-card:nth-child(2n) .feature-icon { background:#193c39; color:#8ce0cb; }
+html.dark-site .feature-card:nth-child(3n) .feature-icon { background:#34294c; color:#d1b5ff; }
+html.dark-site :is(.guide-kicker,.feature-cta) { color:#9bcfff; }
+html.dark-site .theme-switch { background:#18213b; border-color:#536082; color:#e0e9fc; }
+html.v55.light-site :is(.motion-browse-title,.motion-position) { color:var(--ink2); }
+html.v55.light-site .motion-view { background:#edf2fa; border-color:var(--line); }
+html.v55.light-site .motion-browse button { color:var(--ink2); background:#fff; border-color:var(--line2); }
+html.v55.light-site .motion-view button[aria-pressed="true"] { color:var(--brand); background:#e3ecff; border-color:#b6c9ed; }
+@media(max-width:1100px) { html.v55 .topbar-in { gap:12px; } .theme-switch { padding:7px 9px; } }
+@media(max-width:600px) { .theme-switch { min-height:34px; font-size:11px; padding:6px 8px; } html.v55 .topbar-in { gap:8px; } }

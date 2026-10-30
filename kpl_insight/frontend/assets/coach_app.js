@@ -201,11 +201,46 @@
         }).join("") + "</div>" : "");
   }
 
+
+  function blurb(t) {
+    var picks = (t.bp.topPicks || []).slice(0, 2).map(function (r) { return heroName(r.i); });
+    var against = (t.bp.topAgainst || []).slice(0, 1).map(function (r) { return heroName(r.i); });
+    var parts = [];
+    if (t.series.games) parts.push("大场 " + K.fmtInt(t.series.games) + " 场 " + pct(t.series.wr));
+    if (picks.length) parts.push("常用 " + picks.join(" / "));
+    if (against.length) parts.push("最常被 Ban " + against.join(" / "));
+    return parts.join(" · ");
+  }
+
+  function similarPanel(c) {
+    var rows = c.similar || [];
+    var box = $("#coachSimilar");
+    if (!rows.length) {
+      box.innerHTML = '<div class="empty-tip">样本不足，暂不生成相似教练。</div>' +
+        '<div class="block-note">相似度按「前 10 常用英雄 + 前 10 常用禁用」的 Jaccard 重合度合成；只作风格描述，不代表水平高低。</div>';
+      return;
+    }
+    box.innerHTML = '<div class="coach-similar-grid">' + rows.map(function (r) {
+      return '<div class="coach-similar">' +
+        '<div class="coach-similar-head"><b>' + esc(r.name) + "</b><span>" + esc((r.teams || []).join(" / ")) + "</span></div>" +
+        '<div class="coach-similar-body">' +
+          '<div><span>风格相似</span><b>' + (r.similarity == null ? "—" : r.similarity.toFixed(1) + "%") + "</b></div>" +
+          '<div><span>选用相似</span><b>' + (r.pickSim == null ? "—" : r.pickSim.toFixed(1) + "%") + "</b></div>" +
+          '<div><span>禁用相似</span><b>' + (r.banSim == null ? "—" : r.banSim.toFixed(1) + "%") + "</b></div>" +
+          '<div><span>大场胜率</span><b>' + pct(r.seriesWr) + "</b></div>" +
+        "</div>" +
+        '<div class="coach-similar-foot">BP 局 ' + K.fmtInt(r.bpGames) + " · 大场 " + K.fmtInt(r.series) + "</div>" +
+      "</div>";
+    }).join("") + "</div>" +
+      '<div class="block-note">相似度只描述 BP 风格接近，不代表水平高低；计算口径是前 10 常用英雄 + 前 10 常用禁用的 Jaccard 重合度。</div>';
+  }
+
   function render() {
     var c = COACH[coachId], t = TENURE[tenureId];
     if (!c || !t) return;
     summary(t, c);
     sourceBox(t);
+    similarPanel(c);
     finger(t);
     banPanel(t.bp.topBans, "#coachBans", "己方主动禁用占本任期全部禁用手的比例。");
     banPanel(t.bp.topAgainst, "#coachBansAgainst", "对手面对该队时的禁用；不代表该英雄强弱。");
@@ -213,6 +248,7 @@
     tenureHistory(c);
     evidence(t);
     coveragePanel();
+    $("#coachBlurb").textContent = blurb(t);
     $("#coachMeta").textContent = "数据更新 " + (D.generatedAt || "—") + " · 赛季名单口径 · " + K.fmtInt((D.coverage || {}).teamSeasons) + " 个队-赛季";
     $("#coachCareer").innerHTML =
       '<div class="coach-career-item"><b>' + K.fmtInt(c.series) + "</b><span>生涯大场样本</span></div>" +
@@ -228,8 +264,26 @@
     } catch (e) {}
   }
 
+  function initTabs() {
+    var tabs = document.querySelectorAll("#coachTabs button");
+    var note = { overview: "概览：任期来源、赛果分层和任期档案", style: "BP 风格：常用英雄、Ban 资源与组合", similar: "相似教练：按 BP 风格分布", evidence: "证据：逐场 BP 明细" };
+    Array.prototype.forEach.call(tabs, function (btn) {
+      btn.addEventListener("click", function () {
+        var key = btn.getAttribute("data-tab");
+        Array.prototype.forEach.call(tabs, function (b) { b.classList.toggle("on", b === btn); });
+        ["overview", "style", "similar", "evidence"].forEach(function (k) {
+          var el = document.getElementById("tab-" + k);
+          if (el) el.hidden = k !== key;
+        });
+        var n = document.getElementById("coachTabNote");
+        if (n) n.textContent = note[key] || "";
+      });
+    });
+  }
+
   function init() {
     K.init();
+    initTabs();
     fillCoaches();
     fillTenures();
     render();

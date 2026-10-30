@@ -1,10 +1,12 @@
 # 上手指南
 
-## 1. 直接查数据
+峡谷有数主要供用户自行部署、修改和扩展，做出适合自己的 KPL 数据工具，限非商业使用。可以先在线体验已有功能，再在本地运行并按需修改；无需向原项目提交 PR，也可以独立维护自己的非商业版本。使用、修改和分发须遵守仓库许可，保留适用的许可与署名说明。
 
-访问 [静态网站](https://hccccc01333.github.io/KPLdata-site/)。它是单独部署的现有网站，使用静态数据文件，不依赖你本地运行本项目。部分国内网络对 GitHub Pages 的访问仍可能不稳定。
+## 1. 先在线体验
 
-### 默认：运行项目自带前端
+访问 [在线网站](https://kpldata-site.hccccc01333.workers.dev/)，无需安装或注册。网站主要提供已归档数据、已有历史预测与复盘；也可使用 [GitHub Pages 入口](https://hccccc01333.github.io/KPLdata-site/)。在线浏览不依赖你在本地运行本项目。
+
+## 2. 自己部署：在本机浏览归档数据
 
 前端页面、交互和已归档展示数据已随本项目提供，默认使用这套界面。下载或克隆本项目后，在项目根目录运行：
 
@@ -20,7 +22,7 @@ Windows 也可双击根目录的“启动网站.bat”。只需 Python 3.10 或�
 
 安装公开版工具后，`python -m kpl_insight` 和 `kpl-insight` 默认打开这套前端。指定参数时运行 `python -m kpl_insight web --port 8001`；`--help` 继续显示所有采集、训练与分析命令。
 
-## 2. 安装与离线演示
+## 3. 进阶：安装工具与离线演示
 
 使用 Python 3.14，在仓库根目录创建并激活虚拟环境，然后：
 
@@ -35,7 +37,7 @@ python tests/check_monitor_rolling.py
 
 `python -m kpl_insight <命令> --help` 显示各命令参数。也可以使用安装后的 `kpl-insight` 命令。
 
-## 3. 采集与整理
+## 4. 进阶：采集与整理
 
 ```bash
 python -m kpl_insight schedule --league-ids 20260004
@@ -50,7 +52,7 @@ python -m kpl_insight classify --dry-run
 
 采集接口默认直连。确实需要使用环境代理时设置 `KPL_USE_PROXY=1`。数据与模型输出根目录默认是当前工作目录；可用 `KPL_DATA_ROOT` 指向另一个本地目录。始终在启动 Python 进程前设置环境变量。
 
-## 4. 训练与验证
+## 5. 训练与验证
 
 训练需要 `data/processed/battles.csv`、`players.csv`，以及足够多带胜负标签的真实快照局。`dataset` 会生成前两张表；没有可解析选手信息时不会生成 `players.csv`。首次没有模型时，在比赛期间先采集：
 
@@ -74,7 +76,7 @@ python -m kpl_insight evaluate --gates
 
 权重在本地生成，本仓库不提供下载的 joblib。只加载自己生成或信任来源的权重，joblib/pickle 不是安全的数据交换格式。
 
-## 5. 单局预测与实时采集
+## 6. 单局预测与实时采集
 
 **实时胜率需要本地运行采集与预测程序，不是在线静态网站提供的即开即用云端服务。** 只运行网页 HTTP 服务或 Streamlit 工作台不会替代比赛日监控；本地程序停止后，不再持续产生新预测。公开仓库没有预训练权重，没有模型时先使用第 4 节的 `--collect-only` 积累数据，再训练和验证。运行期间保持终端与网络连接；目标赛事 ID 需按实际比赛调整。
 
@@ -89,7 +91,7 @@ python -m kpl_insight monitor --league-id 20260004 --interval 3 --no-auto-train
 
 `monitor` 需要已有模型；它会采集真实过程快照、记录预测并按赛程切换比赛。首次建库可先用 `backfill` 整理终局，但建立可靠的局内模型仍需要持续取得真实时间序列；不能仅靠几场回补直接训练上线。
 
-## 6. 可选本地工作台
+## 7. 可选本地工作台
 
 ```bash
 python -m pip install -e ".[dashboard]"
@@ -98,7 +100,7 @@ python -m streamlit run apps/dashboard.py
 
 工作台读取本地 `data/analysis/`、`data/processed/` 与 `data/realtime/`。没有数据时相关页面显示为空；线上静态网站的数据不会自动同步到本地。
 
-## 7. 静态站点数据导出
+## 8. 静态站点数据导出
 
 ```bash
 python -m kpl_insight export-live
