@@ -3,7 +3,8 @@
 The default mode only checks relative links. Pass ``--external`` to also check
 links to the project's GitHub organization, GitHub Pages site, and Workers
 mirror. External checks intentionally skip ``blob/main`` and security advisory
-URLs because they may legitimately be absent on ``main`` during a pull request.
+URLs because they may legitimately be absent on ``main`` during a pull request,
+and commit-history pages because GitHub rate-limits anonymous access to them.
 """
 
 from __future__ import annotations
@@ -34,6 +35,7 @@ EXTERNAL_SKIP_FRAGMENTS = (
     "/security/advisories/new",
     "/security/policy",
     "/blob/main/",
+    "/commits/",
 )
 USER_AGENT = "kpl-insight-link-check/1.0"
 
